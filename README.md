@@ -1,3 +1,3 @@
 # szakdolg
 
-Webalkalmazás DNS-szekvenciák referenciára illesztésére.
+Webalkalmazás DNS szekvenciák referenciára történő illesztésére
