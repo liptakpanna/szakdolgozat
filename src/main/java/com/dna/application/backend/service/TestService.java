@@ -19,11 +19,11 @@ public class TestService {
     @Transactional
     public boolean setTestData() {
         List<User> users = new ArrayList<>();
-        users.add(new User("A","a@example.com","1234"));
-        users.add(new User("B","b@example.com","1234"));
+        users.add(new User("A","a@example.com","1234", User.Role.ADMIN));
+        users.add(new User("B","b@example.com","1234", User.Role.GUEST));
+        users.add(new User("C","c@example.com","1234", User.Role.RESEARCHER));
         try {
             userRepository.saveAll(users);
-            userRepository.flush();
             return true;
         } catch (Exception e) {
             log.debug("Test Data Exception:", e );

@@ -6,15 +6,21 @@ import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="Users")
 public class User extends BaseEntityAudit{
-    @Column(name = "user_name", unique = true, nullable = false)
-    private String name;
+    @Column(name = "username", unique = true, nullable = false)
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Role role;
+
+    public enum Role { ADMIN, RESEARCHER, GUEST}
 }
