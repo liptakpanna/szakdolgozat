@@ -12,12 +12,12 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     @ResponseBody
     public String login(@RequestParam String username, @RequestParam String pwd){
        User user = userRepository.findByUsername(username);
        if (user == null) return "Username does not exist...";
        else if (user.getPassword().equals(pwd)) return "Login successfull!";
        else return "Wrong password...";
-    }
+    }*/
 }
