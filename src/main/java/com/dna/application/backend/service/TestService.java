@@ -2,6 +2,7 @@ package com.dna.application.backend.service;
 
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.UserRepository;
+import com.dna.application.backend.security.WebSecurityConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,8 +19,7 @@ public class TestService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
     public boolean setTestData() {
