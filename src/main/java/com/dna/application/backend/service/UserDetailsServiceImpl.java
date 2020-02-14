@@ -1,7 +1,6 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.model.User;
-import com.dna.application.backend.model.UserDetailsImpl;
 import com.dna.application.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +19,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(s);
         }
-        return new UserDetailsImpl(user);
+        return user;
     }
 }
