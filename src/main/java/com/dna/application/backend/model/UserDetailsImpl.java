@@ -2,6 +2,7 @@ package com.dna.application.backend.model;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -18,22 +19,18 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        final Set<GrantedAuthority> _grntdAuths = new HashSet<GrantedAuthority>();
+        final Set<GrantedAuthority> grntdAuths = new HashSet<GrantedAuthority>();
 
-        Collection<Role> roles = null;
-
+        User.Role role = null;
         if (user!=null) {
-            roles = user.getRoles();
+            role = user.getRole();
         }
 
-        /*if (roles!=null) {
-            for (Role _role : roles) {
-                //TODO
-                //_grntdAuths.add(new GrantedAuthorityImpl(_role.getRole()));
-            }
-        }*/
+        if (role == User.Role.ADMIN) grntdAuths.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        else if (role == User.Role.RESEARCHER) grntdAuths.add(new SimpleGrantedAuthority("ROLE_RESEARCHER"));
+        else if (role == User.Role.GUEST) grntdAuths.add(new SimpleGrantedAuthority("ROLE_GUEST"));
 
-        return _grntdAuths;
+        return grntdAuths;
     }
 
     @Override
