@@ -1,6 +1,7 @@
 package com.dna.application.backend.model;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,12 +29,12 @@ public class User extends BaseEntityAudit implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    public enum Role {ADMIN, RESEARCHER, GUEST};
+    public enum Role {ADMIN, RESEARCHER, GUEST}
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         final Set<GrantedAuthority> grntdAuths = new HashSet<GrantedAuthority>();
-        grntdAuths.add(new SimpleGrantedAuthority(this.getRole().toString()));
+        grntdAuths.add(new SimpleGrantedAuthority("ROLE_" + this.getRole().toString()));
         return grntdAuths;
     }
 

@@ -24,9 +24,8 @@ public class TestService {
     @Transactional
     public boolean setTestData() {
         List<User> users = new ArrayList<>();
-        users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN));
-        //users.add(new User("B","b@example.com","1234", User.Role.GUEST));
-        //users.add(new User("C","c@example.com","1234", User.Role.RESEARCHER));
+        //users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN));
+        users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST));
         try {
             userRepository.saveAll(users);
             return true;
