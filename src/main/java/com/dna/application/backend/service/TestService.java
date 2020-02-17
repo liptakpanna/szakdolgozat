@@ -1,5 +1,6 @@
 package com.dna.application.backend.service;
 
+import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.UserRepository;
 import com.dna.application.backend.security.WebSecurityConfig;
@@ -19,19 +20,21 @@ public class TestService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public boolean setTestData() {
+    public List<UserDto> setTestData() {
         List<User> users = new ArrayList<>();
         //users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN));
         users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST));
         try {
             userRepository.saveAll(users);
-            return true;
         } catch (Exception e) {
             log.debug("Test Data Exception:", e );
-            return false;
         }
+        return userService.getUsers();
     }
 }

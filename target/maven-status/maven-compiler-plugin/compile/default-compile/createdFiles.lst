@@ -8,6 +8,7 @@ com/dna/application/backend/model/JwtRequest.class
 com/dna/application/backend/service/UserDetailsServiceImpl.class
 com/dna/application/backend/service/BowtieService.class
 com/dna/application/backend/security/WebSecurityConfig.class
+com/dna/application/backend/model/UserUpdateRequest.class
 com/dna/application/backend/controller/AlignerController.class
 com/dna/application/backend/util/JwtTokenUtil.class
 com/dna/application/backend/model/Alignment.class
