@@ -2,9 +2,7 @@ package com.dna.application.backend.model;
 
 import lombok.Getter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
