@@ -1,7 +1,5 @@
 package com.dna.application.backend.controller;
 
-import java.util.Objects;
-
 import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.JwtResponse;
 import com.dna.application.backend.service.UserDetailsServiceImpl;

@@ -1,34 +1,41 @@
 package com.dna.application.backend.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.model.User;
+import com.dna.application.backend.repository.AlignmentRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+@Service
 public class AlignerService {
-    @Value("${data.resource.folder}")
-    public String resourceFolder;
+    @Autowired
+    private AlignmentRepository alignmentRepository;
 
-    static String getInput(Process proc) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        StringBuilder ans = new StringBuilder();
-        String line;
+    private ModelMapper modelMapper = new ModelMapper();
 
-        while((line = reader.readLine()) != null) {
-            ans.append(line);
+    public List<AlignmentDto> getAlignments(User user) {
+        User.Role role = user.getRole();
+
+        Set<Alignment> alignments = new HashSet<>(alignmentRepository.findByVisibility(Alignment.Visibility.PUBLIC));
+        alignments.addAll(alignmentRepository.findByOwner(user.getUsername()));
+
+        if (role == User.Role.ADMIN) {
+            alignments.addAll(alignmentRepository.findByVisibility(Alignment.Visibility.PRIVATE));
         }
-        return ans.toString();
+
+        alignments.addAll(user.getAlignmentAccess());
+
+        Type listType = new TypeToken<List<AlignmentDto>>() {}.getType();
+        return modelMapper.map(alignments, listType);
     }
 
-    static String getError(Process proc) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        StringBuilder ans = new StringBuilder();
-        String line;
 
-        while((line = reader.readLine()) != null) {
-            ans.append(line);
-        }
-        return ans.toString();
-    }
 }

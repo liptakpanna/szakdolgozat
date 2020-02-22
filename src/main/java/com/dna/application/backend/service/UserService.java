@@ -4,7 +4,6 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserUpdateRequest;
 import com.dna.application.backend.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {

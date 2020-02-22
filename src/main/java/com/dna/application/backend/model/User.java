@@ -1,7 +1,8 @@
 package com.dna.application.backend.model;
 
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,12 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     @Column(nullable = false)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(name = "user_x_alignment",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "alignment_id"))
+    Set<Alignment> alignmentAccess;
 
     public enum Role {ADMIN, RESEARCHER, GUEST}
 

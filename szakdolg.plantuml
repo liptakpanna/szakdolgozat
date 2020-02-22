@@ -1,0 +1,219 @@
+@startuml
+
+title __SZAKDOLG's Class Diagram__\n
+
+  namespace com.dna.application.backend {
+    class com.dna.application.backend.Application {
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace controller {
+      class com.dna.application.backend.controller.AlignerController {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace controller {
+      class com.dna.application.backend.controller.JwtAuthenticationController {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace controller {
+      class com.dna.application.backend.controller.TestController {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace controller {
+      class com.dna.application.backend.controller.UserController {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace dto {
+      class com.dna.application.backend.dto.UserDto {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace filter {
+      class com.dna.application.backend.filter.JwtRequestFilter {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      class com.dna.application.backend.model.Alignment {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      abstract class com.dna.application.backend.model.BaseEntity {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      abstract class com.dna.application.backend.model.BaseEntityAudit {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      class com.dna.application.backend.model.JwtRequest {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      class com.dna.application.backend.model.JwtResponse {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      class com.dna.application.backend.model.User {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace model {
+      class com.dna.application.backend.model.UserUpdateRequest {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace repository {
+      interface com.dna.application.backend.repository.UserRepository {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace security {
+      class com.dna.application.backend.security.WebSecurityConfig {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace service {
+      class com.dna.application.backend.service.BaseAligner {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace service {
+      class com.dna.application.backend.service.BowtieService {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace service {
+      class com.dna.application.backend.service.TestService {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace service {
+      class com.dna.application.backend.service.UserDetailsServiceImpl {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace service {
+      class com.dna.application.backend.service.UserService {
+      }
+    }
+  }
+  
+
+  namespace com.dna.application.backend {
+    namespace util {
+      class com.dna.application.backend.util.JwtTokenUtil {
+      }
+    }
+  }
+  
+
+  com.dna.application.backend.controller.AlignerController o-- com.dna.application.backend.service.BowtieService : bowtieService
+  com.dna.application.backend.controller.JwtAuthenticationController o-- com.dna.application.backend.util.JwtTokenUtil : jwtTokenUtil
+  com.dna.application.backend.controller.JwtAuthenticationController o-- com.dna.application.backend.service.UserDetailsServiceImpl : userDetailsService
+  com.dna.application.backend.controller.TestController o-- com.dna.application.backend.service.TestService : testService
+  com.dna.application.backend.controller.UserController o-- com.dna.application.backend.service.UserService : userService
+  com.dna.application.backend.dto.UserDto o-- com.dna.application.backend.model.User.Role : role
+  com.dna.application.backend.filter.JwtRequestFilter -up-|> org.springframework.web.filter.OncePerRequestFilter
+  com.dna.application.backend.filter.JwtRequestFilter o-- com.dna.application.backend.util.JwtTokenUtil : jwtTokenUtil
+  com.dna.application.backend.filter.JwtRequestFilter o-- com.dna.application.backend.service.UserDetailsServiceImpl : jwtUserDetailsService
+  com.dna.application.backend.model.Alignment -up-|> com.dna.application.backend.model.BaseEntityAudit
+  com.dna.application.backend.model.Alignment o-- com.dna.application.backend.model.Alignment.Visibility : visibility
+  com.dna.application.backend.model.BaseEntity .up.|> java.io.Serializable
+  com.dna.application.backend.model.BaseEntityAudit .up.|> java.io.Serializable
+  com.dna.application.backend.model.BaseEntityAudit -up-|> com.dna.application.backend.model.BaseEntity
+  com.dna.application.backend.model.JwtRequest .up.|> java.io.Serializable
+  com.dna.application.backend.model.JwtResponse .up.|> java.io.Serializable
+  com.dna.application.backend.model.User .up.|> org.springframework.security.core.userdetails.UserDetails
+  com.dna.application.backend.model.User -up-|> com.dna.application.backend.model.BaseEntityAudit
+  com.dna.application.backend.model.User o-- com.dna.application.backend.model.User.Role : role
+  com.dna.application.backend.model.UserUpdateRequest o-- com.dna.application.backend.model.User.Role : role
+  com.dna.application.backend.security.WebSecurityConfig -up-|> org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+  com.dna.application.backend.security.WebSecurityConfig o-- com.dna.application.backend.filter.JwtRequestFilter : jwtRequestFilter
+  com.dna.application.backend.security.WebSecurityConfig o-- com.dna.application.backend.service.UserDetailsServiceImpl : userDetailsServiceImpl
+  com.dna.application.backend.service.BowtieService -up-|> com.dna.application.backend.service.BaseAligner
+  com.dna.application.backend.service.BowtieService o-- com.dna.application.backend.repository.UserRepository : userRepository
+  com.dna.application.backend.service.TestService o-- com.dna.application.backend.repository.UserRepository : userRepository
+  com.dna.application.backend.service.TestService o-- com.dna.application.backend.service.UserService : userService
+  com.dna.application.backend.service.UserDetailsServiceImpl .up.|> org.springframework.security.core.userdetails.UserDetailsService
+  com.dna.application.backend.service.UserDetailsServiceImpl o-- com.dna.application.backend.repository.UserRepository : userRepository
+  com.dna.application.backend.service.UserService o-- com.dna.application.backend.repository.UserRepository : userRepository
+  com.dna.application.backend.util.JwtTokenUtil .up.|> java.io.Serializable
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

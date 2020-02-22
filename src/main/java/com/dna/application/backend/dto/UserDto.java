@@ -2,6 +2,7 @@ package com.dna.application.backend.dto;
 
 import com.dna.application.backend.model.User;
 import lombok.*;
+
 import java.util.Date;
 
 @Data
