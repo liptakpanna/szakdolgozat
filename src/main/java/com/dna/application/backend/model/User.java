@@ -2,16 +2,18 @@ package com.dna.application.backend.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,11 +32,17 @@ public class User extends BaseEntityAudit implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @Fetch(value= FetchMode.SELECT)
+    private Set<Alignment> ownedAlignments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_x_alignment",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "alignment_id"))
-    Set<Alignment> alignmentAccess;
+    @Fetch(value= FetchMode.SELECT)
+    private Set<Alignment> alignmentAccess = new HashSet<>();
+
 
     public enum Role {ADMIN, RESEARCHER, GUEST}
 

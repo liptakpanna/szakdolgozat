@@ -10,8 +10,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class AlignmentRequest {
-    private String username;
-
     private Alignment.Aligner aligner;
 
     private String name;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -27,8 +28,8 @@ public class TestService {
     @Transactional
     public List<UserDto> setTestData() {
         List<User> users = new ArrayList<>();
-        //users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN));
-        users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST));
+        users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN, new HashSet<>(), new HashSet<>()));
+        //users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST, null));
         try {
             userRepository.saveAll(users);
         } catch (Exception e) {

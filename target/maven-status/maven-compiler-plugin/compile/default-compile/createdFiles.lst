@@ -15,7 +15,6 @@ com/dna/application/backend/model/AlignmentResponse.class
 com/dna/application/backend/model/UserUpdateRequest.class
 com/dna/application/backend/controller/AlignerController.class
 com/dna/application/backend/service/BaseAligner.class
-com/dna/application/backend/service/AlignerService$1.class
 com/dna/application/backend/util/JwtTokenUtil.class
 com/dna/application/backend/model/Alignment.class
 com/dna/application/backend/controller/TestController.class
@@ -31,3 +30,4 @@ com/dna/application/backend/model/JwtResponse.class
 com/dna/application/backend/service/UserService$1.class
 com/dna/application/backend/model/Alignment$AlignmentBuilder.class
 com/dna/application/backend/filter/JwtRequestFilter.class
+com/dna/application/backend/dto/AlignmentDto$AlignmentDtoBuilder.class

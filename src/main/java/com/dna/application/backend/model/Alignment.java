@@ -1,16 +1,16 @@
 package com.dna.application.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
 @Getter
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,16 +22,19 @@ public class Alignment extends BaseEntityAudit {
 
     private Aligner aligner;
 
-    private String owner;
-
     private String route;
 
     private String description;
 
     private Visibility visibility;
 
-    @ManyToMany(mappedBy = "alignmentAccess")
-    Set<User> userAccess;
+    @ManyToOne
+    @Fetch(value= FetchMode.SELECT)
+    private User owner;
+
+    @ManyToMany(mappedBy = "alignmentAccess", fetch = FetchType.EAGER)
+    @Fetch(value= FetchMode.SELECT)
+    private Set<User> userAccess = new HashSet<>();
 
     public enum Visibility {PUBLIC, PRIVATE, TOPSECRET};
 

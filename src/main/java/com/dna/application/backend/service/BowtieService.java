@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -22,14 +24,19 @@ public class BowtieService extends BaseAligner {
     @Autowired
     private UserRepository userRepository;
 
-    public AlignmentResponse align(AlignmentRequest alignmentRequest) throws Exception{
-        String username = alignmentRequest.getUsername();
+    public AlignmentResponse align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
         String description = alignmentRequest.getDescription();
         String indexRoute = alignmentRequest.getIndexRoute(); //"/bowtie/indexes/e_coli"
         String dnaRoute = alignmentRequest.getDnaRoute(); //"/bowtie/reads/e_coli_1000.fq"
         Alignment.Visibility visibility = alignmentRequest.getVisibility();
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
+
+        Set<User> userAccess = new HashSet<>();
+
+        if( usernameAccessList != null && !usernameAccessList.isEmpty()) {
+            userAccess.addAll(userRepository.findByUsername(usernameAccessList));
+        }
 
         String[] args = new String[]{"bowtie", resourceFolder + indexRoute, resourceFolder + dnaRoute};
 
@@ -49,10 +56,10 @@ public class BowtieService extends BaseAligner {
                 .aligner(Alignment.Aligner.BOWTIE)
                 .name(name)
                 .description(description)
-                .owner(username)
+                .owner(user)
                 .route("null")
                 .visibility(visibility)
-                .userAccess(new HashSet<User>(userRepository.findByUsername(usernameAccessList)))
+              //  .userAccess(userAccess)
                 .build();
 
         alignmentRepository.saveAndFlush(alignment);

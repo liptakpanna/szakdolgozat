@@ -1,9 +1,11 @@
 package com.dna.application.backend.dto;
 
 import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.model.User;
 import lombok.*;
 
 @Data
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,11 +17,11 @@ public class AlignmentDto {
 
     private Alignment.Aligner aligner;
 
-    private String owner;
-
     private String description;
 
     private String route;
 
     private Alignment.Visibility visibility;
+
+    private String owner;
 }
