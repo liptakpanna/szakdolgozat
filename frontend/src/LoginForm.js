@@ -82,6 +82,7 @@ class LoginForm extends React.Component{
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
                     />
+                    <br/>
                     <InputField
                         type='password'
                         placeholder='Enter password'

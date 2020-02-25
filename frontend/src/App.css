@@ -1,3 +1,10 @@
+body {
+  background-color: #2196F3;
+  color: white;
+  margin: 0;
+  height: auto;
+}
+
 .app {
   height: 100%;
   background-color: #2196F3;
@@ -28,9 +35,12 @@
   margin:5px, 15px;
   border-radius: 10px;
   font-size: 20px;
+  text-shadow: 1px 1px #5a5d63;
 }
 
 .btn {
+  display: inline-block;
+  outline: none;
   border: white 2px solid;
   margin: 10px;
   color: #2196F3;
@@ -43,6 +53,8 @@
   border-radius: 10px;
   transition-duration: 0.4s;
   font-weight: bold;
+  font-size: 20px;
+  box-shadow: 3px 3px #999;
   width: 200px;
 }
 
@@ -51,14 +63,21 @@
   color: white;
 }
 
+.btn:active {
+  box-shadow: 0 0 #666;
+  transform: translateY(4px);
+}
+
 .welcome {
   color: white;
+  text-shadow: 2px 2px #5a5d63;
 }
 
 .input {
   color: white;
   width: 50%;
   font-size: 16px;
+  line-height: 20px;
   margin: 10px;
   border: none;
   border-bottom: 2px solid white;
