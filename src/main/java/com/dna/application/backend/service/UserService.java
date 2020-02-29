@@ -73,4 +73,9 @@ public class UserService {
 
         return modelMapper.map(user, UserDto.class);
     }
+
+    public UserDto getUser(String username) {
+        User user = userRepository.findByUsername(username);
+        return modelMapper.map(user, UserDto.class);
+    }
 }

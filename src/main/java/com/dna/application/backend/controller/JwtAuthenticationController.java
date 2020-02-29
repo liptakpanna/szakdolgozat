@@ -2,14 +2,18 @@ package com.dna.application.backend.controller;
 
 import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.JwtResponse;
+import com.dna.application.backend.model.JwtValidResponse;
+import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.UserDetailsServiceImpl;
 import com.dna.application.backend.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +35,8 @@ public class JwtAuthenticationController {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        User user = (User)userDetails;
+        return ResponseEntity.ok(new JwtResponse(token,user.getId(), user.getRole()));
     }
     
     private void authenticate(String username, String password) throws Exception {
@@ -42,5 +47,16 @@ public class JwtAuthenticationController {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
+    }
+
+    @GetMapping("/validate")
+    @ResponseBody
+    public JwtValidResponse validateJwtToken(@RequestHeader("Authorization") String jwtToken, Authentication authentication) {
+        if(authentication != null && !authentication.getName().equals("")) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+            if(userDetails != null)
+                return new JwtValidResponse(jwtTokenUtil.validateToken(jwtToken.substring(7), userDetails));
+        }
+        return new JwtValidResponse(false);
     }
 }

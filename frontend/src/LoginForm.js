@@ -54,9 +54,21 @@ class LoginForm extends React.Component{
             let result = await response.json();
             if (result){
                 console.log(result);
+                localStorage.setItem("isLoggedIn", true);
+                localStorage.setItem("jwtToken", result.jwttoken);
+                localStorage.setItem("username", this.state.username);
+                localStorage.setItem("id", result.id);
+                localStorage.setItem("role", result.role);
+
                 UserStore.isLoggedIn = true;
                 UserStore.jwtToken = result.jwttoken;
                 UserStore.username = this.state.username;
+                UserStore.id = result.id;
+                UserStore.role = result.role;
+
+                console.log(UserStore);
+                
+                this.props.history.push('/home')
             }
             else {
                 alert("Something went wrong...");
@@ -90,7 +102,6 @@ class LoginForm extends React.Component{
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
                     />
-
                     <SubmitButton
                         text='Login'
                         disabled={this.state.buttonDisabled}

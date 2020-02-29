@@ -8,6 +8,8 @@ body {
 .app {
   height: 100%;
   background-color: #2196F3;
+  margin-left: 160px;
+  padding: 0px 10px;
 }
 
 .loginContainer {
@@ -91,4 +93,29 @@ body {
 
 .igvContainer {
   background-color: white;
+}
+
+.sidenav {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1; 
+  top: 0; 
+  left: 0;
+  background-color: #2196F3; 
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #fff;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+  background-color: #0362ad;
 }

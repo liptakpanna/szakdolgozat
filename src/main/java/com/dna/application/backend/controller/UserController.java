@@ -60,4 +60,12 @@ public class UserController {
         User user = (User)authentication.getPrincipal();
         return userService.updateUser(userUpdateRequest, user.getUsername());
     }
+
+    @GetMapping("/me")
+    @ResponseBody
+    public UserDto getUser(@RequestParam String username, Authentication authentication) throws Exception {
+        User user = (User)authentication.getPrincipal();
+        if (user.getUsername().equals(username)) return userService.getUser(username);
+        else throw new Exception("You only can get your information.");
+    }
 }

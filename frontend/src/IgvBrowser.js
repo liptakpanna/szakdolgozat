@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import igv from 'igv/dist/igv.esm.min.js';
+import NavBar from './NavBar';
+import { Redirect } from 'react-router-dom';
 
 class IgvBrowser extends Component {
 
@@ -7,16 +9,14 @@ class IgvBrowser extends Component {
       var igvContainer = document.getElementById('igv-div');
       var igvOptions = 
       {
-        showNavigation: true,
-        showRuler: true,
-        genome: "hg19",
-        locus: 'chr7',
+        genome: "hg38",
+        locus: "chr8:127,736,588-127,739,371",
         tracks: [
             {
-                url: 'https://data.broadinstitute.org/igvdata/test/igv-web/segmented_data_080520.seg.gz',
-                indexed: false,
-                isLog: true,
-                name: 'Segmented CN'
+                "name": "HG00103",
+                "url": "https://s3.amazonaws.com/1000genomes/data/HG00103/alignment/HG00103.alt_bwamem_GRCh38DH.20150718.GBR.low_coverage.cram",
+                "indexURL": "https://s3.amazonaws.com/1000genomes/data/HG00103/alignment/HG00103.alt_bwamem_GRCh38DH.20150718.GBR.low_coverage.cram.crai",
+                "format": "cram"
             }
         ]
     };
@@ -25,11 +25,21 @@ class IgvBrowser extends Component {
     }
   
     render() {
-      return (
-          <div className='igvContainer'>
-              <div id="igv-div"></div>
+      if(true) {
+        return (
+          <div className="container">
+            <NavBar/>
+            <div className='igvContainer'>
+                <div id="igv-div"></div>
+            </div>
           </div>
-      );
+        );
+      }
+      else { 
+          return(
+              <Redirect to="login" />
+          );
+      }
     }
   }
 
