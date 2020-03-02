@@ -22,9 +22,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
@@ -49,17 +48,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
+        httpSecurity
+                .cors().and()
+                .csrf().disable()
         .authorizeRequests().antMatchers("/api/authenticate").permitAll()
                 .antMatchers("/api/test").permitAll()
                 .antMatchers("/api/validate").permitAll()
                 .anyRequest().authenticated().and().
         sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
     }
 }

@@ -106,7 +106,7 @@ title __SZAKDOLG's Class Diagram__\n
 
   namespace com.dna.application.backend {
     namespace model {
-      class com.dna.application.backend.model.UserUpdateRequest {
+      class com.dna.application.backend.model.UserRequest {
       }
     }
   }
@@ -195,7 +195,7 @@ title __SZAKDOLG's Class Diagram__\n
   com.dna.application.backend.model.User .up.|> org.springframework.security.core.userdetails.UserDetails
   com.dna.application.backend.model.User -up-|> com.dna.application.backend.model.BaseEntityAudit
   com.dna.application.backend.model.User o-- com.dna.application.backend.model.User.Role : role
-  com.dna.application.backend.model.UserUpdateRequest o-- com.dna.application.backend.model.User.Role : role
+  com.dna.application.backend.model.UserRequest o-- com.dna.application.backend.model.User.Role : role
   com.dna.application.backend.security.WebSecurityConfig -up-|> org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
   com.dna.application.backend.security.WebSecurityConfig o-- com.dna.application.backend.filter.JwtRequestFilter : jwtRequestFilter
   com.dna.application.backend.security.WebSecurityConfig o-- com.dna.application.backend.service.UserDetailsServiceImpl : userDetailsServiceImpl

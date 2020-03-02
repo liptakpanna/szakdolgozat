@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserUpdateRequest {
+public class UserRequest {
     private Long id;
 
     private String username;

@@ -1,7 +1,6 @@
 import React from 'react';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
-import UserStore from './store/UserStore';
 
 class LoginForm extends React.Component{
 
@@ -60,14 +59,6 @@ class LoginForm extends React.Component{
                 localStorage.setItem("id", result.id);
                 localStorage.setItem("role", result.role);
 
-                UserStore.isLoggedIn = true;
-                UserStore.jwtToken = result.jwttoken;
-                UserStore.username = this.state.username;
-                UserStore.id = result.id;
-                UserStore.role = result.role;
-
-                console.log(UserStore);
-                
                 this.props.history.push('/home')
             }
             else {

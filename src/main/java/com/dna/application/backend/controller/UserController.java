@@ -2,7 +2,7 @@ package com.dna.application.backend.controller;
 
 import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.User;
-import com.dna.application.backend.model.UserUpdateRequest;
+import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
@@ -45,20 +46,20 @@ public class UserController {
 
     @PostMapping("/me/update")
     @ResponseBody
-    public UserDto updateOwnData(@RequestBody UserUpdateRequest userUpdateRequest, Authentication authentication) throws Exception {
+    public UserDto updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        userUpdateRequest.setId(user.getId());
-        if (userUpdateRequest.getRole() != null) throw new Exception("You cannot change your role");
+        userRequest.setId(user.getId());
+        if (userRequest.getRole() != null) throw new Exception("You cannot change your role");
 
-        return userService.updateUser(userUpdateRequest, user.getUsername());
+        return userService.updateUser(userRequest, user.getUsername());
     }
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    public UserDto updateData(@RequestBody UserUpdateRequest userUpdateRequest, Authentication authentication) throws Exception {
+    public UserDto updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        return userService.updateUser(userUpdateRequest, user.getUsername());
+        return userService.updateUser(userRequest, user.getUsername());
     }
 
     @GetMapping("/me")
@@ -67,5 +68,12 @@ public class UserController {
         User user = (User)authentication.getPrincipal();
         if (user.getUsername().equals(username)) return userService.getUser(username);
         else throw new Exception("You only can get your information.");
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseBody
+    public List<UserDto> addUser(@RequestBody UserRequest userRequest) throws Exception{
+        return  userService.addUser(userRequest);
     }
 }

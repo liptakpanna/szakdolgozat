@@ -137,7 +137,7 @@ title __MODEL's Class Diagram__\n
 
   namespace com.dna.application.backend {
     namespace model {
-      class com.dna.application.backend.model.UserUpdateRequest {
+      class com.dna.application.backend.model.UserRequest {
           - email : String
           - id : Long
           - password : String
@@ -170,7 +170,7 @@ title __MODEL's Class Diagram__\n
   com.dna.application.backend.model.User -up-|> com.dna.application.backend.model.BaseEntityAudit
   com.dna.application.backend.model.User o-- com.dna.application.backend.model.User.Role : role
   com.dna.application.backend.model.User +-down- com.dna.application.backend.model.User.Role
-  com.dna.application.backend.model.UserUpdateRequest o-- com.dna.application.backend.model.User.Role : role
+  com.dna.application.backend.model.UserRequest o-- com.dna.application.backend.model.User.Role : role
 
 
 right footer

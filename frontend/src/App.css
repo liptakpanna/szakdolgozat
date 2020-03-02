@@ -60,11 +60,6 @@ body {
   width: 200px;
 }
 
-.btn:hover {
-  background-color: #2196F3;
-  color: white;
-}
-
 .btn:active {
   box-shadow: 0 0 #666;
   transform: translateY(4px);
@@ -117,5 +112,33 @@ body {
 
 .sidenav a:hover {
   color: #f1f1f1;
-  background-color: #0362ad;
+  background-color: rgb(9, 57, 145);
+}
+
+#users {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#users td, #users th {
+  border: 2px solid #ddd;
+  padding: 8px;
+}
+
+#users td {
+  color: black;
+}
+
+#users tr:nth-child(odd){background-color: #fff;}
+
+#users tr:nth-child(even){background-color: #f2f2f2;}
+
+#users tr:hover {background-color: #ddd;}
+
+#users th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgb(43, 108, 199);
+  color: white;
 }
