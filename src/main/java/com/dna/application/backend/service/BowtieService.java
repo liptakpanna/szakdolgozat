@@ -37,13 +37,22 @@ public class BowtieService extends BaseAligner {
             userAccess.addAll(userRepository.findByUsername(usernameAccessList));
         }
 
-        String[] args = new String[]{"bowtie", resourceFolder + indexRoute, resourceFolder + dnaRoute};
+        //String[] args = new String[]{"bowtie", resourceFolder + indexRoute, resourceFolder + dnaRoute};
+        try {
+            createIndex(indexRoute, "rat");
+        } catch (Exception e) {
+            throw new Exception("Index creating error", e);
+        }
+
+        String[] args = new String[]{"bowtie2", "-x rat -U ", resourceFolder + dnaRoute , "--no-unal", "-S result.sam"};
 
         Process proc = new ProcessBuilder(args).start();
         String ans = getInput(proc);
         String error = getError(proc);
 
         proc.waitFor();
+
+
 
         AlignmentResponse alignmentResponse = new AlignmentResponse();
         alignmentResponse.setName(name);
@@ -64,5 +73,15 @@ public class BowtieService extends BaseAligner {
         alignmentRepository.saveAndFlush(alignment);
 
         return alignmentResponse;
+    }
+
+    private void createIndex(String indexRoute, String indexName) throws Exception {
+        String[] args = new String[]{"bowtie2-build", resourceFolder + indexRoute, indexName};
+
+        Process proc = new ProcessBuilder(args).start();
+        String ans = getInput(proc);
+        String error = getError(proc);
+
+        proc.waitFor();
     }
 }

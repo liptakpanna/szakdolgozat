@@ -8,8 +8,9 @@ class AdminUsers extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            'items': []
+            items: [],
         }
+        this.onEditClick = this.onEditClick.bind(this);
     }
 
     componentDidMount() {
@@ -32,12 +33,16 @@ class AdminUsers extends React.Component{
             let result = await response.json();
             if(result){
                 console.log(result);
-                this.setState({'items': result});
+                this.setState({items: result});
             }
         }
         catch(e) {
             console.log(e)
         }
+    }
+
+    onEditClick(event, id, username, role, email) {
+        this.props.history.push("/user/edit", {id: id, username: username, role: role, email:email});
     }
 
     render() {
@@ -77,12 +82,12 @@ class AdminUsers extends React.Component{
                             </thead>
                             <tbody>
                             {this.state.items.map(function(item, index) {
-                                return <tr className="userListItem" key={index}>
+                                return <tr onClick={(e) =>this.onEditClick(e, item.id, item.username, item.role, item.email)} className="userListItem" key={index} >
                                         <td>
                                             {item.id}
                                         </td>
-                                        <td>
-                                            {item.username}
+                                        <td> 
+                                            {item.username}  
                                         </td>
                                         <td>
                                             {item.role}
@@ -100,12 +105,12 @@ class AdminUsers extends React.Component{
                                             {item.createdAt}
                                         </td>
                                     </tr>
-                            })}
+                            }, this)}
                             </tbody>
                         </table>
 
                         <SubmitButton
-                            text='New User'
+                            text='Add User'
                             onClick={ () => this.props.history.push('/users/add')}
                         />
                     </div>

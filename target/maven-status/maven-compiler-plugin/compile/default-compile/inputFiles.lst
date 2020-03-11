@@ -1,8 +1,9 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/filter/JwtRequestFilter.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/BowtieService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/dto/AlignmentDto.java
-/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserDetailsServiceImpl.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/JwtResponse.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserDetailsServiceImpl.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/JwtAuthenticationController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/util/JwtTokenUtil.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/Alignment.java
@@ -20,7 +21,6 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/JwtValidResponse.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/dto/UserDto.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserService.java
-/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserUpdateRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/security/WebSecurityConfig.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/User.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/AlignerService.java

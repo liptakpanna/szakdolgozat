@@ -5,7 +5,7 @@ import InputField from './InputField';
 import SubmitButton from './SubmitButton';
 import PreviousPageIcon from './PreviousPageIcon';
 
-class AdminNewUser extends React.Component{
+class EditUser extends React.Component{
 
     constructor(props) {
         super(props);
@@ -13,8 +13,7 @@ class AdminNewUser extends React.Component{
             username: '',
             password: '',
             email: '',
-            role: 'GUEST',
-            buttonDisabled: true,
+            role: '',
         }
     }
 
@@ -34,21 +33,64 @@ class AdminNewUser extends React.Component{
         })
     }
 
-    async addUser() {
+    replacer(key, value) {
+        if (value === null || value ==='')
+            return undefined;
+        else
+            return value;
+    }
+
+    async editUser() {
+        let url, body;
+        if (localStorage.getItem("role") === 'ADMIN') {
+            url = process.env.REACT_APP_API_URL + '/users/update';
+            body = JSON.stringify({
+                id: this.props.location.state.id,
+                username: this.state.username,
+                password: this.state.password,
+                email: this.state.email,
+                role: this.state.role
+            }, this.replacer);
+        } else {
+            url = process.env.REACT_APP_API_URL + '/users/me/update';
+            body = JSON.stringify({
+                username: this.state.username,
+                password: this.state.password,
+                email: this.state.email,
+                role: this.state.role
+            }, this.replacer);
+        }
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/users/add', {
+            let response = await fetch(url, {
+                method: 'post',
+                headers: new Headers({
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                }),
+                body: body
+            });
+
+            let result = await response.json();
+            if(result){
+                console.log(result);
+                this.props.history.push('/users')
+            }
+        }
+        catch(e) {
+            console.log(e)
+        }
+    }
+
+    async deleteUser() {
+        try {
+            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete?id=' + this.props.location.state.id, {
                 method: 'post',
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
 
-                }),
-                body:JSON.stringify({
-                    username: this.state.username,
-                    password: this.state.password,
-                    email: this.state.email,
-                    role: this.state.role
                 })
             });
 
@@ -68,30 +110,28 @@ class AdminNewUser extends React.Component{
             return (
                 <div className="container">
                 <NavBar/>
-                <div className='newUserContainer'>
+                <div className='editUserContainer'>
                     <PreviousPageIcon
                         where="/users"
                         hist={this.props.history}
                     />
-                    <h1>Add New User</h1>
+                    <h1>Edit User</h1>
                     <InputField
                         type='text'
-                        placeholder='Enter username'
-                        value={this.state.username ? this.state.username : ''}
+                        value={this.props.location.state.username}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
                     />
                     <InputField
                         type='text'
-                        placeholder='Enter password'
+                        placeholder='Enter new password'
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
                     />
                     <InputField
                         type='text'
-                        placeholder='Enter email'
-                        value={this.state.email ? this.state.email : ''}
+                        value={this.props.location.state.email}
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
                     />
@@ -100,7 +140,7 @@ class AdminNewUser extends React.Component{
                         <br/>
                         <select 
                             className="dropdown"
-                            value={this.state.role}
+                            value={this.props.location.state.role}
                             onChange={this.handleDropdownChange.bind(this)}>
                             <option value="ADMIN">Admin</option>
                             <option value="RESEARCHER">Researcher</option>
@@ -109,8 +149,13 @@ class AdminNewUser extends React.Component{
                     </div>
 
                     <SubmitButton
-                        text='Add User'
-                        onClick={ () => this.addUser() }                        
+                        text='Edit User'
+                        onClick={ () => this.editUser() }                        
+                    />
+
+                    <SubmitButton
+                        text='Delete User'
+                        onClick={ () => {if (window.confirm('Are you sure you want to delete this user?')) this.deleteUser()} }                        
                     />
                 </div>
                 </div>
@@ -124,4 +169,4 @@ class AdminNewUser extends React.Component{
         }
 }
 
-export default AdminNewUser;
+export default EditUser;
