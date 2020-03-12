@@ -50,60 +50,32 @@ class AdminUsers extends React.Component{
             return(
                 <div className="container">
                     <NavBar/>
-                    <div className="usersContainer">
+                    <div className="container table-responsive-lg">
                         <h1>
                             User List
                         </h1>
-                        <table id="users" className="userList">
-                            <thead className="userListItem">
+                        <table className="table table-hover">
+                            <thead  style={{backgroundColor: "#e3f2fd"}}>
                                 <tr>
-                                    <th>
-                                        Id
-                                    </th>
-                                    <th>
-                                        Username
-                                    </th>
-                                    <th>
-                                        Role
-                                    </th>
-                                    <th>
-                                        Email
-                                    </th>
-                                    <th>
-                                        Updated By
-                                    </th>
-                                    <th>
-                                        Updated At
-                                    </th>
-                                    <th>
-                                        Created At
-                                    </th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Updated By</th>
+                                    <th scope="col">Updated At</th>
+                                    <th scope="col">Created At</th>
                                 </tr>
                             </thead>
                             <tbody>
                             {this.state.items.map(function(item, index) {
                                 return <tr onClick={(e) =>this.onEditClick(e, item.id, item.username, item.role, item.email)} className="userListItem" key={index} >
-                                        <td>
-                                            {item.id}
-                                        </td>
-                                        <td> 
-                                            {item.username}  
-                                        </td>
-                                        <td>
-                                            {item.role}
-                                        </td>
-                                        <td>
-                                            {item.email}
-                                        </td>
-                                        <td>
-                                            {item.updatedBy}
-                                        </td>
-                                        <td>
-                                            {item.updatedAt}
-                                        </td>
-                                        <td>
-                                            {item.createdAt}
-                                        </td>
+                                        <th scope="col">{item.id}</th>
+                                        <td> {item.username} </td>
+                                        <td> {item.role} </td>
+                                        <td> {item.email} </td>
+                                        <td> {item.updatedBy} </td>
+                                        <td> {item.updatedAt} </td>
+                                        <td> {item.createdAt} </td>
                                     </tr>
                             }, this)}
                             </tbody>
@@ -111,6 +83,7 @@ class AdminUsers extends React.Component{
 
                         <SubmitButton
                             text='Add User'
+                            type='btn-outline-secondary'
                             onClick={ () => this.props.history.push('/users/add')}
                         />
                     </div>

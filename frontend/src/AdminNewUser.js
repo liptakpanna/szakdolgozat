@@ -95,11 +95,10 @@ class AdminNewUser extends React.Component{
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
                     />
-                    <div className="dropdownContainer">
-                        <label className='inputLabel'>Role</label>
-                        <br/>
+                    <div className="form-group row">
+                        <label className='col-form-label'>Role</label>
                         <select 
-                            className="dropdown"
+                            className="form-control"
                             value={this.state.role}
                             onChange={this.handleDropdownChange.bind(this)}>
                             <option value="ADMIN">Admin</option>
@@ -110,6 +109,7 @@ class AdminNewUser extends React.Component{
 
                     <SubmitButton
                         text='Add User'
+                        type='btn-outline-secondary'
                         onClick={ () => this.addUser() }                        
                     />
                 </div>

@@ -9,7 +9,7 @@ class PreviousPageIcon extends React.Component{
     render() {
         return(
             <div>
-                <i class="previousIcon" onClick={(e) => this.onClick(e)}></i>
+                <i className="previousIcon" onClick={(e) => this.onClick(e)}></i>
             </div>
         )
     }

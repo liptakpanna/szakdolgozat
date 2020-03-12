@@ -12,6 +12,7 @@ class IgvBrowser extends Component {
           reference: {
               id: "My Custom Ecoli",
               fastaURL: "http://localhost/dna/reference/ecoli.fna",
+              indexUrl: "http://localhost/dna/reference/ecoli.fna.fai"
           },
           tracks: [
               {

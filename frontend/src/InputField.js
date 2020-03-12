@@ -4,11 +4,10 @@ class InputField extends React.Component{
 
     render() {
         return(
-            <div className="inputField">
-                <label className='inputLabel'>{this.props.label}</label>
-                <br/>
+            <div className="form-group row">
+                <label className='col-form-label'>{this.props.label}</label>
                 <input 
-                    className="input"
+                    className="form-control"
                     type={this.props.type}
                     placeholder={this.props.placeholder}
                     value={this.props.value}

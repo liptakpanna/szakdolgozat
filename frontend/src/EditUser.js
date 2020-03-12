@@ -10,10 +10,10 @@ class EditUser extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            username: this.props.location.state.username,
             password: '',
-            email: '',
-            role: '',
+            email: this.props.location.state.email,
+            role: this.props.location.state.role,
         }
     }
 
@@ -118,7 +118,7 @@ class EditUser extends React.Component{
                     <h1>Edit User</h1>
                     <InputField
                         type='text'
-                        value={this.props.location.state.username}
+                        value={this.state.username}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
                     />
@@ -131,16 +131,15 @@ class EditUser extends React.Component{
                     />
                     <InputField
                         type='text'
-                        value={this.props.location.state.email}
+                        value={this.state.email}
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
                     />
-                    <div className="dropdownContainer">
-                        <label className='inputLabel'>Role</label>
-                        <br/>
+                    <div className="form-group row">
+                        <label className='col-form-label'>Role</label>
                         <select 
-                            className="dropdown"
-                            value={this.props.location.state.role}
+                            className="form-control"
+                            value={this.state.role}
                             onChange={this.handleDropdownChange.bind(this)}>
                             <option value="ADMIN">Admin</option>
                             <option value="RESEARCHER">Researcher</option>
@@ -150,11 +149,13 @@ class EditUser extends React.Component{
 
                     <SubmitButton
                         text='Edit User'
+                        type='btn-outline-secondary'
                         onClick={ () => this.editUser() }                        
                     />
 
                     <SubmitButton
                         text='Delete User'
+                        type='btn-outline-danger'
                         onClick={ () => {if (window.confirm('Are you sure you want to delete this user?')) this.deleteUser()} }                        
                     />
                 </div>

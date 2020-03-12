@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import Routes from "./Routes";
 
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
 
 class App extends React.Component{
