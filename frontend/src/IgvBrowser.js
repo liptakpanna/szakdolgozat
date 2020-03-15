@@ -11,14 +11,12 @@ class IgvBrowser extends Component {
       {
           reference: {
               id: "My Custom Ecoli",
-              fastaURL: "http://localhost/dna/reference/ecoli.fna",
-              indexUrl: "http://localhost/dna/reference/ecoli.fna.fai"
+              fastaURL: "http://localhost:9090/resources/files/references/gyerunk.fna",
           },
           tracks: [
               {
-                  url: "http://localhost/dna/bams/test.bam",
-                  indexed: false,
-                  type: 'alignment',
+                  url: "http://localhost:9090/resources/files/bams/gyerunk.bam",
+                  indexed: true,
                   format: "bam",
                   name: 'Ecoli Sample'
               }

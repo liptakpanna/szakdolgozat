@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class UserService {
     private  ModelMapper modelMapper = new ModelMapper();
 
     public List<UserDto> getUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         Type listType = new TypeToken<List<UserDto>>() {}.getType();
         return modelMapper.map(users, listType);
@@ -76,12 +77,12 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
-    public UserDto getUser(String username) {
+    public UserDto getUserDto(String username) {
         User user = userRepository.findByUsername(username);
         return modelMapper.map(user, UserDto.class);
     }
 
-    public List<UserDto> addUser(UserRequest userRequest) throws Exception{
+    public List<UserDto> addUser(UserRequest userRequest, String admin) throws Exception{
         if (userRequest.getPassword().equals(""))
             throw new Exception("Cannot save this user: Password required");
         if (userRequest.getUsername().length() > 12)
@@ -89,10 +90,9 @@ public class UserService {
         if(userRepository.findByUsername(userRequest.getUsername()) != null)
             throw new Exception("Cannot save this user: Username already in use");
 
-        log.warn("{}", userRequest);
-
         User newUser = modelMapper.map(userRequest , User.class);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        newUser.setCreatedBy(admin);
 
         log.warn("{}", newUser);
         userRepository.saveAndFlush(newUser);

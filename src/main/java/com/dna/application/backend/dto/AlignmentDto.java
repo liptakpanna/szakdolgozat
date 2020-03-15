@@ -18,7 +18,9 @@ public class AlignmentDto {
 
     private String description;
 
-    private String route;
+    private String referenceUrl;
+
+    private String bamUrl;
 
     private Alignment.Visibility visibility;
 

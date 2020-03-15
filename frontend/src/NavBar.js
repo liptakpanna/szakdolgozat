@@ -1,4 +1,5 @@
 import React from 'react';
+import {logout} from './Common';
 
 import 'bootstrap/dist/js/bootstrap.js';
 
@@ -50,7 +51,7 @@ class NavBar extends React.Component{
 
                             </ul>
                             <ul className="nav navbar-nav navbar-right">
-                                <li className="nav-item"><a className="nav-link" href="/login" onClick={ () => this.logout()}>Logout</a></li>
+                                <li className="nav-item"><a className="nav-link" href="/login" onClick={ () =>logout()}>Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -58,15 +59,6 @@ class NavBar extends React.Component{
             );
         }
         
-    }
-
-    logout() {
-        localStorage.setItem("isLoggedIn", false);
-        localStorage.setItem("jwtToken", "");
-        localStorage.setItem("username", "");
-        localStorage.setItem("id", "");
-        localStorage.setItem("role", "");
-        console.log("Logged out");
     }
 }
 

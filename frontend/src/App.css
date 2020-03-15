@@ -4,6 +4,7 @@ body {
   margin: 0;
   height: 2000px;
   padding-top: 70px;
+  cursor: default;
 }
 
 .app {
@@ -27,12 +28,13 @@ body {
 }
 
 .previousIcon {
-  width: 10px;
-  height: 10px;
-  border: solid white;
+  width: 15px;
+  height: 15px;
+  border: solid black;
   border-width: 0 3px 3px 0;
   display: inline-block;
   margin-top: 15px;
+  margin-bottom: 15px;
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }

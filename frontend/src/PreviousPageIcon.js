@@ -8,8 +8,8 @@ class PreviousPageIcon extends React.Component{
 
     render() {
         return(
-            <div>
-                <i className="previousIcon" onClick={(e) => this.onClick(e)}></i>
+            <div className="container">
+                <i className="previousIcon" data-toogle="tooltip" data-placement="right" title="Previous page" onClick={(e) => this.onClick(e)}></i>
             </div>
         )
     }

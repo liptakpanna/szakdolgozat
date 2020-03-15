@@ -1,8 +1,7 @@
 package com.dna.application.backend.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,11 +13,11 @@ public class AlignmentRequest {
 
     private String name;
 
-    private String indexRoute;
-
-    private String dnaRoute;
-
     private String description;
+
+    private MultipartFile referenceDna;
+
+    private MultipartFile readsForDna;
 
     private Alignment.Visibility visibility;
 

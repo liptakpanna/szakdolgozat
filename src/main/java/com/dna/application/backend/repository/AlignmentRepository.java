@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AlignmentRepository extends JpaRepository<Alignment, Long> {
     List<Alignment> findByVisibility(Alignment.Visibility visibility);
+
+    Alignment findByName(String name);
 }

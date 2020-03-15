@@ -25,4 +25,6 @@ public class UserDto {
 
     private Date updatedAt;
 
+    private String createdBy;
+
 }

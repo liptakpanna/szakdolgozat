@@ -14,6 +14,7 @@ class EditUser extends React.Component{
             password: '',
             email: this.props.location.state.email,
             role: this.props.location.state.role,
+            isAdmin: this.props.location.state.isAdmin
         }
     }
 
@@ -56,8 +57,7 @@ class EditUser extends React.Component{
             body = JSON.stringify({
                 username: this.state.username,
                 password: this.state.password,
-                email: this.state.email,
-                role: this.state.role
+                email: this.state.email
             }, this.replacer);
         }
         try {
@@ -74,7 +74,7 @@ class EditUser extends React.Component{
             let result = await response.json();
             if(result){
                 console.log(result);
-                this.props.history.push('/users')
+                this.props.history.push(this.props.location.state.origin)
             }
         }
         catch(e) {
@@ -107,67 +107,112 @@ class EditUser extends React.Component{
 
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-            return (
-                <div className="container">
-                <NavBar/>
-                <div className='editUserContainer'>
-                    <PreviousPageIcon
-                        where="/users"
-                        hist={this.props.history}
-                    />
-                    <h1>Edit User</h1>
-                    <InputField
-                        type='text'
-                        value={this.state.username}
-                        onChange= { (value) => this.setInputValue('username', value)}
-                        label ='Username'
-                    />
-                    <InputField
-                        type='text'
-                        placeholder='Enter new password'
-                        value={this.state.password ? this.state.password : ''}
-                        onChange= { (value) => this.setInputValue('password', value)}
-                        label ='Password'
-                    />
-                    <InputField
-                        type='text'
-                        value={this.state.email}
-                        onChange= { (value) => this.setInputValue('email', value)}
-                        label ='Email'
-                    />
-                    <div className="form-group row">
-                        <label className='col-form-label'>Role</label>
-                        <select 
-                            className="form-control"
-                            value={this.state.role}
-                            onChange={this.handleDropdownChange.bind(this)}>
-                            <option value="ADMIN">Admin</option>
-                            <option value="RESEARCHER">Researcher</option>
-                            <option value="GUEST">Guest</option>
-                        </select>
+            if(this.state.isAdmin) {
+                return (
+                    <div className="container">
+                    <NavBar/>
+                    <div className='editUserContainer'>
+                        <PreviousPageIcon
+                            where="/users"
+                            hist={this.props.history}
+                        />
+                        <h1>Edit User</h1>
+                        <InputField
+                            type='text'
+                            value={this.state.username}
+                            onChange= { (value) => this.setInputValue('username', value)}
+                            label ='Username'
+                        />
+                        <InputField
+                            type='password'
+                            placeholder='Enter new password'
+                            value={this.state.password ? this.state.password : ''}
+                            onChange= { (value) => this.setInputValue('password', value)}
+                            label ='Password'
+                        />
+                        <InputField
+                            type='text'
+                            value={this.state.email}
+                            onChange= { (value) => this.setInputValue('email', value)}
+                            label ='Email'
+                        />
+                        <div className="form-group">
+                            <label className='col-form-label'>Role</label>
+                            <select 
+                                className="form-control"
+                                value={this.state.role}
+                                onChange={this.handleDropdownChange.bind(this)}>
+                                <option value="ADMIN">Admin</option>
+                                <option value="RESEARCHER">Researcher</option>
+                                <option value="GUEST">Guest</option>
+                            </select>
+                        </div>
+                        <div className="btn-toolbar justify-content-between" role="toolbar">
+                            <SubmitButton
+                                text='Edit User'
+                                type='btn-outline-secondary btn-lg'
+                                onClick={ () => this.editUser() }                        
+                            />
+    
+                            <SubmitButton
+                                text='Delete User'
+                                type='btn-outline-danger btn-lg'
+                                onClick={ () => {if (window.confirm('Are you sure you want to delete this user?')) this.deleteUser()} }                        
+                            />
+                        </div>
+    
                     </div>
-
-                    <SubmitButton
-                        text='Edit User'
-                        type='btn-outline-secondary'
-                        onClick={ () => this.editUser() }                        
-                    />
-
-                    <SubmitButton
-                        text='Delete User'
-                        type='btn-outline-danger'
-                        onClick={ () => {if (window.confirm('Are you sure you want to delete this user?')) this.deleteUser()} }                        
-                    />
-                </div>
-                </div>
-            );
+                    </div>
+                );
             }
+            else {
+                return (
+                    <div className="container">
+                    <NavBar/>
+                    <div className='editUserContainer'>
+                        <PreviousPageIcon
+                            where="/users"
+                            hist={this.props.history}
+                        />
+                        <h1>Edit User</h1>
+                        <InputField
+                            type='text'
+                            value={this.state.username}
+                            onChange= { (value) => this.setInputValue('username', value)}
+                            label ='Username'
+                        />
+                        <InputField
+                            type='text'
+                            placeholder='Enter new password'
+                            value={this.state.password ? this.state.password : ''}
+                            onChange= { (value) => this.setInputValue('password', value)}
+                            label ='Password'
+                        />
+                        <InputField
+                            type='text'
+                            value={this.state.email}
+                            onChange= { (value) => this.setInputValue('email', value)}
+                            label ='Email'
+                        />
+                        <div className="btn-toolbar justify-content-between" role="toolbar">
+                            <SubmitButton
+                                text='Edit User'
+                                type='btn-outline-secondary btn-lg'
+                                onClick={ () => this.editUser() }                        
+                            />
+                        </div>
+                    </div>
+                    </div>
+                );
+            }
+            
+        }
             else { 
                 return(
                     <Redirect to="login" />
                 );
             }
-        }
+    }
 }
 
 export default EditUser;

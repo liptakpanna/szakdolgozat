@@ -5,7 +5,6 @@ import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.AlignmentRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,31 +16,27 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class AlignerService {
+public class AlignmentService {
     @Autowired
     private AlignmentRepository alignmentRepository;
 
-    private ModelMapper modelMapper = new ModelMapper();
-
     @Transactional
     public List<AlignmentDto> getAlignments(User user) {
-        User.Role role = user.getRole();
-
         Set<Alignment> alignments = new HashSet<>(alignmentRepository.findByVisibility(Alignment.Visibility.PUBLIC));
         alignments.addAll(user.getOwnedAlignments());
+        alignments.addAll(user.getAlignmentAccess());
 
-        if (role == User.Role.ADMIN) {
+        if (user.getRole() == User.Role.ADMIN) {
             alignments.addAll(alignmentRepository.findByVisibility(Alignment.Visibility.PRIVATE));
         }
-
-        alignments.addAll(user.getAlignmentAccess());
 
         List<AlignmentDto> alignmentDtos = new ArrayList<>();
         for (Alignment alignment : alignments) {
             alignmentDtos.add(AlignmentDto.builder()
                     .id(alignment.getId())
                     .name(alignment.getName())
-                    .route(alignment.getRoute())
+                    .referenceUrl(alignment.getReferenceUrl())
+                    .bamUrl(alignment.getBamUrl())
                     .description(alignment.getDescription())
                     .aligner(alignment.getAligner())
                     .visibility(alignment.getVisibility())
@@ -49,9 +44,22 @@ public class AlignerService {
                     .build()
             );
         }
-
         return alignmentDtos;
     }
 
+    public AlignmentDto getAlignment(String name) {
+        Alignment alignment = alignmentRepository.findByName(name);
+
+        return AlignmentDto.builder()
+                .id(alignment.getId())
+                .name(alignment.getName())
+                .referenceUrl(alignment.getReferenceUrl())
+                .bamUrl(alignment.getBamUrl())
+                .description(alignment.getDescription())
+                .aligner(alignment.getAligner())
+                .visibility(alignment.getVisibility())
+                .owner(alignment.getOwner().getUsername())
+                .build();
+    }
 
 }

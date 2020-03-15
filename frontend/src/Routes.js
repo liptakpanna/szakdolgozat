@@ -6,6 +6,8 @@ import Home from "./Home";
 import AdminUsers from "./AdminUsers";
 import AdminNewUser from "./AdminNewUser";
 import EditUser from "./EditUser";
+import Profile from "./Profile";
+import Alignments from "./Alignments";
 
 export default function Routes() {
   if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
@@ -17,6 +19,8 @@ export default function Routes() {
               <Route path='/users/add' component={AdminNewUser} />
               <Route path='/user/edit' component={EditUser} />
               <Route path='/users' component={AdminUsers} />
+              <Route path='/profile' component={Profile} />
+              <Route path='/alignments' component={Alignments} />
               <Redirect exact from="/" to="home" />
       </Switch>
     );
@@ -29,6 +33,7 @@ export default function Routes() {
               <Route path='/users' component={AdminUsers} />
               <Route path='/users/add' component={AdminNewUser} />
               <Route path='/user/edit' component={EditUser} />
+              <Route path='/profile' component={Profile} />
               <Redirect exact from="/" to="login" />
       </Switch>
     );

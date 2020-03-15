@@ -82,7 +82,7 @@ class AdminNewUser extends React.Component{
                         label ='Username'
                     />
                     <InputField
-                        type='text'
+                        type='password'
                         placeholder='Enter password'
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
@@ -95,7 +95,7 @@ class AdminNewUser extends React.Component{
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
                     />
-                    <div className="form-group row">
+                    <div className="form-group">
                         <label className='col-form-label'>Role</label>
                         <select 
                             className="form-control"

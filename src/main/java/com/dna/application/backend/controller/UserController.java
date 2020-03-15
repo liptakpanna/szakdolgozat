@@ -66,14 +66,15 @@ public class UserController {
     @ResponseBody
     public UserDto getUser(@RequestParam String username, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        if (user.getUsername().equals(username)) return userService.getUser(username);
+        if (user.getUsername().equals(username)) return userService.getUserDto(username);
         else throw new Exception("You only can get your information.");
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    public List<UserDto> addUser(@RequestBody UserRequest userRequest) throws Exception{
-        return  userService.addUser(userRequest);
+    public List<UserDto> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
+        User user = (User)authentication.getPrincipal();
+        return  userService.addUser(userRequest, user.getUsername());
     }
 }

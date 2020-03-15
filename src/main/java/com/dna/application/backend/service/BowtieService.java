@@ -1,8 +1,8 @@
 package com.dna.application.backend.service;
 
+import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
-import com.dna.application.backend.model.AlignmentResponse;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.UserRepository;
@@ -23,13 +23,19 @@ public class BowtieService extends BaseAligner {
     @Autowired
     private UserRepository userRepository;
 
-    public AlignmentResponse align(AlignmentRequest alignmentRequest, User user) throws Exception{
+    @Autowired
+    private AlignmentService alignmentService;
+
+    //TODO nev utkozes
+
+    public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
-        String description = alignmentRequest.getDescription();
-        String indexRoute = alignmentRequest.getIndexRoute(); //"/bowtie/indexes/e_coli"
-        String dnaRoute = alignmentRequest.getDnaRoute(); //"/bowtie/reads/e_coli_1000.fq"
-        Alignment.Visibility visibility = alignmentRequest.getVisibility();
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
+        String filename = name.replaceAll("\\s+","_");
+
+        saveFile(alignmentRequest.getReferenceDna(), folder+"references/"+filename + ".fna");
+        saveFile(alignmentRequest.getReadsForDna(), folder+"reads/"+filename + ".fastq");
+        runScript(folder+"/bowtie_script", filename, folder);
 
         Set<User> userAccess = new HashSet<>();
 
@@ -37,51 +43,20 @@ public class BowtieService extends BaseAligner {
             userAccess.addAll(userRepository.findByUsername(usernameAccessList));
         }
 
-        //String[] args = new String[]{"bowtie", resourceFolder + indexRoute, resourceFolder + dnaRoute};
-        try {
-            createIndex(indexRoute, "rat");
-        } catch (Exception e) {
-            throw new Exception("Index creating error", e);
-        }
-
-        String[] args = new String[]{"bowtie2", "-x rat -U ", resourceFolder + dnaRoute , "--no-unal", "-S result.sam"};
-
-        Process proc = new ProcessBuilder(args).start();
-        String ans = getInput(proc);
-        String error = getError(proc);
-
-        proc.waitFor();
-
-
-
-        AlignmentResponse alignmentResponse = new AlignmentResponse();
-        alignmentResponse.setName(name);
-        alignmentResponse.setAligner(Alignment.Aligner.BOWTIE);
-
-        alignmentResponse.setResult(ans + error);
-
         Alignment alignment = Alignment.builder()
                 .aligner(Alignment.Aligner.BOWTIE)
-                .name(name)
-                .description(description)
+                .name(filename)
+                .description(alignmentRequest.getDescription())
                 .owner(user)
-                .route("null")
-                .visibility(visibility)
+                .referenceUrl(resourceUrl+"/references/"+filename+".fna")
+                .bamUrl(resourceUrl+"/bams/"+filename+".bam")
+                .visibility(alignmentRequest.getVisibility())
               //  .userAccess(userAccess)
                 .build();
 
         alignmentRepository.saveAndFlush(alignment);
 
-        return alignmentResponse;
+        return alignmentService.getAlignment(name);
     }
 
-    private void createIndex(String indexRoute, String indexName) throws Exception {
-        String[] args = new String[]{"bowtie2-build", resourceFolder + indexRoute, indexName};
-
-        Process proc = new ProcessBuilder(args).start();
-        String ans = getInput(proc);
-        String error = getError(proc);
-
-        proc.waitFor();
-    }
 }

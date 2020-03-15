@@ -6,7 +6,6 @@ import com.dna.application.backend.model.JwtValidResponse;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.UserDetailsServiceImpl;
 import com.dna.application.backend.util.JwtTokenUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

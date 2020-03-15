@@ -73,33 +73,35 @@ class LoginForm extends React.Component{
 
     render() {
         return(
-            <div className="loginContainer">
-                <div className="loginForm">
-                    <h1 className="welcome">
+            <div className="container p-5" style={{backgroundColor: "#e3f2fd"}} >
+                <form>
+                    <h1>
                         Welcome!
                     </h1>
                     <InputField
                         type='text'
+                        class="w-50"
                         placeholder='Enter username'
                         value={this.state.username ? this.state.username : ''}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
                     />
-                    <br/>
                     <InputField
                         type='password'
+                        class="w-50"
                         placeholder='Enter password'
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
                     />
+                    <br/>
                     <SubmitButton
                         text='Login'
-                        type='btn-primary'
+                        type='btn-primary btn-lg'
                         disabled={this.state.buttonDisabled}
                         onClick={ () => this.doLogin()}
                     />
-                </div>
+                </form>
             </div>
         );
     }

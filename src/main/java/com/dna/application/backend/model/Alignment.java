@@ -16,12 +16,14 @@ import java.util.Set;
 @Entity
 @Table(name="alignments")
 public class Alignment extends BaseEntityAudit {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     private Aligner aligner;
 
-    private String route;
+    private String referenceUrl;
+
+    private String bamUrl;
 
     private String description;
 
