@@ -113,7 +113,7 @@ class EditUser extends React.Component{
                     <NavBar/>
                     <div className='editUserContainer'>
                         <PreviousPageIcon
-                            where="/users"
+                            where={this.props.location.state.origin}
                             hist={this.props.history}
                         />
                         <h1>Edit User</h1>

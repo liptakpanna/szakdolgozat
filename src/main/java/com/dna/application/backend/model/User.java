@@ -36,6 +36,8 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     private String createdBy;
 
+    private Status status;
+
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> ownedAlignments = new HashSet<>();
@@ -46,9 +48,6 @@ public class User extends BaseEntityAudit implements UserDetails {
     inverseJoinColumns = @JoinColumn(name = "alignment_id"))
     @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> alignmentAccess = new HashSet<>();
-
-
-    public enum Role {ADMIN, RESEARCHER, GUEST}
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
@@ -74,6 +73,10 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return status == Status.ENABLED;
     }
+
+    public enum Role {ADMIN, RESEARCHER, GUEST}
+
+    public enum Status{ENABLED, DELETED}
 }

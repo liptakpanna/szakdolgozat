@@ -2,135 +2,116 @@ import React from 'react';
 import NavBar from './NavBar';
 import { Redirect } from 'react-router-dom';
 import SubmitButton from './SubmitButton';
-import InputField from './InputField';
 import {checkJwtToken} from './Common';
+import Moment from 'moment';
 
 class Alignments extends React.Component{
-
     constructor(props) {
         super(props);
         this.state = {
-            referenceFile: null,
-            readFile: null,
-            name: '',
-            description: '',
-            visibility: '',
-            aligner: 'BOWTIE',
+            items: [],
         }
-        this.handleDropdownChange = this.handleDropdownChange.bind(this);
+        this.viewAlignment = this.viewAlignment.bind(this);
     }
 
     componentDidMount() {
+        console.log("mounted");
         checkJwtToken();
+        this.getAlignments();
     }
 
-    onChangeHandler(event, file){
-        this.setState({
-            [file]: event.target.files[0],
-            loaded: 0,
-          });
-    }
 
-    onClickHandler(event){
-        let data = new FormData();
-        data.append('referenceDna', this.state.referenceFile);
-        data.append('readsForDna', this.state.readFile);
-        data.append("name", this.state.name);
-        data.append("description", this.state.description);
-        data.append("aligner", this.state.aligner);
-        data.append("visibility", this.state.visibility);
-        data.append("usernameAccessList", null);
-        this.upload(data);
-    }
-
-    async upload(data){
+    async getAlignments() {
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/align', {
-                method: 'post',
+            let response = await fetch(process.env.REACT_APP_API_URL + '/align/list', {
+                method: 'get',
                 headers: new Headers({
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                     "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
-                }),
-                body: data
+
+                })
             });
 
             let result = await response.json();
             if(result){
                 console.log(result);
+                this.setState({items: result});
             }
         }
         catch(e) {
             console.log(e)
         }
-    };
-
-    handleDropdownChange(event, dropdown) {
-        this.setState({
-            [dropdown]: event.target.value
-        })
     }
 
+    viewAlignment(event, item) {
+        this.props.history.push("/alignments/igv", {item: item});
+    }
+
+    getBaseHtml() {
+        return (
+            <div className="container table-responsive-lg">
+                <h1>
+                    Alignments
+                </h1>
+                <br/>
+                <table className="table table-hover">
+                    <thead  style={{backgroundColor: "#e3f2fd"}}>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Aligner</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Owner</th>
+                            <th scope="col">Visibility</th>
+                            <th scope="col">Updated By</th>
+                            <th scope="col">Updated At</th>
+                            <th scope="col">Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.items.map(function(item, index) {
+                        return <tr 
+                                key={index} 
+                                onClick={(e) =>this.viewAlignment(e, item)}
+                                data-toogle="tooltip" data-placement="top" title="Click to view alignment">
+                                <th>{item.name}</th>
+                                <td> {item.aligner} </td>
+                                <td> {item.description} </td>
+                                <td> {item.owner} </td>
+                                <td> {item.visibility} </td>
+                                <td> {item.updatedBy} </td>
+                                <td> {item.updatedAt ? Moment(item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""} </td>
+                                <td> {item.createdAt ? Moment(item.createdAt).format("YYYY.MM.DD. HH:mm") : ""} </td>
+                            </tr>
+                    }, this)}
+                    </tbody>
+                </table>
+            </div>);
+    }
 
     render() {
+        Moment.locale('en');
+        let role = localStorage.getItem("role");
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-            return(
-                <div className="container">
-                    <NavBar/>
+            if(role === "ADMIN" || role === "RESEARCHER" ) {
+                return(
                     <div className="container">
-                        <h1> Create new alignment </h1>
-                        <InputField
-                            type='text'
-                            value={this.state.name}
-                            onChange= { (value) => this.setState({name: value})}
-                            label ='Name'
-                        />
-                        <InputField
-                            type='textarea'
-                            value={this.state.description}
-                            onChange= { (value) => this.setState({description: value})}
-                            label ='Description'
-                        />
-                        <div className="form-group">
-                            <label className='col-form-label'>Aligner</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.aligner}
-                                onChange={(e) => this.handleDropdownChange(e, 'aligner')}>
-                                <option value="BOWTIE">Bowtie</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label className='col-form-label'>Reference DNA file</label>
-                            <br/>
-                            <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
-                        </div>
-                        <div className="form-group">
-                            <label className='col-form-label'>Reads file</label>
-                            <br/>
-                            <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "readFile")}/>
-                        </div>
-
-                        <div className="form-group">
-                            <label className='col-form-label'>Visibility</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.visibility}
-                                onChange={(e) => this.handleDropdownChange(e,'visibility')}>
-                                <option value="PUBLIC">Public</option>
-                                <option value="PRIVATE">Private</option>
-                                <option value="TOPSECRET">TopSecret</option>
-                            </select>
-                        </div>
-                    </div>
-                    <br/>
-                    <SubmitButton
-                            text='CREATE'
-                            type='btn-outline-secondary btn-lg'
-                            onClick={ (e) => this.onClickHandler(e)}
-                        />
-                </div>
-
-            );
+                        <NavBar/>
+                        {this.getBaseHtml()}
+                        <br/>
+                        <SubmitButton
+                                text='Create alignment'
+                                type='btn-lg btn-outline-secondary'
+                                onClick={ () => this.props.history.push('/alignments/add')}
+                            />
+                    </div>);
+            } else {
+                return(
+                    <div className="container">
+                        <NavBar/>
+                        {this.getBaseHtml()}
+                    </div>);
+            }
         }
         else { 
             return(

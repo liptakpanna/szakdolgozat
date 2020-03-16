@@ -1,8 +1,10 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.UserDto;
+import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
+import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -16,7 +18,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -24,19 +28,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AlignmentRepository alignmentRepository;
+
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private  ModelMapper modelMapper = new ModelMapper();
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        users.removeIf(user -> user.getStatus() == User.Status.DELETED);
 
         Type listType = new TypeToken<List<UserDto>>() {}.getType();
         return modelMapper.map(users, listType);
     }
 
     public List<UserDto> deleteUser(Long id) {
-        userRepository.deleteById(id);
-        userRepository.flush();
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        user.setStatus(User.Status.DELETED);
+        user.setAlignmentAccess(new HashSet<>());
+        userRepository.saveAndFlush(user);
         return getUsers();
     }
 
@@ -50,6 +60,7 @@ public class UserService {
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
         User.Role role = userRequest.getRole();
+        User.Status status = userRequest.getStatus();
 
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
         if(username != null) {
@@ -66,6 +77,10 @@ public class UserService {
         }
         if(role != null) {
             user.setRole(role);
+            changed = true;
+        }
+        if (status != null) {
+            user.setStatus(status);
             changed = true;
         }
 
@@ -93,6 +108,7 @@ public class UserService {
         User newUser = modelMapper.map(userRequest , User.class);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setCreatedBy(admin);
+        newUser.setStatus(User.Status.ENABLED);
 
         log.warn("{}", newUser);
         userRepository.saveAndFlush(newUser);

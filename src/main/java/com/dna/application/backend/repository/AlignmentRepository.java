@@ -11,4 +11,6 @@ public interface AlignmentRepository extends JpaRepository<Alignment, Long> {
     List<Alignment> findByVisibility(Alignment.Visibility visibility);
 
     Alignment findByName(String name);
+
+    List<Alignment> findByOwnerId(Long id);
 }

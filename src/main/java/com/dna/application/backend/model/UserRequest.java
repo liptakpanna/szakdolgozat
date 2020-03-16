@@ -17,4 +17,6 @@ public class UserRequest {
     private String password;
 
     private User.Role role;
+
+    private User.Status status;
 }

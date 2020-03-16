@@ -6,17 +6,26 @@ import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.AlignmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class AlignmentService {
+    @Value("${data.resource.folder}")
+    private String folder;
+
     @Autowired
     private AlignmentRepository alignmentRepository;
 
@@ -40,7 +49,10 @@ public class AlignmentService {
                     .description(alignment.getDescription())
                     .aligner(alignment.getAligner())
                     .visibility(alignment.getVisibility())
-                    .owner(alignment.getOwner().getUsername())
+                    .owner(getOwnerName(alignment))
+                    .createdAt(alignment.getCreatedAt())
+                    .updatedAt(alignment.getUpdatedAt())
+                    .userAccess(alignment.getUserAccess() != null ? alignment.getUserAccess().stream().map(User::getUsername).collect(Collectors.toList()) : new ArrayList<>())
                     .build()
             );
         }
@@ -58,8 +70,50 @@ public class AlignmentService {
                 .description(alignment.getDescription())
                 .aligner(alignment.getAligner())
                 .visibility(alignment.getVisibility())
-                .owner(alignment.getOwner().getUsername())
+                .owner(getOwnerName(alignment))
+                .createdAt(alignment.getCreatedAt())
+                .updatedAt(alignment.getUpdatedAt())
+                .userAccess(alignment.getUserAccess() != null ? alignment.getUserAccess().stream().map(User::getUsername).collect(Collectors.toList()) : new ArrayList<>())
                 .build();
     }
 
+    public List<AlignmentDto> deleteAlignment(Long id, User user) throws Exception{
+        Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        String filename = alignment.getName().replaceAll("\\s+","_");
+
+        deleteAlignmentFiles(filename);
+
+        alignmentRepository.deleteById(id);
+        alignmentRepository.flush();
+        return getAlignments(user);
+    }
+
+    private void deleteAlignmentFiles(String filename) throws Exception{
+        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder};
+
+        Process proc = new ProcessBuilder(args).start();
+        String error = getError(proc);
+
+        proc.waitFor();
+        log.warn(error);
+    }
+
+    private String getError(Process proc) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+        StringBuilder ans = new StringBuilder();
+        String line;
+
+        while((line = reader.readLine()) != null) {
+            ans.append(line);
+        }
+        return ans.toString();
+    }
+
+    private String getOwnerName(Alignment alignment) {
+        if(alignment.getOwner().getStatus() == User.Status.DELETED) {
+            return "[deleted user]";
+        } else {
+            return alignment.getOwner().getUsername();
+        }
+    }
 }

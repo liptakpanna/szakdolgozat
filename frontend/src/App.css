@@ -19,10 +19,6 @@ body {
   position: relative;
 }
 
-.welcome {
-  text-shadow: 2px 2px #5a5d63;
-}
-
 .igvContainer {
   background-color: white;
 }

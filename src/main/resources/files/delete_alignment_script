@@ -1,0 +1,8 @@
+#!/bin/bash
+# Bowtie script
+#Params: 1.NAME 2.FOLDER
+
+rm ${2}bams/${1}.bam
+rm ${2}bams/${1}.bam.bai
+rm ${2}references/${1}.fna
+rm ${2}references/${1}.fna.fai

@@ -78,7 +78,7 @@ class AdminUsers extends React.Component{
                                         className="userListItem" 
                                         key={index} 
                                         data-toogle="tooltip" data-placement="top" title="Click to edit user">
-                                        <th scope="col">{item.id}</th>
+                                        <th>{item.id}</th>
                                         <td> {item.username} </td>
                                         <td> {item.role} </td>
                                         <td> {item.email} </td>

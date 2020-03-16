@@ -3,6 +3,9 @@ package com.dna.application.backend.dto;
 import com.dna.application.backend.model.Alignment;
 import lombok.*;
 
+import java.util.Date;
+import java.util.List;
+
 @Data
 @Builder
 @Getter
@@ -25,4 +28,10 @@ public class AlignmentDto {
     private Alignment.Visibility visibility;
 
     private String owner;
+
+    private Date createdAt;
+
+    private Date updatedAt;
+
+    private List<String> userAccess;
 }

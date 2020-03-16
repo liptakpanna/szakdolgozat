@@ -50,7 +50,7 @@ public class UserController {
         User user = (User)authentication.getPrincipal();
         userRequest.setId(user.getId());
         if (userRequest.getRole() != null) throw new Exception("You cannot change your role");
-
+        if (userRequest.getStatus() != null) throw new Exception("You cannot change your status");
         return userService.updateUser(userRequest, user.getUsername());
     }
 

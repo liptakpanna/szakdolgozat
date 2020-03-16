@@ -32,11 +32,13 @@ public class AlignerController {
         return alignmentService.getAlignments((User)authentication.getPrincipal());
     }
 
-   //@PostMapping("/delete")
-    //@ResponseBody
-    //public List<UserDto> deleteAlignment(@RequestParam Long id, Authentication authentication) throws Exception{
-      //  User user = (User)authentication.getPrincipal();
-    //}
+    @PostMapping("/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
+    @ResponseBody
+    public List<AlignmentDto> deleteAlignment(@RequestParam Long id, Authentication authentication) throws Exception{
+        User user = (User)authentication.getPrincipal();
+        return alignmentService.deleteAlignment(id, user);
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")

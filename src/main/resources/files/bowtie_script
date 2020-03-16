@@ -9,3 +9,7 @@ samtools sort ${2}bams/${1}.sam > ${2}bams/${1}.bam
 samtools index ${2}bams/${1}.bam
 
 samtools faidx ${2}references/${1}.fna
+
+rm ${2}indexes/${1}.*
+rm ${2}bams/${1}.sam
+rm ${2}reads/${1}.fastq

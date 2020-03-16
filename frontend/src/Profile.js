@@ -60,61 +60,55 @@ class Profile extends React.Component{
         this.props.history.push("/user/edit", { username: this.state.username, role: this.state.role, email: this.state.email, isAdmin: false, origin: "/profile"});
     }
 
+    checkIfUpdated() {
+        if(this.state.updatedAt) {
+            return(
+                <div className="col">
+                    <p className="card-text">Updated By: {this.state.updatedBy}</p>
+                    <p className="card-text">Updated At: {this.state.updatedAt ? Moment(this.state.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                    <p className="card-text">Created By: {this.state.createdBy}</p>
+                    <p className="card-text">Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                </div>
+            );
+        } else {
+            return(
+                <div className="col">
+                    <p className="card-text">Created By: {this.state.createdBy}</p>
+                    <p className="card-text">Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                </div>
+            );
+        }
+    }
+
     render() {
         Moment.locale('en');
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-            if(this.state.updatedAt) {
-                return(
+            return(
+                <div className="container">
+                    <NavBar/>
                     <div className="container">
-                        <NavBar/>
-                        <div className="container">
-                            <h1>
-                                User Profile
-                            </h1>
-                            <div className="container" style={{backgroundColor: "#e3f2fd"}}>
-                                <h2>Username: {this.state.username}</h2>
-                                <h2>Email: {this.state.email}</h2>
-                                <h2>Role: {this.state.role}</h2>
-                                <h2>Updated By: {this.state.updatedBy}</h2>
-                                <h2>Updated At: {this.state.updatedAt ? Moment(this.state.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</h2>
-                                <h2>Created By: {this.state.createdBy}</h2>
-                                <h2>Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</h2>
-                            </div>
+                        <div className="card">
+                            <h5 className="card-header" style={{backgroundColor: "#e3f2fd"}}>User Profile</h5>
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col">
+                                        <p className="card-text">Username: {this.state.username}</p>
+                                        <p className="card-text">Email: {this.state.email}</p>
+                                        <p className="card-text">Role: {this.state.role}</p>
+                                    </div>
+                                    {this.checkIfUpdated()}
+                                </div>
+                            </div> 
                         </div>
-                        <br/>
-                        <SubmitButton
-                                text='Edit'
-                                type='btn-outline-secondary btn-lg'
-                                onClick={ (e) => this.onEditClick(e)}
-                            />
                     </div>
-                );
-            }
-            else {
-                return(
-                    <div className="container">
-                        <NavBar/>
-                        <div className="container">
-                            <h1>
-                                User Profile
-                            </h1>
-                            <div className="container" style={{backgroundColor: "#e3f2fd"}}>
-                                <h2>Username: {this.state.username}</h2>
-                                <h2>Email: {this.state.email}</h2>
-                                <h2>Role: {this.state.role}</h2>
-                                <h2>Created By: {this.state.createdBy}</h2>
-                                <h2>Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</h2>
-                            </div>
-                        </div>
-                        <br/>
-                        <SubmitButton
-                                text='Edit'
-                                type='btn-outline-secondary btn-lg'
-                                onClick={ (e) => this.onEditClick(e)}
-                            />
-                    </div>
-                );
-            }
+                    <br/>
+                    <SubmitButton
+                            text='Edit'
+                            type='btn-outline-secondary btn-lg'
+                            onClick={ (e) => this.onEditClick(e)}
+                        />
+                </div>
+            );
         }
         else { 
             return(

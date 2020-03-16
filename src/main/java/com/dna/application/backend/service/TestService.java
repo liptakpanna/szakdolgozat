@@ -28,7 +28,7 @@ public class TestService {
     @Transactional
     public List<UserDto> setTestData() {
         List<User> users = new ArrayList<>();
-        users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN, "", new HashSet<>(), new HashSet<>()));
+        users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN,"",  User.Status.ENABLED, new HashSet<>(), new HashSet<>()));
         //users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST, null));
         try {
             userRepository.saveAll(users);

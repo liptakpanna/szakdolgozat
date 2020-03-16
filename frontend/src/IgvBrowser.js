@@ -10,20 +10,30 @@ class IgvBrowser extends Component {
       var igvOptions =
       {
           reference: {
-              id: "My Custom Ecoli",
-              fastaURL: "http://localhost:9090/resources/files/references/gyerunk.fna",
+              id: this.props.location.state.item.name,
+              fastaURL: this.props.location.state.item.referenceUrl,
           },
           tracks: [
               {
-                  url: "http://localhost:9090/resources/files/bams/gyerunk.bam",
+                  url: this.props.location.state.item.bamUrl,
                   indexed: true,
                   format: "bam",
-                  name: 'Ecoli Sample'
+                  name: this.props.location.state.item.name + " read"
               }
           ]
       };
 
       return igv.createBrowser(igvContainer, igvOptions);
+    }
+
+    addEditButton(){
+    
+      if(localStorage.getItem("username") === this.props.location.state.item.owner)
+      {
+        return(
+          <button className='btn btn-outline-secondary btn-lg w-25' onClick={ () => this.props.history.push('/alignments/edit')}>Edit</button>
+        );
+      }
     }
   
     render() {
@@ -31,8 +41,33 @@ class IgvBrowser extends Component {
         return (
           <div className="container">
             <NavBar/>
-            <div className='igvContainer'>
-                <div id="igv-div"></div>
+            <div className="container">
+              <div className="container">
+                <h1 className="w-75 d-inline-block">IGV Genome browser</h1>
+                {this.addEditButton()}
+              </div>
+              <br/>
+              <div className="card">
+                  <h5 className="card-header" style={{backgroundColor: "#e3f2fd"}}>{this.props.location.state.item.name}</h5>
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col">
+                        <p className="card-text">Aligner: {this.props.location.state.item.aligner}</p>
+                        <p className="card-text">Owner: {this.props.location.state.item.owner}</p>
+                        <p className="card-text">Visibility: {this.props.location.state.item.visibility}</p>
+                      </div>
+                      <div className="col">
+                        <p className="card-text">Updated at: 2019.05.05. 26:45</p>
+                      </div>
+                    </div>
+                    <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.props.location.state.item.description}</p>
+                    <a href={this.props.location.state.item.bamUrl} className="btn btn-primary">Download result bam file</a>
+                  </div>
+              </div>
+              <br/>
+              <div className='igvContainer'>
+                  <div id="igv-div"></div>
+              </div>
             </div>
           </div>
         );
