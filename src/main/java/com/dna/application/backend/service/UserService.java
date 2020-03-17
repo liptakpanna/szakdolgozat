@@ -4,6 +4,7 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
+import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,10 @@ public class UserService {
         return modelMapper.map(users, listType);
     }
 
+    public UsernameListResponse getUsernames() {
+        return new UsernameListResponse(userRepository.findUsernames());
+    }
+
     public List<UserDto> deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
         user.setStatus(User.Status.DELETED);
@@ -52,8 +57,6 @@ public class UserService {
 
     @Transactional
     public UserDto updateUser(UserRequest userRequest, String updater) throws Exception{
-        boolean changed = false;
-
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
         String username = userRequest.getUsername();
@@ -63,31 +66,14 @@ public class UserService {
         User.Status status = userRequest.getStatus();
 
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
-        if(username != null) {
-            user.setUsername(username);
-            changed = true;
-        }
-        if(email != null) {
-            user.setEmail(email);
-            changed = true;
-        }
-        if(password != null) {
-            user.setPassword(passwordEncoder.encode(password));
-            changed = true;
-        }
-        if(role != null) {
-            user.setRole(role);
-            changed = true;
-        }
-        if (status != null) {
-            user.setStatus(status);
-            changed = true;
-        }
+        if(username != null) user.setUsername(username);
+        if(email != null) user.setEmail(email);
+        if(password != null) user.setPassword(passwordEncoder.encode(password));
+        if(role != null) user.setRole(role);
+        if (status != null) user.setStatus(status);
 
-        if (changed) {
-            user.setUpdatedBy(updater);
-            userRepository.saveAndFlush(user);
-        }
+        user.setUpdatedBy(updater);
+        userRepository.saveAndFlush(user);
 
         return modelMapper.map(user, UserDto.class);
     }

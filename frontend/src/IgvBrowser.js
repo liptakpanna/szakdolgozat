@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import igv from 'igv/dist/igv.esm.min.js';
 import NavBar from './NavBar';
 import { Redirect } from 'react-router-dom';
+import Moment from 'moment';
 
 class IgvBrowser extends Component {
 
@@ -28,11 +29,22 @@ class IgvBrowser extends Component {
 
     addEditButton(){
     
-      if(localStorage.getItem("username") === this.props.location.state.item.owner)
+      if(localStorage.getItem("username") === this.props.location.state.item.owner || localStorage.getItem("role") === 'ADMIN')
       {
         return(
-          <button className='btn btn-outline-secondary btn-lg w-25' onClick={ () => this.props.history.push('/alignments/edit')}>Edit</button>
+          <button className='btn btn-outline-secondary btn-lg w-25' onClick={ () => this.props.history.push('/alignments/edit',  {item : this.props.location.state.item})}>Edit</button>
         );
+      }
+    }
+
+    addUpdated() {
+      if(this.props.location.state.item.updatedAt) {
+        return(            
+          <>
+          <p className="card-text">Updated At: {this.props.location.state.item.updatedAt ? Moment(this.props.location.state.item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+          <p className="card-text">Updated By: {this.props.location.state.item.updatedBy}</p>
+          </>
+          );
       }
     }
   
@@ -57,10 +69,12 @@ class IgvBrowser extends Component {
                         <p className="card-text">Visibility: {this.props.location.state.item.visibility}</p>
                       </div>
                       <div className="col">
-                        <p className="card-text">Updated at: 2019.05.05. 26:45</p>
+                        <p className="card-text">Created At: {this.props.location.state.item.createdAt ? Moment(this.props.location.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                        {this.addUpdated()}
                       </div>
                     </div>
                     <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.props.location.state.item.description}</p>
+                    <a href={this.props.location.state.item.referenceUrl} className="btn btn-primary mr-3">Download reference file</a>
                     <a href={this.props.location.state.item.bamUrl} className="btn btn-primary">Download result bam file</a>
                   </div>
               </div>

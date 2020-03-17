@@ -9,6 +9,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class AlignmentRequest {
+    private Long id;
+
     private Alignment.Aligner aligner;
 
     private String name;

@@ -33,5 +33,7 @@ public class AlignmentDto {
 
     private Date updatedAt;
 
+    private String updatedBy;
+
     private List<String> userAccess;
 }

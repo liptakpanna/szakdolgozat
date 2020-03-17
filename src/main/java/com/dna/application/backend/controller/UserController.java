@@ -3,6 +3,7 @@ package com.dna.application.backend.controller;
 import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
+import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,13 @@ public class UserController {
     @ResponseBody
     public List<UserDto> getUsers( ){
         return userService.getUsers();
+    }
+
+    @GetMapping("/usernamelist")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
+    @ResponseBody
+    public UsernameListResponse getUsernames( ){
+        return userService.getUsernames();
     }
 
     @PostMapping("/delete")

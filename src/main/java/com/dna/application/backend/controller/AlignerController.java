@@ -47,4 +47,11 @@ public class AlignerController {
             return bowtieService.align(alignmentRequest, (User)authentication.getPrincipal());
         else throw new Exception("Not a valid aligner");
     }
+
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
+    public AlignmentDto updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+        User user = (User)authentication.getPrincipal();
+        return alignmentService.updateAlignment(alignmentRequest, user);
+    }
 }

@@ -1,3 +1,4 @@
+com/dna/application/backend/model/User$Status.class
 com/dna/application/backend/controller/JwtAuthenticationController.class
 com/dna/application/backend/model/User$Role.class
 com/dna/application/backend/model/JwtRequest.class
@@ -16,6 +17,7 @@ com/dna/application/backend/service/TestService.class
 com/dna/application/backend/model/JwtValidResponse.class
 com/dna/application/backend/model/UserRequest.class
 com/dna/application/backend/controller/UserController.class
+com/dna/application/backend/model/UsernameListResponse.class
 com/dna/application/backend/dto/AlignmentDto.class
 com/dna/application/backend/service/UserDetailsServiceImpl.class
 com/dna/application/backend/security/WebSecurityConfig.class

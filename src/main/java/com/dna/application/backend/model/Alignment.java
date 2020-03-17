@@ -25,6 +25,7 @@ public class Alignment extends BaseEntityAudit {
 
     private String bamUrl;
 
+    @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;
 
     private Visibility visibility;

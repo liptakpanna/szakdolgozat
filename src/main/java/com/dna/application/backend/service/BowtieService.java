@@ -56,7 +56,7 @@ public class BowtieService extends BaseAligner {
 
         alignmentRepository.saveAndFlush(alignment);
 
-        return alignmentService.getAlignment(name);
+        return alignmentService.getAlignmentDto(name);
     }
 
 }
