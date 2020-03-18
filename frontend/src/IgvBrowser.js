@@ -13,13 +13,15 @@ class IgvBrowser extends Component {
           reference: {
               id: this.props.location.state.item.name,
               fastaURL: this.props.location.state.item.referenceUrl,
+              headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
           },
           tracks: [
               {
                   url: this.props.location.state.item.bamUrl,
                   indexed: true,
                   format: "bam",
-                  name: this.props.location.state.item.name + " read"
+                  name: this.props.location.state.item.name + " read",
+                  headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
               }
           ]
       };
@@ -28,7 +30,6 @@ class IgvBrowser extends Component {
     }
 
     addEditButton(){
-    
       if(localStorage.getItem("username") === this.props.location.state.item.owner || localStorage.getItem("role") === 'ADMIN')
       {
         return(
@@ -74,8 +75,10 @@ class IgvBrowser extends Component {
                       </div>
                     </div>
                     <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.props.location.state.item.description}</p>
+                    {/*
                     <a href={this.props.location.state.item.referenceUrl} className="btn btn-primary mr-3">Download reference file</a>
                     <a href={this.props.location.state.item.bamUrl} className="btn btn-primary">Download result bam file</a>
+                    */} 
                   </div>
               </div>
               <br/>

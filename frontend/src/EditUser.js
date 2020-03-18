@@ -3,19 +3,20 @@ import NavBar from './NavBar';
 import { Redirect } from 'react-router-dom';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
-import {checkJwtToken, Confirm} from './Common';
+import {checkJwtToken} from './Common';
+import Modal from 'react-bootstrap/Modal';
 import PreviousPageIcon from './PreviousPageIcon';
+import _ from 'lodash';
 
 class EditUser extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            username: this.props.location.state.username,
-            password: '',
-            email: this.props.location.state.email,
-            role: this.props.location.state.role,
-            isAdmin: this.props.location.state.isAdmin
+            item: this.props.location.state.item,
+            isAdmin: this.props.location.state.isAdmin,
+            show: false,
+            showModified: false
         }
     }
 
@@ -25,18 +26,17 @@ class EditUser extends React.Component{
 
     setInputValue(property, value) {
         value = value.trim();
-        if (value.length > 12) {
-            return;
+        if(this.state.showModified) {
+            this.setState({showModified: false})
         }
-        this.setState({
-            [property]: value
-        })
+        this.setState({ item: { ...this.state.item, [property]: value} });
     }
 
     handleDropdownChange(event) {
-        this.setState({
-            role: event.target.value
-        })
+        if(this.state.showModified) {
+            this.setState({showModified: false})
+        }
+        this.setState({ item: { ...this.state.item, role: event.target.value} });
     }
 
     replacer(key, value) {
@@ -46,50 +46,56 @@ class EditUser extends React.Component{
             return value;
     }
 
-    async editUser() {
-        let url, body;
-        if (localStorage.getItem("role") === 'ADMIN') {
-            url = process.env.REACT_APP_API_URL + '/users/update';
-            body = JSON.stringify({
-                id: this.props.location.state.id,
-                username: this.state.username,
-                password: this.state.password,
-                email: this.state.email,
-                role: this.state.role
-            }, this.replacer);
-        } else {
-            url = process.env.REACT_APP_API_URL + '/users/me/update';
-            body = JSON.stringify({
-                username: this.state.username,
-                password: this.state.password,
-                email: this.state.email
-            }, this.replacer);
-        }
-        try {
-            let response = await fetch(url, {
-                method: 'post',
-                headers: new Headers({
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
-                }),
-                body: body
-            });
+    isChanged(){
+        return !_.isEqual(this.state.item,this.props.location.state.item);
+    }
 
-            let result = await response.json();
-            if(result){
-                console.log(result);
-                this.props.history.push(this.props.location.state.origin)
+    async editUser() {
+        if(this.isChanged()) {
+            let url, body;
+            if (this.state.isAdmin) {
+                url = process.env.REACT_APP_API_URL + '/users/update';
+                body = JSON.stringify({
+                    id: this.props.location.state.item.id,
+                    username: this.state.item.username,
+                    password: this.state.item.password,
+                    email: this.state.item.email,
+                    role: this.state.item.role
+                }, this.replacer);
+            } else {
+                url = process.env.REACT_APP_API_URL + '/users/me/update';
+                body = JSON.stringify({
+                    username: this.state.item.username,
+                    password: this.state.item.password,
+                    email: this.state.item.email
+                }, this.replacer);
             }
-        }
-        catch(e) {
-            console.log(e)
-        }
+            try {
+                let response = await fetch(url, {
+                    method: 'post',
+                    headers: new Headers({
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    }),
+                    body: body
+                });
+    
+                let result = await response.json();
+                if(result){
+                    console.log(result);
+                    this.props.history.push(this.props.location.state.origin)
+                }
+            }
+            catch(e) {
+                console.log(e)
+            }
+        } else this.setState({showModified: true});
     }
 
     async deleteUser() {
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete?id=' + this.props.location.state.id, {
+            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete?id=' + this.props.location.state.item.id, {
                 method: 'post',
                 headers: new Headers({
                     'Accept': 'application/json',
@@ -117,7 +123,7 @@ class EditUser extends React.Component{
                             <label className='col-form-label'>Role</label>
                             <select 
                                 className="form-control"
-                                value={this.state.role}
+                                value={this.state.item.role}
                                 onChange={this.handleDropdownChange.bind(this)}>
                                 <option value="ADMIN">Admin</option>
                                 <option value="RESEARCHER">Researcher</option>
@@ -127,6 +133,23 @@ class EditUser extends React.Component{
             )
         }
     }
+  
+    handleClose = () => {this.setState({show: false})};
+    handleShow = () => {this.setState({show: true})};
+
+    addModal(){
+        return(
+            <Modal show={this.state.show} onHide={this.handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Are you sure you want to delete this user?</Modal.Title>
+                </Modal.Header>
+                <Modal.Footer>
+                    <SubmitButton type=" btn-secondary" text="Close" onClick={this.handleClose}/>
+                    <SubmitButton type=" btn-danger" text="Delete" onClick={() => this.deleteUser()}/>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
 
     addDeleteButton(){
         if(this.state.isAdmin){
@@ -134,7 +157,7 @@ class EditUser extends React.Component{
                 <SubmitButton
                 text='Delete User'
                 type='btn-outline-danger btn-lg'
-                onClick={ () => {Confirm(this.deleteUser)} }                        
+                onClick={ () => {this.handleShow()} }                        
                 />
             )
         }
@@ -151,22 +174,23 @@ class EditUser extends React.Component{
                         hist={this.props.history}
                     />
                     <h1>Edit User</h1>
+                    {this.addModal()}
                     <InputField
                         type='text'
-                        value={this.state.username}
+                        value={this.state.item.username}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
                     />
                     <InputField
                         type='password'
                         placeholder='Enter new password'
-                        value={this.state.password ? this.state.password : ''}
+                        value={this.state.item.password ? this.state.item.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
                     />
                     <InputField
                         type='text'
-                        value={this.state.email}
+                        value={this.state.item.email}
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
                     />
@@ -179,7 +203,7 @@ class EditUser extends React.Component{
                         />
                         {this.addDeleteButton()}
                     </div>
-
+                    { this.state.showModified ? <div className="alert alert-primary mt-3" role="alert">There are no modifications</div> : null }
                 </div>
                 </div>
             );            

@@ -1,6 +1,3 @@
-import React from 'react';
-import Modal from 'react-bootstrap/Modal';
-import SubmitButton from './SubmitButton';
 
 export async function checkJwtToken() {
         try {
@@ -36,33 +33,3 @@ export function logout() {
     localStorage.setItem("role", "");
     console.log("Logged out");
 }
-
-export function Confirm(task) {
-    var show= false;
-  
-    const handleClose = () => {show = false};
-    const handleShow = () => {show = true};
-  
-    return (
-      <>
-        <SubmitButton variant="primary" onClick={handleShow}>
-          Launch demo modal
-        </SubmitButton>
-  
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Are you sure you want to delete it?</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Deleting this object cannot be undone.</Modal.Body>
-          <Modal.Footer>
-            <SubmitButton className=" btn-secondary" onClick={handleClose}>
-              Close
-            </SubmitButton>
-            <SubmitButton className=" btn-danger" onClick={task}>
-              Delete
-            </SubmitButton>
-          </Modal.Footer>
-        </Modal>
-      </>
-    );
-  }

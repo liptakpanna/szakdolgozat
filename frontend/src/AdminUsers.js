@@ -44,8 +44,8 @@ class AdminUsers extends React.Component{
         }
     }
 
-    onEditClick(event, id, username, role, email) {
-        this.props.history.push("/user/edit", {id: id, username: username, role: role, email:email, isAdmin: true, origin: "/users"});
+    onEditClick(event, item) {
+        this.props.history.push("/user/edit", {item: item, isAdmin: true, origin: "/users"});
     }
 
     render() {
@@ -74,7 +74,7 @@ class AdminUsers extends React.Component{
                             <tbody>
                             {this.state.items.map(function(item, index) {
                                 return <tr 
-                                        onClick={(e) =>this.onEditClick(e, item.id, item.username, item.role, item.email)}
+                                        onClick={(e) =>this.onEditClick(e, item)}
                                         className="userListItem" 
                                         key={index} 
                                         data-toogle="tooltip" data-placement="top" title="Click to edit user">

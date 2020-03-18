@@ -4,18 +4,19 @@ import { Redirect } from 'react-router-dom';
 import SubmitButton from './SubmitButton';
 import {checkJwtToken} from './Common';
 import Moment from 'moment';
+import Modal from 'react-bootstrap/Modal';
 
 class Alignments extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             items: [],
+            show: false
         }
         this.viewAlignment = this.viewAlignment.bind(this);
     }
 
     componentDidMount() {
-        console.log("mounted");
         checkJwtToken();
         this.getAlignments();
     }
@@ -44,6 +45,53 @@ class Alignments extends React.Component{
         }
     }
 
+    handleClose = () => {this.setState({show: false})};
+    handleShow = () => {this.setState({show: true})};
+
+    addModal() {
+        return (
+          <>
+            <Modal 
+                show={this.state.show} 
+                onHide={this.handleClose}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered>
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">Choose an aligner</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                  <div className="container">
+                    <div className="row d-flex justify-content-around">
+                        <div className="p-2">
+                            <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Bowtie"})}>
+                                Bowtie
+                            </button>
+                        </div>
+                        <div className="p-2">
+                            <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "bowtie"})}>
+                                Diamond
+                            </button>
+                        </div>
+                        <div className="p-2">
+                            <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "bowtie"})}>
+                                BWA
+                            </button>
+                        </div>
+                    </div>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <SubmitButton type=" btn-secondary btn-lg" text="Close" onClick={this.handleClose}/>
+                </Modal.Footer>
+            </Modal>
+          </>
+        );
+      }
+
     viewAlignment(event, item) {
         this.props.history.push("/alignments/igv", {item: item});
     }
@@ -54,9 +102,10 @@ class Alignments extends React.Component{
                 <h1>
                     Alignments
                 </h1>
+                {this.addModal()}
                 <br/>
                 <table className="table table-hover">
-                    <thead  style={{backgroundColor: "#e3f2fd"}}>
+                    <thead style={{backgroundColor: "#e3f2fd"}}>
                         <tr>
                             <th scope="col">Name</th>
                             <th scope="col">Aligner</th>
@@ -102,7 +151,7 @@ class Alignments extends React.Component{
                         <SubmitButton
                                 text='Create alignment'
                                 type='btn-lg btn-outline-secondary'
-                                onClick={ () => this.props.history.push('/alignments/add')}
+                                onClick={ () => this.handleShow()}
                             />
                     </div>);
             } else {
