@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,9 +20,11 @@ public class AlignmentRequest {
 
     private MultipartFile referenceDna;
 
-    private MultipartFile readsForDna;
+    private Set<MultipartFile> readsForDna;
 
     private Alignment.Visibility visibility;
 
     private List<String> usernameAccessList;
+
+    private Long referenceId;
 }

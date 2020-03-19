@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -23,7 +24,7 @@ public class AlignmentDto {
 
     private String referenceUrl;
 
-    private String bamUrl;
+    private Set<String> bamUrls;
 
     private Alignment.Visibility visibility;
 

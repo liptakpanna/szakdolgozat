@@ -6,6 +6,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -23,7 +24,13 @@ public class Alignment extends BaseEntityAudit {
 
     private String referenceUrl;
 
-    private String bamUrl;
+    @ElementCollection
+    @CollectionTable(
+            name="bamUrls",
+            joinColumns=@JoinColumn(name="alignment_id")
+    )
+    @Column(name="bamUrl")
+    private Set<String> bamUrls;
 
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;

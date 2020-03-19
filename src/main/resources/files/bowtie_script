@@ -1,15 +1,26 @@
 #!/bin/bash
 # Bowtie script
-#Params: 1.NAME 2.FOLDER
+#Params: 1.NAME 2.FOLDER 3.READS SIZE 4.EXISTING
 
-bowtie-build ${2}references/${1}.fna ${2}indexes/${1}
-bowtie -S ${2}indexes/${1} ${2}reads/${1}.fastq ${2}bams/${1}.sam
-samtools sort ${2}bams/${1}.sam > ${2}bams/${1}.bam
+if [ -z "$4" ]
+then
+  bowtie-build "${2}"references/"${1}".fna "${2}"/"${1}"
+  INDEXNAME="${2}"/"${1}"
+else
+  INDEXNAME="${2}"examples/indexes/"${4}"
+fi
 
-samtools index ${2}bams/${1}.bam
+for ((i=1; i<=${3}; i++))
+do
+  bowtie -S "${INDEXNAME}" "${2}""${1}"$i.fastq "${2}"bams/"${1}".sam
+  samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}"$i.bam
+  samtools index "${2}"bams/"${1}"$i.bam
+  #rm "${2}"bams/"${1}".sam
+  #rm "${2}""${1}"$i.fastq
+done
 
-samtools faidx ${2}references/${1}.fna
-
-rm ${2}indexes/${1}.*
-rm ${2}bams/${1}.sam
-rm ${2}reads/${1}.fastq
+if [ -z "$4" ]
+then
+  samtools faidx "${2}"references/"${1}".fna
+  #rm "${2}""${1}".*
+fi

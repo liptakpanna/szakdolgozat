@@ -5,14 +5,17 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserDetailsServiceImpl.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/AlignmentService.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/ReferenceExample.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/JwtAuthenticationController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/util/JwtTokenUtil.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/Alignment.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/BaseAligner.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/TestController.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/ReferenceRepository.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/BaseEntity.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/AlignmentRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/AlignerController.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UsernameListResponse.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/TestService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/UserRepository.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/JwtRequest.java

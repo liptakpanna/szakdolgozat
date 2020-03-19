@@ -71,13 +71,13 @@ class Alignments extends React.Component{
                         </div>
                         <div className="p-2">
                             <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
-                                onClick={() => this.props.history.push("/alignments/add", {aligner: "bowtie"})}>
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Diamond"})}>
                                 Diamond
                             </button>
                         </div>
                         <div className="p-2">
                             <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
-                                onClick={() => this.props.history.push("/alignments/add", {aligner: "bowtie"})}>
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Bwa"})}>
                                 BWA
                             </button>
                         </div>

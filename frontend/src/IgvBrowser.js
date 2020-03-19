@@ -15,18 +15,25 @@ class IgvBrowser extends Component {
               fastaURL: this.props.location.state.item.referenceUrl,
               headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
           },
-          tracks: [
-              {
-                  url: this.props.location.state.item.bamUrl,
-                  indexed: true,
-                  format: "bam",
-                  name: this.props.location.state.item.name + " read",
-                  headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
-              }
-          ]
+          tracks: this.getTracks()
       };
 
       return igv.createBrowser(igvContainer, igvOptions);
+    }
+
+    getTracks(){
+      var tracksForIgv = [];
+      for(var x = 0; x < this.props.location.state.item.bamUrls.length; x++) {
+        tracksForIgv.push({
+          "url": this.props.location.state.item.bamUrls[x],
+          indexed: true,
+          format: "bam",
+          name: this.props.location.state.item.name + " read",
+          headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
+        });
+      }
+      console.log(tracksForIgv);
+      return tracksForIgv;
     }
 
     addEditButton(){

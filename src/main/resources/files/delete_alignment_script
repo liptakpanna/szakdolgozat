@@ -1,8 +1,12 @@
 #!/bin/bash
 # Bowtie script
-#Params: 1.NAME 2.FOLDER
+#Params: 1.NAME 2.FOLDER 3.EXISTING
 
 rm ${2}bams/${1}.bam
 rm ${2}bams/${1}.bam.bai
-rm ${2}references/${1}.fna
-rm ${2}references/${1}.fna.fai
+
+if [ -z "$3" ]
+then
+    rm ${2}references/${1}.fna
+    rm ${2}references/${1}.fna.fai
+fi
