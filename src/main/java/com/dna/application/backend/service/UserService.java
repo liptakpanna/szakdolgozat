@@ -43,8 +43,10 @@ public class UserService {
         return modelMapper.map(users, listType);
     }
 
-    public UsernameListResponse getUsernames() {
-        return new UsernameListResponse(userRepository.findUsernames());
+    public UsernameListResponse getUsernames(String requester) {
+        List<String> usernames = userRepository.findUsernames();
+        usernames.remove(requester);
+        return new UsernameListResponse(usernames);
     }
 
     public List<UserDto> deleteUser(Long id) {

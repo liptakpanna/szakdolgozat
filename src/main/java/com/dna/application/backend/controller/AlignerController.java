@@ -29,7 +29,7 @@ public class AlignerController {
 
     @GetMapping("/list")
     @ResponseBody
-    public List<AlignmentDto> getAlignments(Authentication authentication){
+    public List<AlignmentDto> getAlignments(Authentication authentication) throws Exception{
         return alignmentService.getAlignments((User)authentication.getPrincipal());
     }
 

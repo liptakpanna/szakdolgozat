@@ -3,7 +3,10 @@ import React from 'react';
 class PreviousPageIcon extends React.Component{
 
     onClick(e) {
-        this.props.hist.push(this.props.where);
+        if(this.props.item !== null)
+            this.props.hist.push(this.props.where, {item : this.props.item});
+        else
+            this.props.hist.push(this.props.where);
     }
 
     render() {

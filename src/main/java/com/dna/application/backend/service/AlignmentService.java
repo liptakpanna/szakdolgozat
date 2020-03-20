@@ -40,7 +40,7 @@ public class AlignmentService {
     private ReferenceRepository referenceRepository;
 
     @Transactional
-    public List<AlignmentDto> getAlignments(User user) {
+    public List<AlignmentDto> getAlignments(User user) throws Exception {
         Set<Alignment> alignments = new HashSet<>(alignmentRepository.findByVisibility(Alignment.Visibility.PUBLIC));
         alignments.addAll(user.getOwnedAlignments());
         alignments.addAll(user.getAlignmentAccess());
@@ -57,23 +57,24 @@ public class AlignmentService {
         return alignmentDtos;
     }
 
-    public AlignmentDto getAlignmentDto(String name) {
+    public AlignmentDto getAlignmentDto(String name) throws Exception {
         Alignment alignment = alignmentRepository.findByName(name);
-
-        return AlignmentDto.builder()
-                .id(alignment.getId())
-                .name(alignment.getName())
-                .referenceUrl(alignment.getReferenceUrl())
-                .bamUrls(alignment.getBamUrls())
-                .description(alignment.getDescription())
-                .aligner(alignment.getAligner())
-                .visibility(alignment.getVisibility())
-                .owner(getOwnerName(alignment))
-                .createdAt(alignment.getCreatedAt())
-                .updatedAt(alignment.getUpdatedAt())
-                .updatedBy(alignment.getUpdatedBy())
-                .userAccess(alignment.getUserAccess() != null ? alignment.getUserAccess().stream().map(User::getUsername).collect(Collectors.toList()) : new ArrayList<>())
-                .build();
+        if(alignment != null)
+            return AlignmentDto.builder()
+                    .id(alignment.getId())
+                    .name(alignment.getName())
+                    .referenceUrl(alignment.getReferenceUrl())
+                    .bamUrls(alignment.getBamUrls())
+                    .description(alignment.getDescription())
+                    .aligner(alignment.getAligner())
+                    .visibility(alignment.getVisibility())
+                    .owner(getOwnerName(alignment))
+                    .createdAt(alignment.getCreatedAt())
+                    .updatedAt(alignment.getUpdatedAt())
+                    .updatedBy(alignment.getUpdatedBy())
+                    .userAccess(alignment.getUserAccess() != null ? alignment.getUserAccess().stream().map(User::getUsername).collect(Collectors.toList()) : new ArrayList<>())
+                    .build();
+        else throw new Exception("Alignment with name:" + name + " not found");
     }
 
     public List<AlignmentDto> deleteAlignment(Long id, User user) throws Exception{
@@ -87,6 +88,15 @@ public class AlignmentService {
 
         alignmentRepository.deleteById(id);
         alignmentRepository.flush();
+
+        user.getOwnedAlignments().remove(alignment);
+        if(alignment.getUserAccess() != null)
+            for(User userAccess: alignment.getUserAccess()) {
+                if(userAccess != null) {
+                    userAccess.getAlignmentAccess().remove(alignment);
+                }
+            }
+        userRepository.saveAndFlush(user);
         return getAlignments(user);
     }
 
@@ -101,19 +111,19 @@ public class AlignmentService {
         String description = alignmentRequest.getDescription();
         Alignment.Visibility visibility = alignmentRequest.getVisibility();
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
+        log.warn("Alignment request: {}", usernameAccessList);
 
         if(alignmentRequest.getName() != null) alignment.setName(name);
         if(alignmentRequest.getDescription() != null) alignment.setDescription(description);
         if(alignmentRequest.getVisibility() != null) alignment.setVisibility(visibility);
 
-        Set<User> userAccessList = new HashSet<>();
         if(usernameAccessList != null)
             for(String username: usernameAccessList) {
                 User userToAdd = userRepository.findByUsername(username);
-                if(userToAdd != null)
-                    userAccessList.add(userToAdd);
+                if(userToAdd != null) {
+                    userToAdd.getAlignmentAccess().add(alignment);
+                }
             }
-        alignment.setUserAccess(userAccessList);
         alignment.setUpdatedBy(user.getUsername());
 
         alignmentRepository.saveAndFlush(alignment);

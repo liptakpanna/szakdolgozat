@@ -38,6 +38,7 @@ export default function Routes() {
                 <Route path='/alignments/igv' component={IgvBrowser} />
                 <Route path='/home' component={Home} />
                 <Route path='/profile' component={Profile} />
+                <Route path='/user/edit' component={EditUser} />
                 <Route path='/alignments/edit' component={EditAlignment} />
                 <Route path='/alignments/add' component={CreateAlignment} />
                 <Route path='/alignments' component={Alignments} />
@@ -51,6 +52,7 @@ export default function Routes() {
                 <Route path='/alignments/igv' component={IgvBrowser} />
                 <Route path='/home' component={Home} />
                 <Route path='/profile' component={Profile} />
+                <Route path='/user/edit' component={EditUser} />
                 <Route path='/alignments' component={Alignments} />
                 <Redirect exact from="/" to="home" />
         </Switch>

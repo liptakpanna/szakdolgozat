@@ -3,6 +3,7 @@ import igv from 'igv/dist/igv.esm.min.js';
 import NavBar from './NavBar';
 import { Redirect } from 'react-router-dom';
 import Moment from 'moment';
+import PreviousPageIcon from './PreviousPageIcon';
 
 class IgvBrowser extends Component {
 
@@ -63,6 +64,10 @@ class IgvBrowser extends Component {
             <NavBar/>
             <div className="container">
               <div className="container">
+                <PreviousPageIcon
+                            where={'/alignments'}
+                            hist={this.props.history}
+                        />
                 <h1 className="w-75 d-inline-block">IGV Genome browser</h1>
                 {this.addEditButton()}
               </div>

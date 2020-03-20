@@ -39,3 +39,20 @@ body {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
+
+@media screen and (min-width: 768px) {
+  .nav-logout {
+    border: solid 2px rgba(121, 117, 117, 0.753);
+    color: rgba(121, 117, 117, 0.753) !important;
+    border-radius: 5px;
+    font-weight: bold !important;
+  }
+  
+  .nav-logout:hover {
+    border: solid 2px rgba(121, 117, 117, 0.753);
+    color: #e3f2fd !important;
+    border-radius: 5px;
+    background-color: rgba(121, 117, 117, 0.753);
+  }
+}
+

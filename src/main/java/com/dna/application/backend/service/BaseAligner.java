@@ -1,5 +1,6 @@
 package com.dna.application.backend.service;
 
+import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -70,14 +71,15 @@ public class BaseAligner {
             log.error("NO READS");
     }
 
-    static Set<User> getUserAccessSet(List<String> usernameAccessList, UserRepository userRepository){
-        Set<User> userAccessSet = new HashSet<>();
+    static void setUserAccessSet(List<String> usernameAccessList, UserRepository userRepository, Alignment alignment){
+        if(usernameAccessList != null)
+            for(String username: usernameAccessList) {
+                User userToAdd = userRepository.findByUsername(username);
+                if(userToAdd != null){
+                    userToAdd.getAlignmentAccess().add(alignment);
+                }
+            }
 
-        if( usernameAccessList != null && !usernameAccessList.isEmpty()) {
-            userAccessSet.addAll(userRepository.findByUsername(usernameAccessList));
-        }
-
-        return userAccessSet;
     }
 
     static void runScript(String scriptName, String filename, String folder, int readsSize) throws Exception {

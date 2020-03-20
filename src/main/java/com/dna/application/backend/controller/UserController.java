@@ -39,8 +39,9 @@ public class UserController {
     @GetMapping("/usernamelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     @ResponseBody
-    public UsernameListResponse getUsernames( ){
-        return userService.getUsernames();
+    public UsernameListResponse getUsernames(Authentication authentication ){
+        User user = (User)authentication.getPrincipal();
+        return userService.getUsernames(user.getUsername());
     }
 
     @PostMapping("/delete")

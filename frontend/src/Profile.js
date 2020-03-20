@@ -16,7 +16,8 @@ class Profile extends React.Component{
             createdAt: null,
             createdBy: '',
             updatedAt: null,
-            updatedBy: ''
+            updatedBy: '',
+            item: []
         }
         this.onEditClick = this.onEditClick.bind(this);
     }
@@ -49,6 +50,7 @@ class Profile extends React.Component{
                 this.setState({createdBy: result.createdBy});
                 this.setState({updatedAt: result.updatedAt});
                 this.setState({updatedBy: result.updatedBy});
+                this.setState({item: result});
             }
         }
         catch(e) {
@@ -57,7 +59,7 @@ class Profile extends React.Component{
     }
 
     onEditClick(event) {
-        this.props.history.push("/user/edit", { username: this.state.username, role: this.state.role, email: this.state.email, isAdmin: false, origin: "/profile"});
+        this.props.history.push("/user/edit", {item: this.state.item, isAdmin: false, origin: "/profile"});
     }
 
     checkIfUpdated() {

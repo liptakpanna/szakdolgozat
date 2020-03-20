@@ -15,12 +15,12 @@ do
   bowtie -S "${INDEXNAME}" "${2}""${1}"$i.fastq "${2}"bams/"${1}".sam
   samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}"$i.bam
   samtools index "${2}"bams/"${1}"$i.bam
-  #rm "${2}"bams/"${1}".sam
-  #rm "${2}""${1}"$i.fastq
+  rm "${2}"bams/"${1}".sam
+  rm "${2}""${1}"$i.fastq
 done
 
 if [ -z "$4" ]
 then
   samtools faidx "${2}"references/"${1}".fna
-  #rm "${2}""${1}".*
+  rm "${2}""${1}".*.ebwt
 fi

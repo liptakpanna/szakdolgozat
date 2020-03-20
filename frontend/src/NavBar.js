@@ -24,7 +24,8 @@ class NavBar extends React.Component{
                                 <li className="nav-item"><a className="nav-link" href="/profile">Profile</a></li>
                             </ul>
                             <ul className="nav navbar-nav navbar-right">
-                                <li className="nav-item"><a className="nav-link" href="/login" onClick={ () => this.logout()}>Logout</a></li>
+                                <li className="nav-item mr-5"><span className="navbar-text">User: {localStorage.getItem("username")}</span></li>
+                                <li className="nav-item"><a className="nav-link nav-logout" href="/login" onClick={ () =>logout()}>Logout</a></li>
                             </ul>
                         </div>
                     </div>

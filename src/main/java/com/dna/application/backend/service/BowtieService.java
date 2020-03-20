@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class BowtieService extends BaseAligner {
     @Autowired
     private AlignmentService alignmentService;
 
+    @Transactional
     public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
         if(alignmentRepository.findByName(name) != null ) throw new Exception("Name already in use");
@@ -60,9 +62,9 @@ public class BowtieService extends BaseAligner {
                 .referenceUrl(reference==null ? resourceUrl+"/references/"+filename+".fna" : resourceUrl+"/examples/"+reference.getFilename()+".fna" )
                 .bamUrls(getBamUrls(resourceUrl, filename, reads.size()))
                 .visibility(alignmentRequest.getVisibility())
-                .userAccess(getUserAccessSet(usernameAccessList, userRepository))
                 .build();
 
+        setUserAccessSet(usernameAccessList, userRepository, alignment);
         alignmentRepository.saveAndFlush(alignment);
 
         return alignmentService.getAlignmentDto(name);
