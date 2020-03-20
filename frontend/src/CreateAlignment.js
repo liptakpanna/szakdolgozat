@@ -32,11 +32,17 @@ class CreateAlignment extends React.Component{
         this.getUsernames();
     }
 
-    onChangeHandler(event, file){
-        this.setState({
-            [file]: event.target.files,
-            loaded: 0,
-          });
+    onChangeHandler(event, file , isMultiple){
+        if(isMultiple)
+            this.setState({
+                [file]: event.target.files,
+                loaded: 0,
+            });
+        else
+            this.setState({
+                [file]: event.target.files[0],
+                loaded: 0,
+            });
     }
 
     onClickHandler(event){
@@ -51,7 +57,8 @@ class CreateAlignment extends React.Component{
         data.append("aligner", this.props.location.state.aligner.toUpperCase());
         data.append("visibility", this.state.visibility);
         data.append("usernameAccessList", this.state.userAccess);
-        data.append("referenceId", this.state.referencId);
+        if(this.state.referencId != null)
+            data.append("referenceId", this.state.referencId);
         this.upload(data);
     }
 
@@ -95,7 +102,7 @@ class CreateAlignment extends React.Component{
             <div className="form-group">
                 <label className='col-form-label'>Reference DNA file</label>
                 <br/>
-                <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
+                <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile", false)}/>
             </div>
         );
     }
@@ -222,7 +229,7 @@ class CreateAlignment extends React.Component{
                         <div className="form-group">
                             <label className='col-form-label'>Reads file</label>
                             <br/>
-                            <input className="form-control-title" type="file" multiple onChange={ (e) => this.onChangeHandler(e, "readFile")}/>
+                            <input className="form-control-title" type="file" multiple onChange={ (e) => this.onChangeHandler(e, "readFile", true)}/>
                         </div>
 
                         <div className="form-group">

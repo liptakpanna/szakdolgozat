@@ -20,7 +20,7 @@ public class AlignmentRequest {
 
     private MultipartFile referenceDna;
 
-    private Set<MultipartFile> readsForDna;
+    private List<ReadTrack> readsForDna;
 
     private Alignment.Visibility visibility;
 

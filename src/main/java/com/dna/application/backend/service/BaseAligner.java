@@ -1,6 +1,8 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.model.BamUrl;
+import com.dna.application.backend.model.ReadTrack;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +50,7 @@ public class BaseAligner {
         return ans.toString();
     }
 
-    static void saveFile(MultipartFile multipartFile, String filename) {
+    static String saveFile(MultipartFile multipartFile, String filename) {
         try {
             byte[] bytes = multipartFile.getBytes();
             Path path = Paths.get(filename);
@@ -56,6 +58,7 @@ public class BaseAligner {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return filename;
     }
 
     static void saveFilesForAligner(MultipartFile referenceDna, Set<MultipartFile> reads, String folder, String filename){
@@ -82,8 +85,8 @@ public class BaseAligner {
 
     }
 
-    static void runScript(String scriptName, String filename, String folder, int readsSize) throws Exception {
-        String[] args = new String[]{scriptName, filename, folder, String.valueOf(readsSize)};
+    static void runScript(String scriptName, String filename, String folder) throws Exception {
+        String[] args = new String[]{scriptName, filename, folder};
 
         Process proc = new ProcessBuilder(args).start();
         String ans = getInput(proc);
@@ -93,8 +96,8 @@ public class BaseAligner {
         log.warn(ans+error);
     }
 
-    static void runScript(String scriptName, String filename, String folder, int readsSize, String existingReference) throws Exception {
-        String[] args = new String[]{scriptName, filename, folder, String.valueOf(readsSize), existingReference};
+    static void runScript(String scriptName, String trackname, String folder, String index, int bamNumber ,boolean isExample, boolean isFasta, boolean isPaired, String read1, String read2) throws Exception {
+        String[] args = new String[]{scriptName, trackname, folder, index, String.valueOf(bamNumber),String.valueOf(isExample), String.valueOf(isFasta),String.valueOf(isPaired), read1, read2};
 
         Process proc = new ProcessBuilder(args).start();
         String ans = getInput(proc);
@@ -104,10 +107,10 @@ public class BaseAligner {
         log.warn(ans+error);
     }
 
-    static Set<String> getBamUrls(String resourceUrl, String filename, int size){
-        Set<String> bamUrls = new HashSet<>();
-        for(int i = 1; i <= size; i++){
-            bamUrls.add(resourceUrl+"/bams/"+filename+i+".bam");
+    static Set<BamUrl> getBamUrls(String resourceUrl, String filename, List<ReadTrack> tracks){
+        Set<BamUrl> bamUrls = new HashSet<>();
+        for(int i = 1; i <= tracks.size(); i++){
+            bamUrls.add(new BamUrl(tracks.get(i).getName(),resourceUrl+"/bams/"+filename+i+".bam"));
         }
         return bamUrls;
     }

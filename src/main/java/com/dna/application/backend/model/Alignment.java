@@ -30,7 +30,7 @@ public class Alignment extends BaseEntityAudit {
             joinColumns=@JoinColumn(name="alignment_id")
     )
     @Column(name="bamUrl")
-    private Set<String> bamUrls;
+    private Set<BamUrl> bamUrls;
 
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;
@@ -47,5 +47,5 @@ public class Alignment extends BaseEntityAudit {
 
     public enum Visibility {PUBLIC, PRIVATE, TOPSECRET};
 
-    public enum Aligner {BOWTIE};
+    public enum Aligner {BOWTIE, BWA};
 }

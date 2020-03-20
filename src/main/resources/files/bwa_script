@@ -1,0 +1,36 @@
+#!/bin/bash
+# BWA script
+#Params: 1.NAME 2.FOLDER 3.READS SIZE 4.EXISTING
+
+if [ -z "$4" ]
+then
+  REFNAME="${2}"references/"${1}".fna
+  bwa index "${REFNAME}"
+else
+  REFNAME="${2}"examples/"${4}".fna
+fi
+
+for ((i=1; i<=${3}; i++))
+do
+  READLENGTH=$(awk '{if(NR%4==2) {count++; bases += length} } END{print bases/count}' "${2}""${1}"$i.fastq )
+ 
+  if (("${READLENGTH}" > 70))
+  then
+     bwa mem "${REFNAME}" "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sam 
+  else
+     bwa aln "${REFNAME}" "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sai; 
+     bwa samse "${REFNAME}" "${2}"bams/"${1}".sai "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sam
+  fi
+
+  samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}"$i.bam
+  samtools index "${2}"bams/"${1}"$i.bam
+  rm "${2}"bams/"${1}".sam
+  rm "${2}"bams/"${1}".sai
+  rm "${2}""${1}"$i.fastq
+done
+
+if [ -z "$4" ]
+then
+  rm "${2}""${1}".fna.*
+  samtools faidx "${2}"references/"${1}".fna
+fi

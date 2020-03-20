@@ -5,6 +5,7 @@ com/dna/application/backend/model/Alignment$Aligner.class
 com/dna/application/backend/repository/ReferenceRepository.class
 com/dna/application/backend/service/BaseAligner.class
 com/dna/application/backend/service/AlignmentService.class
+com/dna/application/backend/service/BwaService.class
 com/dna/application/backend/Application.class
 com/dna/application/backend/model/User.class
 com/dna/application/backend/model/Alignment$AlignmentBuilder.class

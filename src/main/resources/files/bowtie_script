@@ -1,25 +1,36 @@
 #!/bin/bash
-# Bowtie script
-#Params: 1.NAME 2.FOLDER 3.READS SIZE 4.EXISTING
+#Bowtie script
+#Params: 1.NAME 2.FOLDER 3.INDEXNAME 4.BAM NUMBER 5.IS EXAMPLE 6.IS FASTA 7.IS PAIRED 8.READ1 9.READ2
 
-if [ -z "$4" ]
+if [ "${7}" = "true" ]
 then
-  bowtie-build "${2}"references/"${1}".fna "${2}"/"${1}"
-  INDEXNAME="${2}"/"${1}"
+  if [ "${6}" = "true" ]
+  then
+    bowtie -S "${3}" -f -1 "${2}""${8}" -2 "${2}""${9}" "${2}"bams/"${1}".sam
+  else
+    bowtie -S "${3}" -1 "${2}""${8}" -2 "${2}""${9}" "${2}"bams/"${1}".sam
+  fi
 else
-  INDEXNAME="${2}"examples/indexes/"${4}"
+  if [ "${6}" = "true" ]
+  then
+    bowtie -S "${3}" -f "${2}""${8}" "${2}"bams/"${1}".sam
+  else
+    bowtie -S "${3}" "${2}""${8}" "${2}"bams/"${1}".sam
+  fi
 fi
 
-for ((i=1; i<=${3}; i++))
-do
-  bowtie -S "${INDEXNAME}" "${2}""${1}"$i.fastq "${2}"bams/"${1}".sam
-  samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}"$i.bam
-  samtools index "${2}"bams/"${1}"$i.bam
-  rm "${2}"bams/"${1}".sam
-  rm "${2}""${1}"$i.fastq
-done
+samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}""${4}".bam
+samtools index "${2}"bams/"${1}""${4}".bam
+rm "${2}"bams/"${1}".sam
+rm "${2}""${8}"
 
-if [ -z "$4" ]
+if [ "${7}" = "true" ]
+then
+  rm "${2}""${9}"
+ echo
+fi
+
+if [ "${5}" = "false" ]
 then
   samtools faidx "${2}"references/"${1}".fna
   rm "${2}""${1}".*.ebwt

@@ -1,6 +1,7 @@
 package com.dna.application.backend.dto;
 
 import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.model.BamUrl;
 import lombok.*;
 
 import java.util.Date;
@@ -24,7 +25,7 @@ public class AlignmentDto {
 
     private String referenceUrl;
 
-    private Set<String> bamUrls;
+    private Set<BamUrl> bamUrls;
 
     private Alignment.Visibility visibility;
 
