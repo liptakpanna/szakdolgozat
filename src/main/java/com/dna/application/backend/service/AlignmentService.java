@@ -1,20 +1,19 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
-import com.dna.application.backend.model.Alignment;
-import com.dna.application.backend.model.AlignmentRequest;
-import com.dna.application.backend.model.ReferenceExample;
-import com.dna.application.backend.model.User;
+import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
+import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +38,10 @@ public class AlignmentService {
     @Autowired
     private ReferenceRepository referenceRepository;
 
-    @Transactional
+    @Autowired
+    private BamUrlRepository bamUrlRepository;
+
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     public List<AlignmentDto> getAlignments(User user) throws Exception {
         Set<Alignment> alignments = new HashSet<>(alignmentRepository.findByVisibility(Alignment.Visibility.PUBLIC));
         alignments.addAll(user.getOwnedAlignments());
@@ -89,14 +91,6 @@ public class AlignmentService {
         alignmentRepository.deleteById(id);
         alignmentRepository.flush();
 
-        user.getOwnedAlignments().remove(alignment);
-        if(alignment.getUserAccess() != null)
-            for(User userAccess: alignment.getUserAccess()) {
-                if(userAccess != null) {
-                    userAccess.getAlignmentAccess().remove(alignment);
-                }
-            }
-        userRepository.saveAndFlush(user);
         return getAlignments(user);
     }
 

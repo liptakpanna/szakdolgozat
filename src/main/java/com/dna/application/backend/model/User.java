@@ -38,7 +38,7 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     private Status status;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval=true)
     @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> ownedAlignments = new HashSet<>();
 

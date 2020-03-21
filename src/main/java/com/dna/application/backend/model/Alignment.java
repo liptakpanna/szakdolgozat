@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity
 @Table(name="alignments")
 public class Alignment extends BaseEntityAudit {
@@ -24,8 +25,9 @@ public class Alignment extends BaseEntityAudit {
 
     private String referenceUrl;
 
-    @OneToMany(mappedBy = "alignment", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
     @Fetch(value= FetchMode.SELECT)
+    @JoinColumn(name = "alignment_id")
     private Set<BamUrl> bamUrls;
 
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)

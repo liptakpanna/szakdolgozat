@@ -1,36 +1,26 @@
 #!/bin/bash
 # BWA script
-#Params: 1.NAME 2.FOLDER 3.READS SIZE 4.EXISTING
+#Params: 1.NAME 2.FOLDER 3.REFNAME 4.IS PAIRED 5.READ1 6.READ2
 
-if [ -z "$4" ]
+READLENGTH=$(awk '{if(NR%4==2) {count++; bases += length} } END{print bases/count}' "${5}" )
+
+if [ "$READLENGTH" -gt 70 ]
 then
-  REFNAME="${2}"references/"${1}".fna
-  bwa index "${REFNAME}"
+    if [ "${4}" = "true" ]
+    then
+        bwa mem "${3}" "${5}" "${6}" > "${2}"bams/"${1}".sam
+    else
+        bwa mem "${3}" "${5}" > "${2}"bams/"${1}".sam
+    fi
 else
-  REFNAME="${2}"examples/"${4}".fna
-fi
-
-for ((i=1; i<=${3}; i++))
-do
-  READLENGTH=$(awk '{if(NR%4==2) {count++; bases += length} } END{print bases/count}' "${2}""${1}"$i.fastq )
- 
-  if (("${READLENGTH}" > 70))
-  then
-     bwa mem "${REFNAME}" "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sam 
-  else
-     bwa aln "${REFNAME}" "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sai; 
-     bwa samse "${REFNAME}" "${2}"bams/"${1}".sai "${2}""${1}"$i.fastq > "${2}"bams/"${1}".sam
-  fi
-
-  samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}"$i.bam
-  samtools index "${2}"bams/"${1}"$i.bam
-  rm "${2}"bams/"${1}".sam
-  rm "${2}"bams/"${1}".sai
-  rm "${2}""${1}"$i.fastq
-done
-
-if [ -z "$4" ]
-then
-  rm "${2}""${1}".fna.*
-  samtools faidx "${2}"references/"${1}".fna
+    if [ "${4}" = "true" ]
+    then
+        bwa aln "${3}" "${5}" > "${2}"bams/"${1}".sai; bwa aln "${3}" "${6}" > "${2}"bams/"${1}"2.sai;
+        bwa samse "${3}" "${2}"bams/"${1}".sai "${2}"bams/"${1}"2.sai "${5}" "${6}" > "${2}"bams/"${1}".sam
+        rm "${2}"bams/"${1}"2.sai;
+    else
+        bwa aln "${3}" "${5}" > "${2}"bams/"${1}".sai;
+        bwa samse "${3}" "${2}"bams/"${1}".sai "${5}" > "${2}"bams/"${1}".sam
+    fi
+    rm "${2}"bams/"${1}".sai;
 fi

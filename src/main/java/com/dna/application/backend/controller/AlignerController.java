@@ -6,7 +6,8 @@ import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.ReferenceExample;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.AlignmentService;
-import com.dna.application.backend.service.AlignerService;
+import com.dna.application.backend.service.BowtieService;
+import com.dna.application.backend.service.BwaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,10 @@ import java.util.List;
 public class AlignerController {
 
     @Autowired
-    private AlignerService alignerService;
+    private BowtieService bowtieService;
+
+    @Autowired
+    private BwaService bwaService;
 
     @Autowired
     private AlignmentService alignmentService;
@@ -45,8 +49,12 @@ public class AlignerController {
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     public AlignmentDto doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-
-        return alignerService.align(alignmentRequest, user);
+        if(alignmentRequest.getAligner() == Alignment.Aligner.BOWTIE)
+            return bowtieService.align(alignmentRequest, user);
+        if(alignmentRequest.getAligner() == Alignment.Aligner.BWA)
+            return bwaService.align(alignmentRequest, user);
+        else
+            throw new Exception("Not a valid aligner");
     }
 
     @PostMapping("/update")
