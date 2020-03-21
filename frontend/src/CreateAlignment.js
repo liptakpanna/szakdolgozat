@@ -13,7 +13,12 @@ class CreateAlignment extends React.Component{
         super(props);
         this.state = {
             referenceFile: null,
-            readFile: [],
+            readFile: [
+                {
+                    name: null,
+                    file: [],
+                }
+            ],
             name: '',
             description: '',
             visibility: 'PUBLIC',
@@ -21,7 +26,8 @@ class CreateAlignment extends React.Component{
             refType: "example",
             references: [],
             userAccess: [],
-            usernames: []
+            usernames: [],
+            trackCount: 1
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -32,25 +38,24 @@ class CreateAlignment extends React.Component{
         this.getUsernames();
     }
 
-    onChangeHandler(event, file , isMultiple){
-        if(isMultiple)
-            this.setState({
-                [file]: event.target.files,
-                loaded: 0,
-            });
-        else
-            this.setState({
-                [file]: event.target.files[0],
-                loaded: 0,
-            });
+    onChangeHandler(event, file){
+        this.setState({
+            [file]: event.target.files[0],
+            loaded: 0,
+        });
     }
 
     onClickHandler(event){
         let data = new FormData();
         if(this.state.referenceFile)
             data.append('referenceDna', this.state.referenceFile);
-        for (var x = 0; x < this.state.readFile.length; x++) {
-            data.append("readsForDna", this.state.readFile[x]);
+        for (let x = 0; x < this.state.readFile.length-1; x++) {
+            let isPaired = this.state.readFile[x].file.length === 2;
+            data.append("readsForDna[" + x + "].name", this.state.readFile[x].name);
+            data.append("readsForDna[" + x + "].isPaired", isPaired);
+            data.append("readsForDna[" + x + "].read1", this.state.readFile[x].file[0]);
+            if(isPaired)
+                data.append("readsForDna[" + x + "].read2", this.state.readFile[x].file[1]);
         }
         data.append("name", this.state.name);
         data.append("description", this.state.description);
@@ -102,7 +107,7 @@ class CreateAlignment extends React.Component{
             <div className="form-group">
                 <label className='col-form-label'>Reference DNA file</label>
                 <br/>
-                <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile", false)}/>
+                <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
             </div>
         );
     }
@@ -186,6 +191,42 @@ class CreateAlignment extends React.Component{
         }
     }
 
+    setValueForRead(property, value, index) {
+        let reads = [...this.state.readFile];
+        let read = {...reads[index]};
+        if(property === "name")
+            read.name = value;
+        else if (property === "file")
+            read.file = value;
+        reads[index] = read;
+        if(read.name !== null && read.file.length > 0 && index+1 === reads.length) {
+            this.setState({trackCount: this.state.trackCount+1});
+            let newRead = {...reads[index+1]};
+            newRead.name = null;
+            newRead.file = [];
+            reads[index+1] = newRead;
+        }
+        this.setState({readFile: reads});
+    }
+
+    addTrackInputs(){
+        var tracks = [];
+        for(let i=0; i < this.state.trackCount; i++) {
+            tracks.push(<div className="form-group pl-5" key={i}>
+                    <label className="mr-2">Track:</label>
+                    <input className="form-control-title" type="file" multiple onChange={ (e) => this.setValueForRead("file", e.target.files, i)}/>
+                    <InputField
+                        type='text'
+                        value={this.state.readFile[i].name ? this.state.readFile[i].name : ""}
+                        onChange= { (value) => this.setValueForRead("name", value, i)}
+                        label ='Name: '
+                        maxLength="20"
+                    />
+                </div>);
+        }
+        return tracks;
+    }
+
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return(
@@ -226,12 +267,11 @@ class CreateAlignment extends React.Component{
                             <label className="form-check-label" htmlFor="uploadRef">Upload reference dna</label>
                         </div>
                         {this.state.refType === "upload" ? this.showReferenceUpload() : this.showReferenceExample()}
-                        <div className="form-group">
-                            <label className='col-form-label'>Reads file</label>
-                            <br/>
-                            <input className="form-control-title" type="file" multiple onChange={ (e) => this.onChangeHandler(e, "readFile", true)}/>
-                        </div>
-
+                        <h4>Read files</h4>
+                        <p>Select one file for single end read, two for paired end reads</p>
+                        <form className="form-inline">
+                            {this.addTrackInputs()}
+                        </form>
                         <div className="form-group">
                             <label className='col-form-label'>Visibility</label>
                             <select 

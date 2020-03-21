@@ -3,6 +3,7 @@ package com.dna.application.backend.service;
 import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
+import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class AlignerService extends BaseAligner {
     private ReferenceRepository referenceRepository;
 
     @Autowired
+    private BamUrlRepository bamUrlRepository;
+
+    @Autowired
     private AlignmentService alignmentService;
 
     final private List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
@@ -49,24 +53,24 @@ public class AlignerService extends BaseAligner {
         ReferenceExample reference = null;
         if(referenceId != null){
             reference = referenceRepository.findById(referenceId).orElseThrow(() -> new EntityNotFoundException(referenceId.toString()));
-            String indexFile = folder+"/examples/"+reference.getFilename();
+            String indexFile = folder+"/examples/indexes/"+reference.getFilename();
             doAlignmentOnTracks(readTracks, filename, indexFile, true, alignerName);
         }
         else {
             saveFile(alignmentRequest.getReferenceDna(), folder+"references/"+filename+".fna");
-            runScript(folder+"/"+ alignerName + "_index_script", filename, folder);
+            runScript(folder+"/"+ alignerName.toLowerCase() + "_index_script", filename, folder);
             String indexFile = folder+filename;
 
             doAlignmentOnTracks(readTracks, filename, indexFile, false, alignerName);
         }
 
         Alignment alignment = Alignment.builder()
-                .aligner(Alignment.Aligner.BOWTIE)
+                .aligner(alignmentRequest.getAligner())
                 .name(filename)
                 .description(alignmentRequest.getDescription())
                 .owner(user)
                 .referenceUrl(reference==null ? resourceUrl+"/references/"+filename+".fna" : resourceUrl+"/examples/"+reference.getFilename()+".fna" )
-                .bamUrls(getBamUrls(resourceUrl, filename, readTracks))
+                .bamUrls(getBamUrls(resourceUrl, filename, readTracks, bamUrlRepository))
                 .visibility(alignmentRequest.getVisibility())
                 .build();
 
@@ -87,11 +91,11 @@ public class AlignerService extends BaseAligner {
             if (read.isPaired()) {
                 MultipartFile readFile2 = read.getRead1();
                 String read2 = saveFile(readFile2, folder + filename + fileNumber + "." + extension);
-                runScript(folder+"/" + alignerName +"_script", filename, folder, indexName, trackNumber, isExample, fastaExtensions.contains(extension),true, read1, read2);
+                runScript(folder+"/" + alignerName.toLowerCase() +"_script", filename, folder, indexName, trackNumber, isExample, fastaExtensions.contains(extension),true, read1, read2);
                 fileNumber++;
             }
             else{
-                runScript(folder+"/" + alignerName +"_script", filename, folder, indexName, trackNumber,isExample, fastaExtensions.contains(extension),false, read1, "");
+                runScript(folder+"/" + alignerName.toLowerCase() +"_script", filename, folder, indexName, trackNumber,isExample, fastaExtensions.contains(extension),false, read1, "");
             }
             trackNumber++;
         }

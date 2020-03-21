@@ -1,9 +1,10 @@
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/BamUrl.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/filter/JwtRequestFilter.java
-/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/BowtieService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/dto/AlignmentDto.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/JwtResponse.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserDetailsServiceImpl.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserRequest.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/ReadTrack.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/AlignmentService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/ReferenceExample.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/JwtAuthenticationController.java
@@ -27,4 +28,5 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/security/WebSecurityConfig.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/User.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/AlignerService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/UserController.java

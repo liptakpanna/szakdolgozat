@@ -4,6 +4,7 @@ import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.BamUrl;
 import com.dna.application.backend.model.ReadTrack;
 import com.dna.application.backend.model.User;
+import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,19 +62,6 @@ public class BaseAligner {
         return filename;
     }
 
-    static void saveFilesForAligner(MultipartFile referenceDna, Set<MultipartFile> reads, String folder, String filename){
-        if(referenceDna != null)
-            saveFile(referenceDna, folder+"references/"+filename + ".fna");
-        int index = 1;
-        if (reads != null)
-            for(MultipartFile read: reads){
-                saveFile(read, folder+filename + index + ".fastq");
-                index++;
-            }
-        else
-            log.error("NO READS");
-    }
-
     static void setUserAccessSet(List<String> usernameAccessList, UserRepository userRepository, Alignment alignment){
         if(usernameAccessList != null)
             for(String username: usernameAccessList) {
@@ -107,11 +95,13 @@ public class BaseAligner {
         log.warn(ans+error);
     }
 
-    static Set<BamUrl> getBamUrls(String resourceUrl, String filename, List<ReadTrack> tracks){
+    static Set<BamUrl> getBamUrls(String resourceUrl, String filename, List<ReadTrack> tracks, BamUrlRepository bamUrlRepository){
         Set<BamUrl> bamUrls = new HashSet<>();
-        for(int i = 1; i <= tracks.size(); i++){
-            bamUrls.add(new BamUrl(tracks.get(i).getName(),resourceUrl+"/bams/"+filename+i+".bam"));
+        for(int i = 0; i < tracks.size(); i++){
+            bamUrls.add(new BamUrl(tracks.get(i).getName(),resourceUrl+"/bams/"+filename+(i+1)+".bam"));
         }
+        bamUrlRepository.saveAll(bamUrls);
+        bamUrlRepository.flush();
         return bamUrls;
     }
 }

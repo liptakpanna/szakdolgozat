@@ -6,27 +6,27 @@ if [ "${7}" = "true" ]
 then
   if [ "${6}" = "true" ]
   then
-    bowtie -S "${3}" -f -1 "${2}""${8}" -2 "${2}""${9}" "${2}"bams/"${1}".sam
+    bowtie -S "${3}" -f -1 "${8}" -2 "${9}" "${2}"bams/"${1}".sam
   else
-    bowtie -S "${3}" -1 "${2}""${8}" -2 "${2}""${9}" "${2}"bams/"${1}".sam
+    bowtie -S "${3}" -1 "${8}" -2 "${9}" "${2}"bams/"${1}".sam
   fi
 else
   if [ "${6}" = "true" ]
   then
-    bowtie -S "${3}" -f "${2}""${8}" "${2}"bams/"${1}".sam
+    bowtie -S "${3}" -f "${8}" "${2}"bams/"${1}".sam
   else
-    bowtie -S "${3}" "${2}""${8}" "${2}"bams/"${1}".sam
+    bowtie -S "${3}" "${8}" "${2}"bams/"${1}".sam
   fi
 fi
 
 samtools sort "${2}"bams/"${1}".sam > "${2}"bams/"${1}""${4}".bam
 samtools index "${2}"bams/"${1}""${4}".bam
 rm "${2}"bams/"${1}".sam
-rm "${2}""${8}"
+rm "${8}"
 
 if [ "${7}" = "true" ]
 then
-  rm "${2}""${9}"
+  rm "${9}"
  echo
 fi
 

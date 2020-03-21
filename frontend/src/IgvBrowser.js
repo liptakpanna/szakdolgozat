@@ -26,10 +26,10 @@ class IgvBrowser extends Component {
       var tracksForIgv = [];
       for(var x = 0; x < this.props.location.state.item.bamUrls.length; x++) {
         tracksForIgv.push({
-          "url": this.props.location.state.item.bamUrls[x],
+          "url": this.props.location.state.item.bamUrls[x].url,
           indexed: true,
           format: "bam",
-          name: this.props.location.state.item.name + " read",
+          name: this.props.location.state.item.bamUrls[x].name,
           headers: {"Authorization": 'Bearer ' + localStorage.getItem("jwtToken")}
         });
       }

@@ -24,12 +24,8 @@ public class Alignment extends BaseEntityAudit {
 
     private String referenceUrl;
 
-    @ElementCollection
-    @CollectionTable(
-            name="bamUrls",
-            joinColumns=@JoinColumn(name="alignment_id")
-    )
-    @Column(name="bamUrl")
+    @OneToMany(mappedBy = "alignment", fetch = FetchType.EAGER)
+    @Fetch(value= FetchMode.SELECT)
     private Set<BamUrl> bamUrls;
 
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
