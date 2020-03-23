@@ -49,12 +49,15 @@ public class UserService {
         return new UsernameListResponse(usernames);
     }
 
-    public List<UserDto> deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
-        user.setStatus(User.Status.DELETED);
-        user.setAlignmentAccess(new HashSet<>());
-        userRepository.saveAndFlush(user);
-        return getUsers();
+    @Transactional
+    public Boolean deleteUser(Long id, User user) throws Exception {
+        if (user.getId().equals(id))
+            throw new Exception("You cannot delete yourself.");
+        User userForDelete = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        userForDelete.setStatus(User.Status.DELETED);
+        userForDelete.setAlignmentAccess(new HashSet<>());
+        userRepository.saveAndFlush(userForDelete);
+        return !userRepository.existsById(id);
     }
 
     @Transactional

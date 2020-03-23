@@ -59,8 +59,7 @@ class IgvBrowser extends Component {
   
     render() {
       if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-        return (
-          <div className="container">
+        return (<div className="container">
             <NavBar/>
             <div className="container">
               <div className="container">

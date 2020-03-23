@@ -11,7 +11,10 @@ export async function checkJwtToken() {
             let result = await response.json();
             console.log(result);
             if (result){
-                localStorage.setItem("isLoggedIn", true);
+                if(result.valid === "false")
+                    logout();
+                else
+                    localStorage.setItem("isLoggedIn", true);
                 return result.valid;
             }
             else {

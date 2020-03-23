@@ -10,6 +10,7 @@ import com.dna.application.backend.service.BowtieService;
 import com.dna.application.backend.service.BwaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +41,12 @@ public class AlignerController {
     @PostMapping("/delete")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     @ResponseBody
-    public List<AlignmentDto> deleteAlignment(@RequestParam Long id, Authentication authentication) throws Exception{
+    public ResponseEntity<Boolean> deleteAlignment(@RequestParam Long id, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
-        return alignmentService.deleteAlignment(id, user);
+        if (alignmentService.deleteAlignment(id, user))
+            return ResponseEntity.ok(true);
+        else
+            throw new Exception("Delete was not successful");
     }
 
     @PostMapping

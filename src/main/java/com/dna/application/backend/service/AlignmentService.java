@@ -79,7 +79,7 @@ public class AlignmentService {
         else throw new Exception("Alignment with name:" + name + " not found");
     }
 
-    public List<AlignmentDto> deleteAlignment(Long id, User user) throws Exception{
+    public Boolean deleteAlignment(Long id, User user) throws Exception{
         Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
 
         if (alignment.getOwner() != user && user.getRole() != User.Role.ADMIN)
@@ -91,7 +91,7 @@ public class AlignmentService {
         alignmentRepository.deleteById(id);
         alignmentRepository.flush();
 
-        return getAlignments(user);
+        return !alignmentRepository.existsById(id);
     }
 
     public AlignmentDto updateAlignment(AlignmentRequest alignmentRequest, User user) throws Exception{

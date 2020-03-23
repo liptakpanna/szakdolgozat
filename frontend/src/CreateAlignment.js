@@ -17,6 +17,10 @@ class CreateAlignment extends React.Component{
                 {
                     name: null,
                     file: [],
+                    radio: "specific",
+                    specific: 1,
+                    mismatch: 2,
+                    penalty: [4,6,1]
                 }
             ],
             name: '',
@@ -27,7 +31,8 @@ class CreateAlignment extends React.Component{
             references: [],
             userAccess: [],
             usernames: [],
-            trackCount: 1
+            trackCount: 1,
+            aligner: this.props.location.state.aligner ? this.props.location.state.aligner : "Bowtie",
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -56,10 +61,16 @@ class CreateAlignment extends React.Component{
             data.append("readsForDna[" + x + "].read1", this.state.readFile[x].file[0]);
             if(isPaired)
                 data.append("readsForDna[" + x + "].read2", this.state.readFile[x].file[1]);
+            if(this.state.aligner === "Bowtie") {
+                data.append("readsForDna[" + x + "].validCount", this.state.readFile[x].radio !== "specific" ? this.state.readFile[x].radio : this.state.readFile[x].specific );
+                data.append("readsForDna[" + x + "].mismatch", this.state.readFile[x].mismatch);
+            }
+            if(this.state.aligner ==="Bwa")
+                data.append("readsForDna[" + x + "].penalties", this.state.readFile[x].penalty);
         }
         data.append("name", this.state.name);
         data.append("description", this.state.description);
-        data.append("aligner", this.props.location.state.aligner.toUpperCase());
+        data.append("aligner", this.state.aligner.toUpperCase());
         data.append("visibility", this.state.visibility);
         data.append("usernameAccessList", this.state.userAccess);
         if(this.state.referencId != null)
@@ -198,33 +209,146 @@ class CreateAlignment extends React.Component{
             read.name = value;
         else if (property === "file")
             read.file = value;
+        else if (property === "radio") {
+            if(value === " --best")
+                read.radio += value;
+            else
+                read.radio = value;
+        }
+        else if (property === "specific")
+            read.specific = value;
+        else if (property === "mismatch")
+            read.mismatch = value;
+        else if(property === "penaltyMis")
+            read.penalty[0] = value;
+        else if(property === "penaltyGapOpen")
+            read.penalty[1] = value;
+        else if(property === "penaltyGapExt")
+            read.penalty[2] = value;
         reads[index] = read;
         if(read.name !== null && read.file.length > 0 && index+1 === reads.length) {
             this.setState({trackCount: this.state.trackCount+1});
             let newRead = {...reads[index+1]};
             newRead.name = null;
             newRead.file = [];
+            newRead.specific = 1;
+            newRead.radio = "specific";
+            newRead.mismatch = 2;
+            newRead.penalty = [4,6,1];
             reads[index+1] = newRead;
         }
         this.setState({readFile: reads});
     }
 
+    addOptions(i){
+        if(this.state.aligner === "Bowtie") {
+            return(<>
+                <td> 
+                <div className="form-check-inline">
+                    <input className="form-check-input" type="radio" name={"inlineRadioOptions"+i} 
+                        checked={this.state.readFile[i].radio !== "specific"} 
+                        value="all"
+                        onChange={(e) => this.setValueForRead("radio", e.currentTarget.value, i)}/>
+                    <label className="form-check-label mr-2">all</label> 
+                    <input type="checkbox" className="form-check-input" value=" --best" name={"inlineCheckBox"+i}
+                        onChange={(e) => this.setValueForRead("radio", e.currentTarget.value, i)}
+                        disabled={this.state.readFile[i].radio === "specific"}
+                        />
+                    <label className="form-check-label">best-to-worst</label>
+                </div>
+                <div className="form-check-inline">
+                    <input className="form-check-input" type="radio" name={"inlineRadioOptions"+i} 
+                        checked={this.state.readFile[i].radio === "specific"} 
+                        value="specific"
+                        onChange={(e) => this.setValueForRead("radio", e.currentTarget.value, i)}/>
+                    <label className="form-check-label mr-2">number: </label>
+                    <input type="number" min="1" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].specific} 
+                        onChange= { (e) => this.setValueForRead("specific", e.target.value, i)}
+                        disabled={this.state.readFile[i].radio !== "specific"}
+                        /> 
+                </div>
+                </td>
+                <td>
+                    <input type="number" min="0" max="3" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].mismatch} 
+                        onChange= { (e) => this.setValueForRead("mismatch", e.target.value, i)}
+                    /> 
+                </td>
+                </>
+            )
+        }
+        else if(this.state.aligner === "Bwa") {
+            return(<>
+                <td data-toogle="tooltip" data-placement="top" title="Note: if your reads are <70bp the default values are: 3, 11, 4">
+                    <input type="number" min="0" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].penalty[0]} 
+                        onChange= { (e) => this.setValueForRead("penaltyMis", e.target.value, i)}
+                    /> 
+                </td>
+                <td data-toogle="tooltip" data-placement="top" title="Note: if your reads are <70bp the default values are: 3, 11, 4">
+                    <input type="number" min="0" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].penalty[1]} 
+                        onChange= { (e) => this.setValueForRead("penaltyGapOpen", e.target.value, i)}
+                    /> 
+                </td>
+                <td data-toogle="tooltip" data-placement="top" title="Note: if your reads are <70bp the default values are: 3, 11, 4">
+                    <input type="number" min="0" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].penalty[2]} 
+                        onChange= { (e) => this.setValueForRead("penaltyGapExt", e.target.value, i)}
+                    /> 
+                </td>
+            </>);
+        }
+    }
+
+    addOptionNames(){
+        if(this.state.aligner==="Bowtie") {
+            return(<>
+            <th scope="col">Report valid alignments</th>
+            <th scope="col">Most mismatches(0-3)</th>
+            </>);
+        }
+        else if(this.state.aligner ==="Bwa") {
+            return(<>
+                <th scope="col">Mismatch penalty</th>
+                <th scope="col">Gap open penalty</th>
+                <th scope="col">Gap extension penalty</th>
+                </>);
+        }
+    }
+
     addTrackInputs(){
         var tracks = [];
         for(let i=0; i < this.state.trackCount; i++) {
-            tracks.push(<div className="form-group pl-5" key={i}>
-                    <label className="mr-2">Track:</label>
-                    <input className="form-control-title" type="file" multiple onChange={ (e) => this.setValueForRead("file", e.target.files, i)}/>
-                    <InputField
-                        type='text'
+            tracks.push(<tr 
+                key={i} >
+                <th>{i+1}</th>
+                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" multiple onChange={ (e) => this.setValueForRead("file", e.target.files, i)}/> </td>
+                <td> <input className="form-control"
+                        type='text' style={{"width":"120px"}}
                         value={this.state.readFile[i].name ? this.state.readFile[i].name : ""}
-                        onChange= { (value) => this.setValueForRead("name", value, i)}
-                        label ='Name: '
-                        maxLength="20"
-                    />
-                </div>);
+                        onChange= { (e) => this.setValueForRead("name", e.target.value, i)}
+                        placeholder ='Name'
+                        maxLength="12"
+                        /> 
+                </td>
+                {this.addOptions(i)}
+            </tr>);
         }
-        return tracks;
+        return(<table className="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Track</th>
+                        <th scope="col">Files</th>
+                        <th scope="col">Name</th>
+                        {this.addOptionNames()}
+                    </tr>
+                </thead>
+                <tbody>
+                {tracks}
+                </tbody>
+             </table>);
     }
 
     render() {
@@ -237,7 +361,7 @@ class CreateAlignment extends React.Component{
                             where="/alignments"
                             hist={this.props.history}
                         />
-                        <h1> Create new alignment with {this.props.location.state.aligner}</h1>
+                        <h1> Create new alignment with {this.state.aligner}</h1>
                         <InputField
                             type='text'
                             value={this.state.name}
@@ -269,9 +393,9 @@ class CreateAlignment extends React.Component{
                         {this.state.refType === "upload" ? this.showReferenceUpload() : this.showReferenceExample()}
                         <h4>Read files</h4>
                         <p>Select one file for single end read, two for paired end reads</p>
-                        <form className="form-inline">
+                        <div className="container table-responsive-lg">
                             {this.addTrackInputs()}
-                        </form>
+                        </div>
                         <div className="form-group">
                             <label className='col-form-label'>Visibility</label>
                             <select 
