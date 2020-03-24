@@ -33,6 +33,8 @@ class CreateAlignment extends React.Component{
             usernames: [],
             trackCount: 1,
             aligner: this.props.location.state.aligner ? this.props.location.state.aligner : "Bowtie",
+            show: false,
+            errormessage: null
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -207,8 +209,16 @@ class CreateAlignment extends React.Component{
         let read = {...reads[index]};
         if(property === "name")
             read.name = value;
-        else if (property === "file")
-            read.file = value;
+        else if (property === "file") {
+            if(value.length > 2) {
+                this.setState({errormessage: "Maximum two files per track"})   
+                this.setState({show:true});
+            }
+            else {
+                this.setState({show:false});
+                read.file = value;
+            } 
+        }
         else if (property === "radio") {
             if(value === " --best")
                 read.radio += value;
@@ -324,9 +334,9 @@ class CreateAlignment extends React.Component{
             tracks.push(<tr 
                 key={i} >
                 <th>{i+1}</th>
-                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" multiple onChange={ (e) => this.setValueForRead("file", e.target.files, i)}/> </td>
+                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" required multiple onChange={ (e) => {e.preventDefault(); this.setValueForRead("file", e.target.files, i, e)}}/> </td>
                 <td> <input className="form-control"
-                        type='text' style={{"width":"120px"}}
+                        type='text' style={{"width":"120px"}} required
                         value={this.state.readFile[i].name ? this.state.readFile[i].name : ""}
                         onChange= { (e) => this.setValueForRead("name", e.target.value, i)}
                         placeholder ='Name'
@@ -367,7 +377,8 @@ class CreateAlignment extends React.Component{
                             value={this.state.name}
                             onChange= { (value) => this.setState({name: value})}
                             label ='Name'
-                            maxLength="20"
+                            maxLength="20"                        
+                            required={true}
                         />
                         <div className="form-group">
                             <label >Description</label>
@@ -415,13 +426,16 @@ class CreateAlignment extends React.Component{
                             type='btn-outline-secondary btn-lg'
                             onClick={ (e) => this.onClickHandler(e)}
                         />
+
+                    {this.state.show ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+
                 </div>
 
             );
         }
         else { 
             return(
-                <Redirect to="login" />
+                <Redirect to="/login" />
             );
         }
     }

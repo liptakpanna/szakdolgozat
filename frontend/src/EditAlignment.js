@@ -219,7 +219,7 @@ class EditUser extends React.Component{
         }
             else { 
                 return(
-                    <Redirect to="login" />
+                    <Redirect to="/login" />
                 );
             }
     }

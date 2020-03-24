@@ -14,15 +14,13 @@ class AdminAddUser extends React.Component{
             password: '',
             email: '',
             role: 'GUEST',
-            buttonDisabled: true,
+            show: false,
+            errormessage: null
         }
     }
 
     setInputValue(property, value) {
         value = value.trim();
-        if (value.length > 12) {
-            return;
-        }
         this.setState({
             [property]: value
         })
@@ -35,6 +33,7 @@ class AdminAddUser extends React.Component{
     }
 
     async addUser() {
+        if (!this.state.username || !this.state.password || !this.state.email) {return;}
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/users/add', {
                 method: 'post',
@@ -54,11 +53,17 @@ class AdminAddUser extends React.Component{
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.props.history.push('/users')
+                if(result.status === 500) {
+                    this.setState({errormessage: "Username already in use"})   
+                    this.setState({show:true});
+                }else{
+                    console.log(result)
+                    this.props.history.push('/users')    
+                }
             }
         }
         catch(e) {
+            console.log("megint mas: ");
             console.log(e)
         }
     }
@@ -73,6 +78,7 @@ class AdminAddUser extends React.Component{
                         where="/users"
                         hist={this.props.history}
                     />
+                    <form>
                     <h1>Add New User</h1>
                     <InputField
                         type='text'
@@ -80,6 +86,7 @@ class AdminAddUser extends React.Component{
                         value={this.state.username ? this.state.username : ''}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
+                        required={true}
                     />
                     <InputField
                         type='password'
@@ -87,6 +94,7 @@ class AdminAddUser extends React.Component{
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
+                        required={true}
                     />
                     <InputField
                         type='text'
@@ -94,7 +102,10 @@ class AdminAddUser extends React.Component{
                         value={this.state.email ? this.state.email : ''}
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
+                        maxLength="50"
+                        required={true}
                     />
+                    
                     <div className="form-group">
                         <label className='col-form-label'>Role</label>
                         <select 
@@ -111,14 +122,16 @@ class AdminAddUser extends React.Component{
                         text='Add User'
                         type='btn-outline-secondary'
                         onClick={ () => this.addUser() }                        
-                    />
+                    />  
+                    </form>
                 </div>
+                {this.state.show ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
             );
             }
             else { 
                 return(
-                    <Redirect to="login" />
+                    <Redirect to="/login" />
                 );
             }
         }

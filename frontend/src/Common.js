@@ -6,7 +6,11 @@ export async function checkJwtToken() {
                 headers: {
                     "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
                 }
-            });
+            })
+            .catch(error =>  {
+                logout();
+                console.log("Cannot connect to server");
+             });
 
             let result = await response.json();
             console.log(result);

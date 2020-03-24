@@ -16,7 +16,8 @@ class EditUser extends React.Component{
             item: this.props.location.state.item,
             isAdmin: this.props.location.state.isAdmin,
             show: false,
-            showModified: false
+            showError: false,
+            errormessage: "There are no modifications"
         }
     }
 
@@ -26,15 +27,15 @@ class EditUser extends React.Component{
 
     setInputValue(property, value) {
         value = value.trim();
-        if(this.state.showModified) {
-            this.setState({showModified: false})
+        if(this.state.showError) {
+            this.setState({showError: false})
         }
         this.setState({ item: { ...this.state.item, [property]: value} });
     }
 
     handleDropdownChange(event) {
-        if(this.state.showModified) {
-            this.setState({showModified: false})
+        if(this.state.showError) {
+            this.setState({showError: false})
         }
         this.setState({ item: { ...this.state.item, role: event.target.value} });
     }
@@ -83,14 +84,22 @@ class EditUser extends React.Component{
     
                 let result = await response.json();
                 if(result){
-                    console.log(result);
-                    this.props.history.push(this.props.location.state.origin)
+                    if(result.status === 500) {
+                        this.setState({errormessage: "Username already in use"})   
+                        this.setState({showError:true});
+                    } else {
+                        console.log(result);
+                        this.props.history.push(this.props.location.state.origin)
+                    }
                 }
             }
             catch(e) {
                 console.log(e)
             }
-        } else this.setState({showModified: true});
+        } else{
+            this.setState({showError: true});
+            this.setState({errormessage: "There are no modifications."})   
+        } 
     }
 
     async deleteUser() {
@@ -203,14 +212,14 @@ class EditUser extends React.Component{
                         />
                         {this.addDeleteButton()}
                     </div>
-                    { this.state.showModified ? <div className="alert alert-primary mt-3" role="alert">There are no modifications</div> : null }
+                    { this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
                 </div>
             );            
         }
             else { 
                 return(
-                    <Redirect to="login" />
+                    <Redirect to="/login" />
                 );
             }
     }

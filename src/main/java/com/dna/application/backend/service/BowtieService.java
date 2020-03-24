@@ -52,4 +52,9 @@ public class BowtieService extends AbstractAligner {
             return folder+"/"+filename;
         }
     }
+
+    @Override
+    protected void deleteIndex(String filename) throws Exception {
+        runCommand(new String[]{"rm", folder + filename + ".*.ebwt"});
+    }
 }

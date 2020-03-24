@@ -13,6 +13,7 @@ class InputField extends React.Component{
                     value={this.props.value}
                     onChange={ (e) => this.props.onChange(e.target.value)}
                     maxLength={this.props.maxLength ? this.props.maxLength : "12"}
+                    required={this.props.required ? this.props.required : false}
                 />
             </div>
         );

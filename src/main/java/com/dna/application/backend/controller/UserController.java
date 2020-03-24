@@ -76,8 +76,12 @@ public class UserController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    public List<UserDto> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
+    public ResponseEntity<Boolean> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
-        return  userService.addUser(userRequest, user.getUsername());
+        try{
+            return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
+        } catch(Exception e) {
+            throw new Exception("USERNAME_IN_USE",e);
+        }
     }
 }

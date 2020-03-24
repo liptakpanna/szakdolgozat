@@ -64,6 +64,8 @@ public class UserService {
     public UserDto updateUser(UserRequest userRequest, String updater) throws Exception{
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
+        if(userRepository.findByUsername(userRequest.getUsername()) != null)
+            throw new Exception("Username already in use");
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
@@ -88,13 +90,13 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
-    public List<UserDto> addUser(UserRequest userRequest, String admin) throws Exception{
+    public boolean addUser(UserRequest userRequest, String admin) throws Exception{
         if (userRequest.getPassword().equals(""))
-            throw new Exception("Cannot save this user: Password required");
+            throw new Exception("Password required");
         if (userRequest.getUsername().length() > 12)
-            throw new Exception("Cannot save this user: Username too long");
+            throw new Exception("Username too long");
         if(userRepository.findByUsername(userRequest.getUsername()) != null)
-            throw new Exception("Cannot save this user: Username already in use");
+            throw new Exception("Username already in use");
 
         User newUser = modelMapper.map(userRequest , User.class);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -103,6 +105,6 @@ public class UserService {
 
         log.warn("{}", newUser);
         userRepository.saveAndFlush(newUser);
-        return getUsers();
+        return userRepository.existsByUsername(userRequest.getUsername());
     }
 }

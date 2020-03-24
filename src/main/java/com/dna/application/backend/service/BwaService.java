@@ -41,4 +41,9 @@ public class BwaService extends AbstractAligner {
             return folder+"references/"+filename+".fna";
         }
     }
+
+    @Override
+    protected void deleteIndex(String filename) throws Exception {
+        runCommand(new String[]{"find", folder, "-name", "\""+filename+".fna.*\"", "-not", "-name" ,"\""+filename+".fna.fai\"", "-exec", "rm", "{}", "+"});
+    }
 }

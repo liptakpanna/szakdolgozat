@@ -9,6 +9,7 @@ import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
+@Service
 public abstract class AbstractAligner {
     @Autowired
     private AlignmentRepository alignmentRepository;
@@ -52,6 +54,8 @@ public abstract class AbstractAligner {
     protected abstract List<String> doAlignmentOnTrack(ReadTrack read, String filename, String indexName) throws Exception;
 
     protected abstract String doIndex(boolean isExample, String filename) throws Exception;
+
+    protected abstract void deleteIndex(String filename) throws Exception;
 
     @Transactional
     public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
@@ -170,5 +174,6 @@ public abstract class AbstractAligner {
             trackCount++;
             deleteReadFiles(readNames);
         }
+        deleteIndex(filename);
     }
 }

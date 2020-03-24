@@ -35,8 +35,10 @@ public class TestService {
         List<User> users = new ArrayList<>();
         //users.add(new User("admin", "admin@example.com", passwordEncoder.encode("1234"), User.Role.ADMIN,"",  User.Status.ENABLED, new HashSet<>(), new HashSet<>()));
         //users.add(new User("guest", "guest@example.com", passwordEncoder.encode("1234"), User.Role.GUEST, null));
-        referenceRepository.saveAndFlush(new ReferenceExample("Ecoli", "Choose this for Ecoli","ecoli"));
-        referenceRepository.saveAndFlush(new ReferenceExample("Test", "DONT CHOOSE THIS","kamu"));
+        //referenceRepository.saveAndFlush(new ReferenceExample("Ecoli", "Choose this for Ecoli","ecoli"));
+        //referenceRepository.saveAndFlush(new ReferenceExample("Test", "DONT CHOOSE THIS","kamu"));
+        //referenceRepository.saveAndFlush(new ReferenceExample("Rat", "Choose this for Rat","rat"));
+        referenceRepository.deleteById(67L);
         try {
             userRepository.saveAll(users);
         } catch (Exception e) {

@@ -102,7 +102,7 @@ class IgvBrowser extends Component {
       }
       else { 
           return(
-              <Redirect to="login" />
+              <Redirect to="/login" />
           );
       }
     }

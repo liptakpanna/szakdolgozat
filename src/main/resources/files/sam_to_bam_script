@@ -9,6 +9,4 @@ rm "${2}"bams/"${1}".sam
 if [ "${4}" = "false" ]
 then
   samtools faidx "${2}"references/"${1}".fna
-  rm "${2}""${1}".*.ebwt
-  rm "${2}""${1}".fna.*
 fi

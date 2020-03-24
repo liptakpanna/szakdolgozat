@@ -17,7 +17,7 @@ class Home extends React.Component{
         }
         else { 
             return(
-                <Redirect to="login" />
+                <Redirect to="/login" />
             );
         }
     }
