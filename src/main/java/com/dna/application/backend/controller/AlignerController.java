@@ -1,6 +1,7 @@
 package com.dna.application.backend.controller;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.ReferenceExample;
@@ -51,21 +52,30 @@ public class AlignerController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public AlignmentDto doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<Boolean> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        if(alignmentRequest.getAligner() == Alignment.Aligner.BOWTIE)
-            return bowtieService.align(alignmentRequest, user);
-        if(alignmentRequest.getAligner() == Alignment.Aligner.BWA)
-            return bwaService.align(alignmentRequest, user);
-        else
-            throw new Exception("Not a valid aligner");
+        try {
+            if(alignmentRequest.getAligner() == Alignment.Aligner.BOWTIE)
+                return ResponseEntity.ok(bowtieService.align(alignmentRequest, user));
+            if(alignmentRequest.getAligner() == Alignment.Aligner.BWA)
+                return ResponseEntity.ok(bwaService.align(alignmentRequest, user));
+            else
+                throw new Exception("Not a valid aligner");
+        } catch (EntityNameAlreadyExistsException e) {
+            throw new Exception("Alignment name already exists.");
+        }
+
     }
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public AlignmentDto updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<AlignmentDto> updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        return alignmentService.updateAlignment(alignmentRequest, user);
+        try {
+            return ResponseEntity.ok(alignmentService.updateAlignment(alignmentRequest, user));
+        } catch (EntityNameAlreadyExistsException e){
+            throw new Exception("Alignment name already exists.");
+        }
     }
 
     @GetMapping("/referencelist")

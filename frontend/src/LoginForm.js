@@ -85,7 +85,7 @@ class LoginForm extends React.Component{
     render() {
         return(
             <div className="container p-5" style={{backgroundColor: "#e3f2fd"}} >
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <h1>
                         Welcome!
                     </h1>

@@ -1,6 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.UserDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
@@ -61,11 +62,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(UserRequest userRequest, String updater) throws Exception{
+    public boolean updateUser(UserRequest userRequest, String updater) throws Exception{
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
         if(userRepository.findByUsername(userRequest.getUsername()) != null)
-            throw new Exception("Username already in use");
+            throw new EntityNameAlreadyExistsException();
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
@@ -82,7 +83,7 @@ public class UserService {
         user.setUpdatedBy(updater);
         userRepository.saveAndFlush(user);
 
-        return modelMapper.map(user, UserDto.class);
+        return ((userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()))).getUpdatedBy().equals(updater));
     }
 
     public UserDto getUserDto(String username) {
@@ -96,7 +97,7 @@ public class UserService {
         if (userRequest.getUsername().length() > 12)
             throw new Exception("Username too long");
         if(userRepository.findByUsername(userRequest.getUsername()) != null)
-            throw new Exception("Username already in use");
+            throw new EntityNameAlreadyExistsException();
 
         User newUser = modelMapper.map(userRequest , User.class);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));

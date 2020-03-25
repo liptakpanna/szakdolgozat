@@ -1,6 +1,7 @@
 package com.dna.application.backend.controller;
 
 import com.dna.application.backend.dto.UserDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.model.UsernameListResponse;
@@ -49,20 +50,28 @@ public class UserController {
 
     @PostMapping("/me/update")
     @ResponseBody
-    public UserDto updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<Boolean> updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         userRequest.setId(user.getId());
         if (userRequest.getRole() != null) throw new Exception("You cannot change your role");
         if (userRequest.getStatus() != null) throw new Exception("You cannot change your status");
-        return userService.updateUser(userRequest, user.getUsername());
+        try{
+            return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
+        } catch(EntityNameAlreadyExistsException e) {
+            throw new Exception("Username already exists",e);
+        }
     }
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    public UserDto updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        return userService.updateUser(userRequest, user.getUsername());
+        try{
+            return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
+        } catch(EntityNameAlreadyExistsException e) {
+            throw new Exception("Username already exists",e);
+        }
     }
 
     @GetMapping("/me")
@@ -80,8 +89,8 @@ public class UserController {
         User user = (User)authentication.getPrincipal();
         try{
             return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
-        } catch(Exception e) {
-            throw new Exception("USERNAME_IN_USE",e);
+        } catch(EntityNameAlreadyExistsException e) {
+            throw new Exception("Username already exists",e);
         }
     }
 }

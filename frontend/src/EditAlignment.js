@@ -36,7 +36,7 @@ class EditUser extends React.Component{
     }
 
     replacer(key, value) {
-        if (value === null || value ==='')
+        if (value === null || value ==='' || this.state.item.key === value)
             return undefined;
         else
             return value;
@@ -171,47 +171,50 @@ class EditUser extends React.Component{
                             item = {this.state.item}
                             hist={this.props.history}
                         />
-                        <h1>Edit Alignment</h1>
-                        {this.addModal()}
-                        <InputField
-                            type='text'
-                            value={this.state.item.name}
-                            onChange= { (value) => this.setInputValue('name', value)}
-                            label ='Name'
-                        />
-                        <div className="form-group">
-                            <label >Description</label>
-                            <textarea 
-                                value={this.state.item.description} 
-                                className="form-control" 
-                                rows="4" maxLength='1000' 
-                                onChange= { (event) => this.setInputValue('description', event.target.value)}>
-                            </textarea>
-                        </div>
-                        <div className="form-group">
-                            <label className='col-form-label'>Visibility</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.item.visibility}
-                                onChange={this.handleDropdownChange.bind(this)}>
-                                <option value="PUBLIC">Public</option>
-                                <option value="PRIVATE">Private</option>
-                                <option value="TOPSECRET">Top Secret</option>
-                            </select>
-                        </div>
-                        {this.addUserAccessList()}
-                        <div className="btn-toolbar justify-content-between" role="toolbar">
-                            <SubmitButton
-                                text='Edit Alignment'
-                                type='btn-outline-secondary btn-lg'
-                                onClick={ () => this.editAlignment() }                        
+                        <form onSubmit={(e) => e.preventDefault()}>
+                            <h1>Edit Alignment</h1>
+                            {this.addModal()}
+                            <InputField
+                                type='text'
+                                value={this.state.item.name}
+                                onChange= { (value) => this.setInputValue('name', value)}
+                                label ='Name'
+                                required={true}
                             />
-                            <SubmitButton
-                                text='Delete Alignment'
-                                type='btn-outline-danger btn-lg'
-                                onClick={ () => {this.handleShow()} }                       
-                            />
-                        </div>
+                            <div className="form-group">
+                                <label >Description</label>
+                                <textarea 
+                                    value={this.state.item.description} 
+                                    className="form-control" 
+                                    rows="4" maxLength='1000' 
+                                    onChange= { (event) => this.setInputValue('description', event.target.value)}>
+                                </textarea>
+                            </div>
+                            <div className="form-group">
+                                <label className='col-form-label'>Visibility</label>
+                                <select 
+                                    className="form-control"
+                                    value={this.state.item.visibility}
+                                    onChange={this.handleDropdownChange.bind(this)}>
+                                    <option value="PUBLIC">Public</option>
+                                    <option value="PRIVATE">Private</option>
+                                    <option value="TOPSECRET">Top Secret</option>
+                                </select>
+                            </div>
+                            {this.addUserAccessList()}
+                            <div className="btn-toolbar justify-content-between" role="toolbar">
+                                <SubmitButton
+                                    text='Edit Alignment'
+                                    type='btn-outline-secondary btn-lg'
+                                    onClick={ () => this.editAlignment() }                        
+                                />
+                                <SubmitButton
+                                    text='Delete Alignment'
+                                    type='btn-outline-danger btn-lg'
+                                    onClick={ () => {this.handleShow()} }                       
+                                />
+                            </div>
+                        </form>
                         { this.state.showModified ? <div className="alert alert-primary mt-3" role="alert">There are no modifications</div> : null }
                     </div>
                     </div>

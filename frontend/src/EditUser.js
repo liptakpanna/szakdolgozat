@@ -19,6 +19,7 @@ class EditUser extends React.Component{
             showError: false,
             errormessage: "There are no modifications"
         }
+        this.replacer = this.replacer.bind(this);
     }
 
     componentDidMount(){
@@ -52,13 +53,15 @@ class EditUser extends React.Component{
     }
 
     async editUser() {
+        if (!this.state.item.username || !this.state.item.email) {return;}
         if(this.isChanged()) {
-            let url, body;
+            let url, body, username;
+            username = this.state.item.username === this.props.location.state.item.username ? null : this.state.item.username;
             if (this.state.isAdmin) {
                 url = process.env.REACT_APP_API_URL + '/users/update';
                 body = JSON.stringify({
                     id: this.props.location.state.item.id,
-                    username: this.state.item.username,
+                    username: username,
                     password: this.state.item.password,
                     email: this.state.item.email,
                     role: this.state.item.role
@@ -66,7 +69,7 @@ class EditUser extends React.Component{
             } else {
                 url = process.env.REACT_APP_API_URL + '/users/me/update';
                 body = JSON.stringify({
-                    username: this.state.item.username,
+                    username: username,
                     password: this.state.item.password,
                     email: this.state.item.email
                 }, this.replacer);
@@ -85,7 +88,7 @@ class EditUser extends React.Component{
                 let result = await response.json();
                 if(result){
                     if(result.status === 500) {
-                        this.setState({errormessage: "Username already in use"})   
+                        this.setState({errormessage: result.message})   
                         this.setState({showError:true});
                     } else {
                         console.log(result);
@@ -110,7 +113,6 @@ class EditUser extends React.Component{
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
-
                 })
             });
 
@@ -184,34 +186,40 @@ class EditUser extends React.Component{
                     />
                     <h1>Edit User</h1>
                     {this.addModal()}
-                    <InputField
-                        type='text'
-                        value={this.state.item.username}
-                        onChange= { (value) => this.setInputValue('username', value)}
-                        label ='Username'
-                    />
-                    <InputField
-                        type='password'
-                        placeholder='Enter new password'
-                        value={this.state.item.password ? this.state.item.password : ''}
-                        onChange= { (value) => this.setInputValue('password', value)}
-                        label ='Password'
-                    />
-                    <InputField
-                        type='text'
-                        value={this.state.item.email}
-                        onChange= { (value) => this.setInputValue('email', value)}
-                        label ='Email'
-                    />
-                    {this.addRoleDropdown()}
-                    <div className="btn-toolbar justify-content-between" role="toolbar">
-                        <SubmitButton
-                            text='Edit User'
-                            type='btn-outline-secondary btn-lg'
-                            onClick={ () => this.editUser() }                        
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <InputField
+                            type='text'
+                            value={this.state.item.username}
+                            onChange= { (value) => this.setInputValue('username', value)}
+                            label ='Username'
+                            placeholder='Enter new username'
+                            required={true}
                         />
-                        {this.addDeleteButton()}
-                    </div>
+                        <InputField
+                            type='password'
+                            placeholder='Enter new password'
+                            value={this.state.item.password ? this.state.item.password : ''}
+                            onChange= { (value) => this.setInputValue('password', value)}
+                            label ='Password'
+                        />
+                        <InputField
+                            type='text'
+                            value={this.state.item.email}
+                            onChange= { (value) => this.setInputValue('email', value)}
+                            label ='Email'
+                            placeholder='Enter new email'
+                            required={true}
+                        />
+                        {this.addRoleDropdown()}
+                        <div className="btn-toolbar justify-content-between" role="toolbar">
+                            <SubmitButton
+                                text='Edit User'
+                                type='btn-outline-secondary btn-lg'
+                                onClick={ () => this.editUser() }                        
+                            />
+                            {this.addDeleteButton()}
+                        </div>
+                    </form>
                     { this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
                 </div>

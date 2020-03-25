@@ -120,7 +120,7 @@ class CreateAlignment extends React.Component{
             <div className="form-group">
                 <label className='col-form-label'>Reference DNA file</label>
                 <br/>
-                <input className="form-control-title" type="file" onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
+                <input className="form-control-title" type="file" required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
             </div>
         );
     }
@@ -371,62 +371,63 @@ class CreateAlignment extends React.Component{
                             where="/alignments"
                             hist={this.props.history}
                         />
-                        <h1> Create new alignment with {this.state.aligner}</h1>
-                        <InputField
-                            type='text'
-                            value={this.state.name}
-                            onChange= { (value) => this.setState({name: value})}
-                            label ='Name'
-                            maxLength="20"                        
-                            required={true}
-                        />
-                        <div className="form-group">
-                            <label >Description</label>
-                            <textarea 
-                                value={this.state.description} 
-                                className="form-control" 
-                                rows="4" maxLength='1000' 
-                                onChange= { (event) => this.setState({description: event.target.value})}>
-                            </textarea>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="radio" name="inlineRadioOptions" value="example" id="exampleRef"
-                                checked={this.state.refType === "example"}
+                        <form onSubmit={(e) => e.preventDefault()}>
+                            <h1> Create new alignment with {this.state.aligner}</h1>
+                            <InputField
+                                type='text'
+                                value={this.state.name}
+                                onChange= { (value) => this.setState({name: value})}
+                                label ='Name'
+                                maxLength="20"                        
+                                required={true}
+                            />
+                            <div className="form-group">
+                                <label >Description</label>
+                                <textarea 
+                                    value={this.state.description} 
+                                    className="form-control" 
+                                    rows="4" maxLength='1000' 
+                                    onChange= { (event) => this.setState({description: event.target.value})}>
+                                </textarea>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="radio" name="inlineRadioOptions" value="example" id="exampleRef"
+                                    checked={this.state.refType === "example"}
+                                    onChange={(e) => this.onRadioChange(e)}/>
+                                <label className="form-check-label" htmlFor="exampleRef">Choose reference dna</label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="radio" name="inlineRadioOptions" value="upload" id="uploadRef"
+                                checked={this.state.refType === "upload"}
                                 onChange={(e) => this.onRadioChange(e)}/>
-                            <label className="form-check-label" htmlFor="exampleRef">Choose reference dna</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="radio" name="inlineRadioOptions" value="upload" id="uploadRef"
-                            checked={this.state.refType === "upload"}
-                            onChange={(e) => this.onRadioChange(e)}/>
-                            <label className="form-check-label" htmlFor="uploadRef">Upload reference dna</label>
-                        </div>
-                        {this.state.refType === "upload" ? this.showReferenceUpload() : this.showReferenceExample()}
-                        <h4>Read files</h4>
-                        <p>Select one file for single end read, two for paired end reads</p>
-                        <div className="container table-responsive-lg">
-                            {this.addTrackInputs()}
-                        </div>
-                        <div className="form-group">
-                            <label className='col-form-label'>Visibility</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.visibility}
-                                onChange={(e) => this.handleDropdownChange(e,'visibility')}>
-                                <option value="PUBLIC">Public</option>
-                                <option value="PRIVATE">Private</option>
-                                <option value="TOPSECRET">TopSecret</option>
-                            </select>
-                        </div>
-                        {this.addUserAccessList()}
+                                <label className="form-check-label" htmlFor="uploadRef">Upload reference dna</label>
+                            </div>
+                            {this.state.refType === "upload" ? this.showReferenceUpload() : this.showReferenceExample()}
+                            <h4>Read files</h4>
+                            <p>Select one file for single end read, two for paired end reads</p>
+                            <div className="container table-responsive-lg">
+                                {this.addTrackInputs()}
+                            </div>
+                            <div className="form-group">
+                                <label className='col-form-label'>Visibility</label>
+                                <select 
+                                    className="form-control"
+                                    value={this.state.visibility}
+                                    onChange={(e) => this.handleDropdownChange(e,'visibility')}>
+                                    <option value="PUBLIC">Public</option>
+                                    <option value="PRIVATE">Private</option>
+                                    <option value="TOPSECRET">TopSecret</option>
+                                </select>
+                            </div>
+                            {this.addUserAccessList()}
+                        </form>
                     </div>
                     <br/>
                     <SubmitButton
                             text='CREATE'
                             type='btn-outline-secondary btn-lg'
                             onClick={ (e) => this.onClickHandler(e)}
-                        />
-
+                        />                
                     {this.state.show ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
 
                 </div>

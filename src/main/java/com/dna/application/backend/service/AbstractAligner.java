@@ -1,6 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
@@ -58,9 +59,9 @@ public abstract class AbstractAligner {
     protected abstract void deleteIndex(String filename) throws Exception;
 
     @Transactional
-    public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
+    public boolean align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
-        if(alignmentRepository.findByName(name) != null ) throw new Exception("Name already in use");
+        if(alignmentRepository.findByName(name) != null ) throw new EntityNameAlreadyExistsException();
 
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
         String filename = name.replaceAll("\\s+","_");
@@ -93,7 +94,7 @@ public abstract class AbstractAligner {
         setUserAccessSet(usernameAccessList, alignment);
         alignmentRepository.saveAndFlush(alignment);
 
-        return alignmentService.getAlignmentDto(name);
+        return alignmentRepository.existsByName(alignment.getName());
     }
 
     static String getInput(Process proc) throws IOException {

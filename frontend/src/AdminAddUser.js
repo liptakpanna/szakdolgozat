@@ -54,9 +54,13 @@ class AdminAddUser extends React.Component{
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: "Username already in use"})   
+                    this.setState({errormessage: result.message})   
                     this.setState({show:true});
-                }else{
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
                     console.log(result)
                     this.props.history.push('/users')    
                 }
@@ -78,7 +82,7 @@ class AdminAddUser extends React.Component{
                         where="/users"
                         hist={this.props.history}
                     />
-                    <form>
+                    <form onSubmit={(e) => e.preventDefault()}>
                     <h1>Add New User</h1>
                     <InputField
                         type='text'
