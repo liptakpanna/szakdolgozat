@@ -3,18 +3,19 @@ import NavBar from './NavBar';
 import { Redirect } from 'react-router-dom';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
-import {checkJwtToken} from './Common';
+import {checkJwtToken, validateEmail} from './Common';
 import Modal from 'react-bootstrap/Modal';
 import PreviousPageIcon from './PreviousPageIcon';
 import _ from 'lodash';
+import Cookie from "js-cookie";
 
 class EditUser extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            item: this.props.location.state.item,
-            isAdmin: this.props.location.state.isAdmin,
+            item: (this.props.location.state ? this.props.location.state.item : null),
+            isAdmin: (this.props.location.state ? this.props.location.state.isAdmin : false),
             show: false,
             showError: false,
             errormessage: "There are no modifications"
@@ -23,7 +24,9 @@ class EditUser extends React.Component{
     }
 
     componentDidMount(){
-        checkJwtToken();
+        if (this.isComponentMounted) {
+            checkJwtToken();
+        }
     }
 
     setInputValue(property, value) {
@@ -57,6 +60,11 @@ class EditUser extends React.Component{
         if(this.isChanged()) {
             let url, body, username;
             username = this.state.item.username === this.props.location.state.item.username ? null : this.state.item.username;
+            if(!validateEmail(this.state.item.email)) {
+                this.setState({errormessage: "Not a valid email form"})   
+                this.setState({showError:true});
+                return;
+            }
             if (this.state.isAdmin) {
                 url = process.env.REACT_APP_API_URL + '/users/update';
                 body = JSON.stringify({
@@ -80,9 +88,13 @@ class EditUser extends React.Component{
                     headers: new Headers({
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                        "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                     }),
                     body: body
+                }).catch(error =>  {
+                    this.setState({errormessage: "Cannot connect to server"})   
+                    this.setState({showError:true});
+                    console.log("Cannot connect to server");
                 });
     
                 let result = await response.json();
@@ -90,7 +102,11 @@ class EditUser extends React.Component{
                     if(result.status === 500) {
                         this.setState({errormessage: result.message})   
                         this.setState({showError:true});
-                    } else {
+                    } 
+                    else if(result.status === 403) {
+                        this.props.history.push("/login");
+                    }
+                    else {
                         console.log(result);
                         this.props.history.push(this.props.location.state.origin)
                     }
@@ -112,14 +128,27 @@ class EditUser extends React.Component{
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.props.history.push('/users')
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                } 
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else {
+                    console.log(result);
+                    this.props.history.push('/users')
+                }
             }
         }
         catch(e) {
@@ -131,15 +160,15 @@ class EditUser extends React.Component{
         if(this.state.isAdmin){
             return(
                 <div className="form-group">
-                            <label className='col-form-label'>Role</label>
-                            <select 
-                                className="form-control"
-                                value={this.state.item.role}
-                                onChange={this.handleDropdownChange.bind(this)}>
-                                <option value="ADMIN">Admin</option>
-                                <option value="RESEARCHER">Researcher</option>
-                                <option value="GUEST">Guest</option>
-                            </select>
+                    <label className='col-form-label'>Role</label>
+                    <select 
+                        className="form-control"
+                        value={this.state.item.role}
+                        onChange={this.handleDropdownChange.bind(this)}>
+                        <option value="ADMIN">Admin</option>
+                        <option value="RESEARCHER">Researcher</option>
+                        <option value="GUEST">Guest</option>
+                    </select>
                 </div>
             )
         }
@@ -176,6 +205,11 @@ class EditUser extends React.Component{
 
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+            if(!this.state.item) {
+                return(
+                    <Redirect to="/home" />
+                );
+            }
             return (
                 <div className="container">
                 <NavBar/>
@@ -208,6 +242,7 @@ class EditUser extends React.Component{
                             onChange= { (value) => this.setInputValue('email', value)}
                             label ='Email'
                             placeholder='Enter new email'
+                            maxLength="50"
                             required={true}
                         />
                         {this.addRoleDropdown()}

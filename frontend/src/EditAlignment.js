@@ -8,29 +8,31 @@ import Modal from 'react-bootstrap/Modal';
 import PreviousPageIcon from './PreviousPageIcon';
 import _ from 'lodash';
 import { Multiselect } from 'react-widgets';
+import Cookie from "js-cookie";
 
 class EditUser extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            item: this.props.location.state.item,
+            item: (this.props.location.state ? this.props.location.state.item : null),
             show: false,
-            showModified: false,
+            showError: false,
+            errormessage: null,
             username: []
         }
     }
 
     setInputValue(property, value) {
-        if(this.state.showModified) {
-            this.setState({showModified: false})
+        if(this.state.showError) {
+            this.setState({showError: false})
         }
         this.setState({ item: { ...this.state.item, [property]: value} });
     }
 
     handleDropdownChange(event) {
-        if(this.state.showModified) {
-            this.setState({showModified: false})
+        if(this.state.showError) {
+            this.setState({showError: false})
         }
         this.setState({ item: { ...this.state.item, visibility: event.target.value} });
     }
@@ -43,8 +45,10 @@ class EditUser extends React.Component{
     }
 
     componentDidMount(){
-        checkJwtToken();
-        this.getUsernames();
+        if (this.isComponentMounted) {
+            checkJwtToken();
+            this.getUsernames();
+        }
     }
 
     isChanged(){
@@ -59,7 +63,7 @@ class EditUser extends React.Component{
                     headers: new Headers({
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                        "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                     }),
                     body: JSON.stringify({
                         id: this.props.location.state.item.id,
@@ -68,18 +72,34 @@ class EditUser extends React.Component{
                         description: this.state.item.description,
                         usernameAccessList: this.state.item.userAccess
                     }, this.replacer)
+                }).catch(error =>  {
+                    this.setState({errormessage: "Cannot connect to server"})   
+                    this.setState({showError:true});
+                    console.log("Cannot connect to server");
                 });
     
                 let result = await response.json();
                 if(result){
-                    console.log(result);
-                    this.props.history.push('/alignments/igv', {item: result})
+                    if(result.status === 500) {
+                        this.setState({errormessage: result.message})   
+                        this.setState({showError:true});
+                    }
+                    else if(result.status === 403) {
+                        this.props.history.push("/login");
+                    }
+                    else{
+                        console.log(result);
+                        this.props.history.push('/alignments/igv', {item: result})    
+                    }
                 }
             }
             catch(e) {
                 console.log(e)
             }
-        }else this.setState({showModified: true});
+        }else {
+            this.setState({showError: true});
+            this.setState({errormessage: "There are no modifications"});
+        }
     }
 
     async deleteAlignment() {
@@ -89,15 +109,28 @@ class EditUser extends React.Component{
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.props.history.push('/alignments')
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.props.history.push('/alignments')   
+                }
             }
         }
         catch(e) {
@@ -111,14 +144,27 @@ class EditUser extends React.Component{
                 method: 'get',
                 headers: new Headers({
                     'Accept': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({usernames: result.usernames});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                this.setState({usernames: result.usernames});  
+                }
             }
         }
         catch(e) {
@@ -162,63 +208,68 @@ class EditUser extends React.Component{
 
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-                return (
-                    <div className="container">
-                    <NavBar/>
-                    <div className='container'>
-                        <PreviousPageIcon
-                            where={'/alignments/igv'}
-                            item = {this.state.item}
-                            hist={this.props.history}
+            if(!this.state.item) {
+                return(
+                    <Redirect to="/alignments" />
+                );
+            }
+            return (
+                <div className="container">
+                <NavBar/>
+                <div className='container'>
+                    <PreviousPageIcon
+                        where={'/alignments/igv'}
+                        item = {this.state.item}
+                        hist={this.props.history}
+                    />
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <h1>Edit Alignment</h1>
+                        {this.addModal()}
+                        <InputField
+                            type='text'
+                            value={this.state.item.name}
+                            onChange= { (value) => this.setInputValue('name', value)}
+                            label ='Name'
+                            required={true}
                         />
-                        <form onSubmit={(e) => e.preventDefault()}>
-                            <h1>Edit Alignment</h1>
-                            {this.addModal()}
-                            <InputField
-                                type='text'
-                                value={this.state.item.name}
-                                onChange= { (value) => this.setInputValue('name', value)}
-                                label ='Name'
-                                required={true}
+                        <div className="form-group">
+                            <label >Description</label>
+                            <textarea 
+                                value={this.state.item.description} 
+                                className="form-control" 
+                                rows="4" maxLength='1000' 
+                                onChange= { (event) => this.setInputValue('description', event.target.value)}>
+                            </textarea>
+                        </div>
+                        <div className="form-group">
+                            <label className='col-form-label'>Visibility</label>
+                            <select 
+                                className="form-control"
+                                value={this.state.item.visibility}
+                                onChange={this.handleDropdownChange.bind(this)}>
+                                <option value="PUBLIC">Public</option>
+                                <option value="PRIVATE">Private</option>
+                                <option value="TOPSECRET">Top Secret</option>
+                            </select>
+                        </div>
+                        {this.addUserAccessList()}
+                        <div className="btn-toolbar justify-content-between" role="toolbar">
+                            <SubmitButton
+                                text='Edit Alignment'
+                                type='btn-outline-secondary btn-lg'
+                                onClick={ () => this.editAlignment() }                        
                             />
-                            <div className="form-group">
-                                <label >Description</label>
-                                <textarea 
-                                    value={this.state.item.description} 
-                                    className="form-control" 
-                                    rows="4" maxLength='1000' 
-                                    onChange= { (event) => this.setInputValue('description', event.target.value)}>
-                                </textarea>
-                            </div>
-                            <div className="form-group">
-                                <label className='col-form-label'>Visibility</label>
-                                <select 
-                                    className="form-control"
-                                    value={this.state.item.visibility}
-                                    onChange={this.handleDropdownChange.bind(this)}>
-                                    <option value="PUBLIC">Public</option>
-                                    <option value="PRIVATE">Private</option>
-                                    <option value="TOPSECRET">Top Secret</option>
-                                </select>
-                            </div>
-                            {this.addUserAccessList()}
-                            <div className="btn-toolbar justify-content-between" role="toolbar">
-                                <SubmitButton
-                                    text='Edit Alignment'
-                                    type='btn-outline-secondary btn-lg'
-                                    onClick={ () => this.editAlignment() }                        
-                                />
-                                <SubmitButton
-                                    text='Delete Alignment'
-                                    type='btn-outline-danger btn-lg'
-                                    onClick={ () => {this.handleShow()} }                       
-                                />
-                            </div>
-                        </form>
-                        { this.state.showModified ? <div className="alert alert-primary mt-3" role="alert">There are no modifications</div> : null }
-                    </div>
-                    </div>
-                );      
+                            <SubmitButton
+                                text='Delete Alignment'
+                                type='btn-outline-danger btn-lg'
+                                onClick={ () => {this.handleShow()} }                       
+                            />
+                        </div>
+                    </form>
+                { this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+                </div>
+                </div>
+            );      
         }
             else { 
                 return(

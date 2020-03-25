@@ -1,6 +1,7 @@
 import React from 'react';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
+import Cookie from "js-cookie"
 
 class LoginForm extends React.Component{
 
@@ -62,9 +63,14 @@ class LoginForm extends React.Component{
                 if(result.status === 403) {
                     this.setState({errormessage: "Wrong username password combination"})   
                     this.setState({show:true});
-                } else {
+                }
+                else if(result.status === 500) {
+                    this.setState({show:true});
+                    this.setState({errormessage: result.message})    
+                }
+                else {
                     localStorage.setItem("isLoggedIn", true);
-                    localStorage.setItem("jwtToken", result.jwttoken);
+                    Cookie.set("jwtToken", result.jwttoken)
                     localStorage.setItem("username", this.state.username);
                     localStorage.setItem("id", result.id);
                     localStorage.setItem("role", result.role);

@@ -4,6 +4,8 @@ import { Redirect } from 'react-router-dom';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
 import PreviousPageIcon from './PreviousPageIcon';
+import Cookie from "js-cookie";
+import {validateEmail} from './Common';
 
 class AdminAddUser extends React.Component{
 
@@ -14,7 +16,7 @@ class AdminAddUser extends React.Component{
             password: '',
             email: '',
             role: 'GUEST',
-            show: false,
+            showError: false,
             errormessage: null
         }
     }
@@ -34,13 +36,18 @@ class AdminAddUser extends React.Component{
 
     async addUser() {
         if (!this.state.username || !this.state.password || !this.state.email) {return;}
+        if(!validateEmail(this.state.item.email)) {
+            this.setState({errormessage: "Not a valid email form"})   
+            this.setState({showError:true});
+            return;
+        }
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/users/add', {
                 method: 'post',
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 }),
                 body:JSON.stringify({
@@ -49,13 +56,17 @@ class AdminAddUser extends React.Component{
                     email: this.state.email,
                     role: this.state.role
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
                     this.setState({errormessage: result.message})   
-                    this.setState({show:true});
+                    this.setState({showError:true});
                 }
                 else if(result.status === 403) {
                     this.props.history.push("/login");
@@ -101,7 +112,7 @@ class AdminAddUser extends React.Component{
                         required={true}
                     />
                     <InputField
-                        type='text'
+                        type='email'
                         placeholder='Enter email'
                         value={this.state.email ? this.state.email : ''}
                         onChange= { (value) => this.setInputValue('email', value)}
@@ -129,7 +140,7 @@ class AdminAddUser extends React.Component{
                     />  
                     </form>
                 </div>
-                {this.state.show ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+                {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
             );
             }

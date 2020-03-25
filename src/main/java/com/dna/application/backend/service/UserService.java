@@ -65,8 +65,7 @@ public class UserService {
     public boolean updateUser(UserRequest userRequest, String updater) throws Exception{
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
-        if(userRepository.findByUsername(userRequest.getUsername()) != null)
-            throw new EntityNameAlreadyExistsException();
+
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
@@ -74,7 +73,10 @@ public class UserService {
         User.Status status = userRequest.getStatus();
 
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
-        if(username != null) user.setUsername(username);
+        if(username != null){
+            if(!username.equals(user.getUsername()) && userRepository.existsByUsername(username)) throw new EntityNameAlreadyExistsException();
+            user.setUsername(username);
+        }
         if(email != null) user.setEmail(email);
         if(password != null) user.setPassword(passwordEncoder.encode(password));
         if(role != null) user.setRole(role);

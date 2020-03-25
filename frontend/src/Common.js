@@ -1,10 +1,11 @@
+import Cookie from "js-cookie"
 
 export async function checkJwtToken() {
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/validate', {
                 method: 'get',
                 headers: {
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 }
             })
             .catch(error =>  {
@@ -14,15 +15,15 @@ export async function checkJwtToken() {
 
             let result = await response.json();
             console.log(result);
-            if (result){
-                if(result.valid === "false")
+            if (result != null){
+                if(result === false)
                     logout();
                 else
                     localStorage.setItem("isLoggedIn", true);
                 return result.valid;
             }
             else {
-                alert("Something went wrong...");
+                alert("Something went wrong.")
             }
         }
         catch(e) {
@@ -34,9 +35,14 @@ export async function checkJwtToken() {
 
 export function logout() {
     localStorage.setItem("isLoggedIn", false);
-    localStorage.setItem("jwtToken", "");
+    Cookie.set("jwtToken", null);
     localStorage.setItem("username", "");
     localStorage.setItem("id", "");
     localStorage.setItem("role", "");
     console.log("Logged out");
+}
+
+export function validateEmail (email) {
+    const regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regexp.test(email);
 }

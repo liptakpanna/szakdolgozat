@@ -3,6 +3,7 @@ com/dna/application/backend/model/User$Role.class
 com/dna/application/backend/model/JwtRequest.class
 com/dna/application/backend/model/Alignment$Aligner.class
 com/dna/application/backend/repository/ReferenceRepository.class
+com/dna/application/backend/exception/EntityNameAlreadyExistsException.class
 com/dna/application/backend/service/AlignmentService.class
 com/dna/application/backend/service/BwaService.class
 com/dna/application/backend/Application.class

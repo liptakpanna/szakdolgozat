@@ -10,6 +10,7 @@ import Profile from "./Profile";
 import Alignments from "./Alignments";
 import CreateAlignment from "./CreateAlignment";
 import EditAlignment from "./EditAlignment";
+import NotFound from "./NotFound";
 
 
 export default function Routes() {
@@ -29,6 +30,7 @@ export default function Routes() {
                 <Route path='/alignments/add' component={CreateAlignment} />
                 <Route path='/alignments' component={Alignments} />
                 <Redirect exact from="/" to="home" />
+                <Route component={NotFound} />
         </Switch>
       );
     } else if (role === "RESEARCHER") {
@@ -43,6 +45,7 @@ export default function Routes() {
                 <Route path='/alignments/add' component={CreateAlignment} />
                 <Route path='/alignments' component={Alignments} />
                 <Redirect exact from="/" to="home" />
+                <Route component={NotFound} />
         </Switch>
       );
     } else {
@@ -55,6 +58,7 @@ export default function Routes() {
                 <Route path='/user/edit' component={EditUser} />
                 <Route path='/alignments' component={Alignments} />
                 <Redirect exact from="/" to="home" />
+                <Route component={NotFound} />
         </Switch>
       );
     }
@@ -72,7 +76,7 @@ export default function Routes() {
               <Route path='/alignments/edit' component={EditAlignment} />
               <Route path='/alignments/add' component={CreateAlignment} />
               <Route path='/alignments' component={Alignments} />
-              <Redirect to="/login" />
+              <Redirect from="*" to="/login" />
       </Switch>
     );
   }

@@ -13,6 +13,7 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/Alignment.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/TestController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/ReferenceRepository.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/exception/EntityNameAlreadyExistsException.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/BaseEntity.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/AlignmentRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/AlignerController.java

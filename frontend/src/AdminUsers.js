@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import SubmitButton from './SubmitButton';
 import Moment from 'moment';
 import {checkJwtToken} from './Common';
+import Cookie from "js-cookie";
 
 class AdminUsers extends React.Component{
 
@@ -11,6 +12,8 @@ class AdminUsers extends React.Component{
         super(props);
         this.state = {
             items: [],
+            showError: false,
+            errormessage: null
         }
         this.onEditClick = this.onEditClick.bind(this);
     }
@@ -28,15 +31,28 @@ class AdminUsers extends React.Component{
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({items: result});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.setState({items: result});
+                }
             }
         }
         catch(e) {
@@ -97,6 +113,8 @@ class AdminUsers extends React.Component{
                             type='btn-outline-secondary btn-lg'
                             onClick={ () => this.props.history.push('/users/add')}
                         />
+
+                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
 
             );

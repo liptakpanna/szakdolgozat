@@ -6,6 +6,7 @@ import InputField from './InputField';
 import {checkJwtToken} from './Common';
 import PreviousPageIcon from './PreviousPageIcon';
 import { Multiselect } from 'react-widgets';
+import Cookie from "js-cookie";
 
 class CreateAlignment extends React.Component{
 
@@ -33,7 +34,7 @@ class CreateAlignment extends React.Component{
             usernames: [],
             trackCount: 1,
             aligner: this.props.location.state.aligner ? this.props.location.state.aligner : "Bowtie",
-            show: false,
+            showError: false,
             errormessage: null
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
@@ -86,15 +87,28 @@ class CreateAlignment extends React.Component{
                 method: 'post',
                 headers: new Headers({
                     'Accept': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 }),
                 body: data
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.props.history.push("/alignments/igv", {item : result});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.props.history.push("/alignments/igv", {item : result});
+                }
             }
         }
         catch(e) {
@@ -118,7 +132,7 @@ class CreateAlignment extends React.Component{
     showReferenceUpload(){
         return(
             <div className="form-group">
-                <label className='col-form-label'>Reference DNA file</label>
+                <h4 className="mt-1 mb-0">Reference DNA file</h4>
                 <br/>
                 <input className="form-control-title" type="file" required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
             </div>
@@ -131,14 +145,27 @@ class CreateAlignment extends React.Component{
                 method: 'get',
                 headers: new Headers({
                     'Accept': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({references: result});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.setState({references: result});
+                } 
             }
         }
         catch(e) {
@@ -172,14 +199,27 @@ class CreateAlignment extends React.Component{
                 method: 'get',
                 headers: new Headers({
                     'Accept': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({usernames: result.usernames});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.setState({usernames: result.usernames});
+                } 
             }
         }
         catch(e) {
@@ -212,10 +252,10 @@ class CreateAlignment extends React.Component{
         else if (property === "file") {
             if(value.length > 2) {
                 this.setState({errormessage: "Maximum two files per track"})   
-                this.setState({show:true});
+                this.setState({showError:true});
             }
             else {
-                this.setState({show:false});
+                this.setState({showError:false});
                 read.file = value;
             } 
         }
@@ -428,7 +468,7 @@ class CreateAlignment extends React.Component{
                             type='btn-outline-secondary btn-lg'
                             onClick={ (e) => this.onClickHandler(e)}
                         />                
-                    {this.state.show ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
 
                 </div>
 

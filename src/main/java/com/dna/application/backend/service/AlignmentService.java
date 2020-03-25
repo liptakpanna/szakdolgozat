@@ -1,6 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
@@ -107,9 +108,12 @@ public class AlignmentService {
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
         log.warn("Alignment request: {}", usernameAccessList);
 
-        if(alignmentRequest.getName() != null) alignment.setName(name);
-        if(alignmentRequest.getDescription() != null) alignment.setDescription(description);
-        if(alignmentRequest.getVisibility() != null) alignment.setVisibility(visibility);
+        if(name != null) {
+            if (!name.equals(alignment.getName()) && alignmentRepository.existsByName(name)) throw new EntityNameAlreadyExistsException();
+            alignment.setName(name);
+        }
+        if(description != null) alignment.setDescription(description);
+        if(visibility != null) alignment.setVisibility(visibility);
 
         if(usernameAccessList != null)
             for(String username: usernameAccessList) {

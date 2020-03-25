@@ -6,6 +6,7 @@ import com.dna.application.backend.model.JwtValidResponse;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.UserDetailsServiceImpl;
 import com.dna.application.backend.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
+@Slf4j
 @RequestMapping("/api")
 public class JwtAuthenticationController {
     @Autowired
@@ -50,12 +52,16 @@ public class JwtAuthenticationController {
 
     @GetMapping("/validate")
     @ResponseBody
-    public JwtValidResponse validateJwtToken(@RequestHeader("Authorization") String jwtToken, Authentication authentication) {
+    public ResponseEntity<Boolean> validateJwtToken(@RequestHeader("Authorization") String jwtToken, Authentication authentication) {
         if(authentication != null && !authentication.getName().equals("")) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
             if(userDetails != null)
-                return new JwtValidResponse(jwtTokenUtil.validateToken(jwtToken.substring(7), userDetails));
+                try {
+                    return ResponseEntity.ok(jwtTokenUtil.validateToken(jwtToken.substring(7), userDetails));
+                } catch(Exception e) {
+                    return ResponseEntity.ok(false);
+                }
         }
-        return new JwtValidResponse(false);
+        return ResponseEntity.ok(false);
     }
 }

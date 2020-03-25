@@ -4,20 +4,16 @@ import { Redirect } from 'react-router-dom';
 import SubmitButton from './SubmitButton';
 import Moment from 'moment';
 import {checkJwtToken} from './Common';
+import Cookie from "js-cookie";
 
 class Profile extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
-            role: '',
-            email: '',
-            createdAt: null,
-            createdBy: '',
-            updatedAt: null,
-            updatedBy: '',
-            item: []
+            item: [],
+            showError: false,
+            errormessage: null
         }
         this.onEditClick = this.onEditClick.bind(this);
     }
@@ -27,7 +23,6 @@ class Profile extends React.Component{
         this.getUser();
     }
 
-
     async getUser() {
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/users/me?username=' + localStorage.getItem("username"), {
@@ -35,22 +30,28 @@ class Profile extends React.Component{
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({username: result.username});
-                this.setState({email: result.email});
-                this.setState({role: result.role});
-                this.setState({createdAt: result.createdAt});
-                this.setState({createdBy: result.createdBy});
-                this.setState({updatedAt: result.updatedAt});
-                this.setState({updatedBy: result.updatedBy});
-                this.setState({item: result});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                } 
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else {
+                    console.log(result);
+                    this.setState({item: result});
+                }
             }
         }
         catch(e) {
@@ -63,20 +64,20 @@ class Profile extends React.Component{
     }
 
     checkIfUpdated() {
-        if(this.state.updatedAt) {
+        if(this.state.item.updatedAt) {
             return(
                 <div className="col">
-                    <p className="card-text">Updated By: {this.state.updatedBy}</p>
-                    <p className="card-text">Updated At: {this.state.updatedAt ? Moment(this.state.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
-                    <p className="card-text">Created By: {this.state.createdBy}</p>
-                    <p className="card-text">Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                    <p className="card-text">Updated By: {this.state.item.updatedBy}</p>
+                    <p className="card-text">Updated At: {this.state.item.updatedAt ? Moment(this.state.item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                    <p className="card-text">Created By: {this.state.item.createdBy}</p>
+                    <p className="card-text">Created At: {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
                 </div>
             );
         } else {
             return(
                 <div className="col">
-                    <p className="card-text">Created By: {this.state.createdBy}</p>
-                    <p className="card-text">Created At: {this.state.createdAt ? Moment(this.state.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                    <p className="card-text">Created By: {this.state.item.createdBy}</p>
+                    <p className="card-text">Created At: {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
                 </div>
             );
         }
@@ -89,14 +90,14 @@ class Profile extends React.Component{
                 <div className="container">
                     <NavBar/>
                     <div className="container">
-                        <div className="card">
+                        <div className="card mt-4">
                             <h5 className="card-header" style={{backgroundColor: "#e3f2fd"}}>User Profile</h5>
                             <div className="card-body">
                                 <div className="row">
                                     <div className="col">
-                                        <p className="card-text">Username: {this.state.username}</p>
-                                        <p className="card-text">Email: {this.state.email}</p>
-                                        <p className="card-text">Role: {this.state.role}</p>
+                                        <p className="card-text">Username: {this.state.item.username}</p>
+                                        <p className="card-text">Email: {this.state.item.email}</p>
+                                        <p className="card-text">Role: {this.state.item.role}</p>
                                     </div>
                                     {this.checkIfUpdated()}
                                 </div>
@@ -109,6 +110,7 @@ class Profile extends React.Component{
                             type='btn-outline-secondary btn-lg'
                             onClick={ (e) => this.onEditClick(e)}
                         />
+                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
             );
         }
