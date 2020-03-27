@@ -52,14 +52,14 @@ public abstract class AbstractAligner {
 
     final static List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
 
-    protected abstract List<String> doAlignmentOnTrack(ReadTrack read, String filename, String indexName) throws Exception;
+    protected abstract List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception;
 
     protected abstract String doIndex(boolean isExample, String filename) throws Exception;
 
     protected abstract void deleteIndex(String filename) throws Exception;
 
     @Transactional
-    public boolean align(AlignmentRequest alignmentRequest, User user) throws Exception{
+    public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
         if(alignmentRepository.findByName(name) != null ) throw new EntityNameAlreadyExistsException();
 
@@ -75,7 +75,7 @@ public abstract class AbstractAligner {
             indexFile = doIndex(true, reference.getFilename());
         }
         else {
-            saveFile(alignmentRequest.getReferenceDna(), folder+"/"+"references/"+filename+".fna");
+            saveFile(alignmentRequest.getReferenceDna(), folder+"references/"+filename+".fna");
             indexFile = doIndex(false, filename);
         }
 
@@ -94,7 +94,7 @@ public abstract class AbstractAligner {
         setUserAccessSet(usernameAccessList, alignment);
         alignmentRepository.saveAndFlush(alignment);
 
-        return alignmentRepository.existsByName(alignment.getName());
+        return alignmentService.getAlignmentDto(name);
     }
 
     static String getInput(Process proc) throws IOException {
@@ -169,9 +169,10 @@ public abstract class AbstractAligner {
 
     private void doAlignmentOnTracks(List<ReadTrack> readTracks, String filename, String indexFile, Long referenceId) throws Exception{
         int trackCount=1;
+        if(readTracks == null) throw new Exception("No reads.");
         for(ReadTrack track : readTracks) {
             List<String> readNames = doAlignmentOnTrack(track, filename, indexFile);
-            runCommand(new String[]{folder+"/"+ "sam_to_bam_script",filename, folder, String.valueOf(trackCount), String.valueOf(referenceId != null)});
+            runCommand(new String[]{folder+ "sam_to_bam_script",filename, folder, String.valueOf(trackCount), String.valueOf(referenceId != null)});
             trackCount++;
             deleteReadFiles(readNames);
         }

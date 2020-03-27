@@ -43,7 +43,7 @@ public class Alignment extends BaseEntityAudit {
     @Fetch(value= FetchMode.SELECT)
     private Set<User> userAccess = new HashSet<>();
 
-    public enum Visibility {PUBLIC, PRIVATE, TOPSECRET};
+    public enum Visibility {PUBLIC, PRIVATE, PRIVATE_GROUP};
 
-    public enum Aligner {BOWTIE, BWA};
+    public enum Aligner {BOWTIE, BWA, SNAP};
 }

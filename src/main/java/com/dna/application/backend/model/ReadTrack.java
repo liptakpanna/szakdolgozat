@@ -24,4 +24,7 @@ public class ReadTrack {
     private String mismatch;
 
     private List<String> penalties;
-}
+
+    private String maxHits;
+
+    private String maxDist;}

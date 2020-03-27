@@ -9,6 +9,7 @@ import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.AlignmentService;
 import com.dna.application.backend.service.BowtieService;
 import com.dna.application.backend.service.BwaService;
+import com.dna.application.backend.service.SnapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class AlignerController {
 
     @Autowired
     private BwaService bwaService;
+
+    @Autowired
+    private SnapService snapService;
 
     @Autowired
     private AlignmentService alignmentService;
@@ -52,13 +56,15 @@ public class AlignerController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public ResponseEntity<Boolean> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<AlignmentDto> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         try {
             if(alignmentRequest.getAligner() == Alignment.Aligner.BOWTIE)
                 return ResponseEntity.ok(bowtieService.align(alignmentRequest, user));
             if(alignmentRequest.getAligner() == Alignment.Aligner.BWA)
                 return ResponseEntity.ok(bwaService.align(alignmentRequest, user));
+            if(alignmentRequest.getAligner() == Alignment.Aligner.SNAP)
+                return ResponseEntity.ok(snapService.align(alignmentRequest, user));
             else
                 throw new Exception("Not a valid aligner");
         } catch (EntityNameAlreadyExistsException e) {

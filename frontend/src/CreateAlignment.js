@@ -7,6 +7,7 @@ import {checkJwtToken} from './Common';
 import PreviousPageIcon from './PreviousPageIcon';
 import { Multiselect } from 'react-widgets';
 import Cookie from "js-cookie";
+import Modal from 'react-bootstrap/Modal';
 
 class CreateAlignment extends React.Component{
 
@@ -21,7 +22,9 @@ class CreateAlignment extends React.Component{
                     radio: "specific",
                     specific: 1,
                     mismatch: 2,
-                    penalty: [4,6,1]
+                    penalty: [4,6,1],
+                    maxHits: 300,
+                    maxDist: 8
                 }
             ],
             name: '',
@@ -35,7 +38,8 @@ class CreateAlignment extends React.Component{
             trackCount: 1,
             aligner: this.props.location.state.aligner ? this.props.location.state.aligner : "Bowtie",
             showError: false,
-            errormessage: null
+            errormessage: null,
+            isLoading: false
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -54,10 +58,15 @@ class CreateAlignment extends React.Component{
     }
 
     onClickHandler(event){
+        this.setState({isLoading: true});
+        if(!this.state.name) {return;}
         let data = new FormData();
+        if(!this.state.referenceFile && this.state.refType ==="upload") {return;}
+        else if(this.state.refType !=="upload" && !this.state.referencId) {return;}
         if(this.state.referenceFile)
             data.append('referenceDna', this.state.referenceFile);
         for (let x = 0; x < this.state.readFile.length-1; x++) {
+            if(!this.state.readFile[x].name || !this.state.readFile[x].file[0]) {return;}
             let isPaired = this.state.readFile[x].file.length === 2;
             data.append("readsForDna[" + x + "].name", this.state.readFile[x].name);
             data.append("readsForDna[" + x + "].isPaired", isPaired);
@@ -68,8 +77,12 @@ class CreateAlignment extends React.Component{
                 data.append("readsForDna[" + x + "].validCount", this.state.readFile[x].radio !== "specific" ? this.state.readFile[x].radio : this.state.readFile[x].specific );
                 data.append("readsForDna[" + x + "].mismatch", this.state.readFile[x].mismatch);
             }
-            if(this.state.aligner ==="Bwa")
+            else if(this.state.aligner ==="Bwa")
                 data.append("readsForDna[" + x + "].penalties", this.state.readFile[x].penalty);
+            else if(this.state.aligner ==="Snap") {
+                data.append("readsForDna[" + x + "].maxDist", this.state.readFile[x].maxDist);
+                data.append("readsForDna[" + x + "].maxHits", this.state.readFile[x].maxHits);
+            }
         }
         data.append("name", this.state.name);
         data.append("description", this.state.description);
@@ -93,11 +106,13 @@ class CreateAlignment extends React.Component{
             }).catch(error =>  {
                 this.setState({errormessage: "Cannot connect to server"})   
                 this.setState({showError:true});
+                this.setState({isLoading: false});
                 console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
+                this.setState({isLoading: false});
                 if(result.status === 500) {
                     this.setState({errormessage: result.message})   
                     this.setState({showError:true});
@@ -112,6 +127,7 @@ class CreateAlignment extends React.Component{
             }
         }
         catch(e) {
+            this.setState({isLoading: false});
             console.log(e)
         }
     };
@@ -244,7 +260,7 @@ class CreateAlignment extends React.Component{
         }
     }
 
-    setValueForRead(property, value, index) {
+    setValueForRead(property, value, index, event) {
         let reads = [...this.state.readFile];
         let read = {...reads[index]};
         if(property === "name")
@@ -253,8 +269,9 @@ class CreateAlignment extends React.Component{
             if(value.length > 2) {
                 this.setState({errormessage: "Maximum two files per track"})   
                 this.setState({showError:true});
+                return;
             }
-            else {
+            else { 
                 this.setState({showError:false});
                 read.file = value;
             } 
@@ -275,6 +292,10 @@ class CreateAlignment extends React.Component{
             read.penalty[1] = value;
         else if(property === "penaltyGapExt")
             read.penalty[2] = value;
+        else if (property === "maxdist")
+            read.maxDist = value;
+        else if(property === "maxhits")
+            read.maxHits = value;
         reads[index] = read;
         if(read.name !== null && read.file.length > 0 && index+1 === reads.length) {
             this.setState({trackCount: this.state.trackCount+1});
@@ -285,6 +306,8 @@ class CreateAlignment extends React.Component{
             newRead.radio = "specific";
             newRead.mismatch = 2;
             newRead.penalty = [4,6,1];
+            newRead.maxDist = 8;
+            newRead.maxHits = 300;
             reads[index+1] = newRead;
         }
         this.setState({readFile: reads});
@@ -350,6 +373,22 @@ class CreateAlignment extends React.Component{
                 </td>
             </>);
         }
+        else if(this.state.aligner === "Snap") {
+            return(<>
+                <td data-toogle="tooltip" data-placement="top" title="Note: for paired-end reads the default is: 16000">
+                    <input type="number" min="10" max="30000" length="5" style={{"width":"50px"}}
+                        value={this.state.readFile[i].maxHits} 
+                        onChange= { (e) => this.setValueForRead("maxhits", e.target.value, i)}
+                    /> 
+                </td>
+                <td>
+                    <input type="number" min="0" length="2" style={{"width":"50px"}}
+                        value={this.state.readFile[i].maxDist} 
+                        onChange= { (e) => this.setValueForRead("maxdist", e.target.value, i)}
+                    /> 
+                </td>
+            </>);
+        }
     }
 
     addOptionNames(){
@@ -366,6 +405,12 @@ class CreateAlignment extends React.Component{
                 <th scope="col">Gap extension penalty</th>
                 </>);
         }
+        else if(this.state.aligner ==="Snap") {
+            return(<>
+                <th scope="col">Maximum Hits</th>
+                <th scope="col">Maximum Distance</th>
+                </>);
+        }
     }
 
     addTrackInputs(){
@@ -374,13 +419,16 @@ class CreateAlignment extends React.Component{
             tracks.push(<tr 
                 key={i} >
                 <th>{i+1}</th>
-                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" required multiple onChange={ (e) => {e.preventDefault(); this.setValueForRead("file", e.target.files, i, e)}}/> </td>
+                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" accept=".fastq,.fq,.fasta,.fna,.fa" 
+                    required={this.state.trackCount === 1 || this.state.trackCount>i+1}
+                    multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i, e)}}/> </td>
                 <td> <input className="form-control"
-                        type='text' style={{"width":"120px"}} required
+                        type='text' style={{"width":"120px"}}
                         value={this.state.readFile[i].name ? this.state.readFile[i].name : ""}
                         onChange= { (e) => this.setValueForRead("name", e.target.value, i)}
                         placeholder ='Name'
                         maxLength="12"
+                        required={this.state.trackCount === 1 || this.state.trackCount>i+1}
                         /> 
                 </td>
                 {this.addOptions(i)}
@@ -399,6 +447,18 @@ class CreateAlignment extends React.Component{
                 {tracks}
                 </tbody>
              </table>);
+    }
+
+    handleClose = () => {this.setState({isLoading: false})};
+
+    addModal(){
+        return(
+            <Modal show={this.state.isLoading} onHide={this.handleClose}>
+                <Modal.Body>
+                    <div class="loader">Loading...</div>
+                </Modal.Body>
+            </Modal>
+        )
     }
 
     render() {
@@ -460,16 +520,19 @@ class CreateAlignment extends React.Component{
                                 </select>
                             </div>
                             {this.addUserAccessList()}
+                        
+                            
+                            <br/>
+                            <SubmitButton
+                                    text='CREATE'
+                                    type='btn-outline-secondary btn-lg'
+                                    onClick={ (e) => this.onClickHandler(e)}
+                                    disabled={this.state.showError}
+                                />
                         </form>
-                    </div>
-                    <br/>
-                    <SubmitButton
-                            text='CREATE'
-                            type='btn-outline-secondary btn-lg'
-                            onClick={ (e) => this.onClickHandler(e)}
-                        />                
+                    </div>  
                     {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
-
+                    {this.addModal()}
                 </div>
 
             );

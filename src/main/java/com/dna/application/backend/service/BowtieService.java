@@ -13,21 +13,21 @@ import java.util.List;
 public class BowtieService extends AbstractAligner {
 
     @Override
-    protected List<String> doAlignmentOnTrack(ReadTrack read, String filename, String indexName) throws Exception {
+    protected List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception {
         List<String> args = new ArrayList<>();
-        MultipartFile readFile = read.getRead1();
+        MultipartFile readFile = track.getRead1();
         String extension = FilenameUtils.getExtension(readFile.getOriginalFilename());
         String read1 = saveFile(readFile, folder + filename + "1" + "." + extension);
-        String read2 = null;
-        if(read.getValidCount().equals("all"))
+        String read2 = "";
+        if(track.getValidCount().equals("all"))
             args.addAll(Arrays.asList("bowtie", "-a"));
-        else if(read.getValidCount().equals("all --best"))
+        else if(track.getValidCount().equals("all --best"))
             args.addAll(Arrays.asList("bowtie", "-a", "--best"));
         else
-            args.addAll(Arrays.asList("bowtie", "-k", read.getValidCount()));
-        args.addAll(Arrays.asList("-v", read.getMismatch()));
-        if (read.isPaired()) {
-            MultipartFile readFile2 = read.getRead1();
+            args.addAll(Arrays.asList("bowtie", "-k", track.getValidCount()));
+        args.addAll(Arrays.asList("-v", track.getMismatch()));
+        if (track.isPaired()) {
+            MultipartFile readFile2 = track.getRead1();
             read2 = saveFile(readFile2, folder + filename + "2" + "." + extension);
             if(fastaExtensions.contains(extension))
                 args.addAll(Arrays.asList("-S", indexName, "-f", "-1", read1, "-2", read2, folder + "bams/" + filename + ".sam"));
@@ -46,15 +46,15 @@ public class BowtieService extends AbstractAligner {
 
     @Override
     protected String doIndex(boolean isExample, String filename) throws Exception{
-        if(isExample) return folder+"/examples/indexes/"+filename;
+        if(isExample) return folder+"examples/indexes/"+filename;
         else {
-            runCommand(new String[]{"bowtie-build", folder+"references/"+filename+".fna", folder+"/"+filename});
+            runCommand(new String[]{"bowtie-build", folder+"references/"+filename+".fna", folder+filename});
             return folder+"/"+filename;
         }
     }
 
     @Override
     protected void deleteIndex(String filename) throws Exception {
-        runCommand(new String[]{"rm", folder + filename + ".*.ebwt"});
+        runCommand(new String[]{"ls", "-la;","rm", folder + filename + ".*.ebwt"});
     }
 }
