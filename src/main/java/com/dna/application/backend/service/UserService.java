@@ -2,7 +2,6 @@ package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
-import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.model.UsernameListResponse;
@@ -22,7 +21,6 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service

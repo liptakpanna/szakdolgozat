@@ -2,6 +2,7 @@ package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
+import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
@@ -142,12 +143,18 @@ public abstract class AbstractAligner {
 
     static void runCommand(String[] args) throws Exception {
         Process proc = new ProcessBuilder(args).start();
-        String ans = getInput(proc);
+        String input = getInput(proc);
         String error = getError(proc);
+        if(fileErrorMessages.parallelStream().anyMatch(error::contains) || fileErrorMessages.parallelStream().anyMatch(input::contains) )
+            throw new WrongFileTypeException();
 
         proc.waitFor();
-        log.warn(ans+error);
+        log.warn(input+error);
     }
+    //Bwa, Bowtie
+    static List<String> fileErrorMessages = Arrays.asList("Unknown file type","FASTA file doesn't beging with a contig name",
+            "Reference file does not seem to be a FASTA file",
+            "reads file does not look like");
 
     @Transactional
     private Set<BamUrl> getBamUrls(String filename, List<ReadTrack> tracks){

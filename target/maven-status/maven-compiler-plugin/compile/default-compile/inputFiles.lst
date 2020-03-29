@@ -14,8 +14,10 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/TestController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/ReferenceRepository.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/exception/EntityNameAlreadyExistsException.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/exception/WrongFileTypeException.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/BaseEntity.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/AlignmentRequest.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/SnapService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/AlignerController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UsernameListResponse.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/BamUrlRepository.java

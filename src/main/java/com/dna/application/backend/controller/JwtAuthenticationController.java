@@ -2,7 +2,6 @@ package com.dna.application.backend.controller;
 
 import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.JwtResponse;
-import com.dna.application.backend.model.JwtValidResponse;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.UserDetailsServiceImpl;
 import com.dna.application.backend.util.JwtTokenUtil;

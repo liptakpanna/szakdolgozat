@@ -69,7 +69,7 @@ class AdminUsers extends React.Component{
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return(
                 <div className="container">
-                    <NavBar/>
+                    <NavBar active="users"/>
                     <div className="container table-responsive-lg">
                         <h1>
                             User List

@@ -88,7 +88,7 @@ class Profile extends React.Component{
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return(
                 <div className="container">
-                    <NavBar/>
+                    <NavBar active="profile"/>
                     <div className="container">
                         <div className="card mt-4">
                             <h5 className="card-header" style={{backgroundColor: "#e3f2fd"}}>User Profile</h5>

@@ -2,7 +2,10 @@ package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
-import com.dna.application.backend.model.*;
+import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.model.AlignmentRequest;
+import com.dna.application.backend.model.ReferenceExample;
+import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
@@ -87,7 +90,7 @@ public class AlignmentService {
             throw new Exception("You have no authorization to delete this object");
 
         String filename = alignment.getName().replaceAll("\\s+","_");
-        deleteAlignmentFiles(filename);
+        deleteAlignmentFiles(filename, alignment.getBamUrls().size(), alignment.getReferenceUrl().contains("/examples/"));
 
         alignmentRepository.deleteById(id);
         alignmentRepository.flush();
@@ -132,8 +135,8 @@ public class AlignmentService {
         return referenceRepository.findAll();
     }
 
-    private void deleteAlignmentFiles(String filename) throws Exception{
-        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder};
+    private void deleteAlignmentFiles(String filename, int readSize, boolean isExample) throws Exception{
+        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder, String.valueOf(readSize), String.valueOf(isExample)};
 
         Process proc = new ProcessBuilder(args).start();
         String error = getError(proc);

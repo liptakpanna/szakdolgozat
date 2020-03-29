@@ -158,27 +158,21 @@ class Alignments extends React.Component{
         Moment.locale('en');
         let role = localStorage.getItem("role");
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-            if(role === "ADMIN" || role === "RESEARCHER" ) {
-                return(
-                    <div className="container">
-                        <NavBar/>
-                        {this.getBaseHtml()}
-                        <br/>
-                        <SubmitButton
-                                text='Create alignment'
-                                type='btn-lg btn-outline-secondary'
-                                onClick={ () => this.handleShow()}
-                            />
-                        {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
-                    </div>);
-            } else {
-                return(
-                    <div className="container">
-                        <NavBar/>
-                        {this.getBaseHtml()}
-                        {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
-                    </div>);
-            }
+            return(
+                <div className="container">
+                    <NavBar active="alignments"/>
+                    {this.getBaseHtml()}
+                    <br/>
+                    {role === "ADMIN" || role === "RESEARCHER" ?
+                    <SubmitButton
+                            text='Create alignment'
+                            type='btn-lg btn-outline-secondary'
+                            onClick={ () => this.handleShow()}
+                        /> : null }
+                    
+                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+                </div>);
+            
         }
         else { 
             return(

@@ -15,6 +15,7 @@ com/dna/application/backend/dto/UserDto.class
 com/dna/application/backend/model/BaseEntityAudit.class
 com/dna/application/backend/model/User$Status.class
 com/dna/application/backend/util/JwtTokenUtil.class
+com/dna/application/backend/exception/WrongFileTypeException.class
 com/dna/application/backend/service/AbstractAligner.class
 com/dna/application/backend/model/AlignmentRequest.class
 com/dna/application/backend/model/JwtResponse.class
@@ -22,6 +23,7 @@ com/dna/application/backend/controller/JwtAuthenticationController.class
 com/dna/application/backend/model/Alignment$Aligner.class
 com/dna/application/backend/exception/EntityNameAlreadyExistsException.class
 com/dna/application/backend/service/AlignmentService.class
+com/dna/application/backend/service/SnapService.class
 com/dna/application/backend/model/UserRequest.class
 com/dna/application/backend/controller/UserController.class
 com/dna/application/backend/model/UsernameListResponse.class

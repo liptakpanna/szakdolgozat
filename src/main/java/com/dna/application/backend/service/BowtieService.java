@@ -55,6 +55,6 @@ public class BowtieService extends AbstractAligner {
 
     @Override
     protected void deleteIndex(String filename) throws Exception {
-        runCommand(new String[]{"ls", "-la;","rm", folder + filename + ".*.ebwt"});
+        runCommand(new String[]{"rm", folder + filename + ".*.ebwt"});
     }
 }

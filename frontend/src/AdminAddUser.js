@@ -87,7 +87,7 @@ class AdminAddUser extends React.Component{
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return (
                 <div className="container">
-                <NavBar/>
+                <NavBar active="users"/>
                 <div className='newUserContainer'>
                     <PreviousPageIcon
                         where="/users"

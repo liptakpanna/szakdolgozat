@@ -7,7 +7,6 @@ import {checkJwtToken} from './Common';
 import PreviousPageIcon from './PreviousPageIcon';
 import { Multiselect } from 'react-widgets';
 import Cookie from "js-cookie";
-import Modal from 'react-bootstrap/Modal';
 
 class CreateAlignment extends React.Component{
 
@@ -39,7 +38,8 @@ class CreateAlignment extends React.Component{
             aligner: this.props.location.state.aligner ? this.props.location.state.aligner : "Bowtie",
             showError: false,
             errormessage: null,
-            isLoading: false
+            isLoading: false,
+            acceptedFormat: this.props.location.state.aligner === "Snap" ? ".fastq,.fq"  : ".fastq,.fq,.fasta,.fna,.fa" ,
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
@@ -58,11 +58,14 @@ class CreateAlignment extends React.Component{
     }
 
     onClickHandler(event){
-        this.setState({isLoading: true});
-        if(!this.state.name) {return;}
+        if(!this.state.name || this.state.readFile.length === 1 ) {return;}
         let data = new FormData();
         if(!this.state.referenceFile && this.state.refType ==="upload") {return;}
-        else if(this.state.refType !=="upload" && !this.state.referencId) {return;}
+        else if(this.state.refType !=="upload" && !this.state.referencId) {
+            this.setState({showError: true});
+            this.setState({errormessage: "Please choose reference genome or upload one."})
+            return;
+        }
         if(this.state.referenceFile)
             data.append('referenceDna', this.state.referenceFile);
         for (let x = 0; x < this.state.readFile.length-1; x++) {
@@ -91,6 +94,7 @@ class CreateAlignment extends React.Component{
         data.append("usernameAccessList", this.state.userAccess);
         if(this.state.referencId != null)
             data.append("referenceId", this.state.referencId);
+        this.setState({isLoading: true});
         this.upload(data);
     }
 
@@ -114,7 +118,14 @@ class CreateAlignment extends React.Component{
             if(result){
                 this.setState({isLoading: false});
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    if(result.message.includes("Maximum upload size exceeded")){
+                        let max = result.message.substring(result.message.lastIndexOf("(")+1, result.message.length-1);
+                        this.setState({errormessage: "Maximum upload size (" + max/1000000 + "MB) exceeded."})
+                    }
+                    else if(result.message === "Wrong file type")
+                    this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and readfiles with one of the following extensions: " + this.state.acceptedFormat})
+                    else
+                        this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }
                 else if(result.status === 403) {
@@ -150,7 +161,7 @@ class CreateAlignment extends React.Component{
             <div className="form-group">
                 <h4 className="mt-1 mb-0">Reference DNA file</h4>
                 <br/>
-                <input className="form-control-title" type="file" required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
+                <input className="form-control-title" type="file" accept=".fasta,.fna,.fa"  required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
             </div>
         );
     }
@@ -190,13 +201,13 @@ class CreateAlignment extends React.Component{
     }
 
     showReferenceExample(){
-        let btnclass = "btn btn-light btn-sq ";
+        let btnclass = "btn btn-light ";
         return(
             <div className="container">
                 <div className="row d-flex justify-content-around">
                     {this.state.references.map(function(item, index) {
                             return <div className="p-2" key={index}>
-                                <button type="button" 
+                                <button type="button" style={{backgroundColor: "#e3f2fd"}}
                                 className={this.state.referencId === item.id ? btnclass+'active' : btnclass}
                                 onClick={() => this.setState({referencId: item.id})}
                                 data-toogle="tooltip" data-placement="top" title={item.description}>
@@ -244,7 +255,7 @@ class CreateAlignment extends React.Component{
     }
 
     addUserAccessList(){
-        if(this.state.visibility === "PRIVATE" || this.state.visibility === "TOPSECRET") {
+        if(this.state.visibility === "PRIVATE" || this.state.visibility === "PRIVATE_GROUP") {
             if(this.state.usernames && this.state.usernames.length > 0) {
                 return(
                     <div>
@@ -419,7 +430,7 @@ class CreateAlignment extends React.Component{
             tracks.push(<tr 
                 key={i} >
                 <th>{i+1}</th>
-                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" accept=".fastq,.fq,.fasta,.fna,.fa" 
+                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" accept={this.state.acceptedFormat}
                     required={this.state.trackCount === 1 || this.state.trackCount>i+1}
                     multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i, e)}}/> </td>
                 <td> <input className="form-control"
@@ -452,20 +463,25 @@ class CreateAlignment extends React.Component{
     handleClose = () => {this.setState({isLoading: false})};
 
     addModal(){
-        return(
-            <Modal show={this.state.isLoading} onHide={this.handleClose}>
-                <Modal.Body>
-                    <div class="loader">Loading...</div>
-                </Modal.Body>
-            </Modal>
-        )
+        if(this.state.isLoading){
+            return(
+                    <div className="loading">Loading&#8230;</div>
+            )
+        }
+    }
+
+    nameChangeHandler(value){
+        if(this.state.showError && this.state.errormessage === "Alignment name already exists, please choose an other one.") {
+            this.setState({showError:false});
+        }
+        this.setState({name: value});
     }
 
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return(
                 <div className="container">
-                    <NavBar/>
+                    <NavBar active="alignments"/>
                     <div className="container">
                         <PreviousPageIcon
                             where="/alignments"
@@ -476,13 +492,13 @@ class CreateAlignment extends React.Component{
                             <InputField
                                 type='text'
                                 value={this.state.name}
-                                onChange= { (value) => this.setState({name: value})}
+                                onChange= { (value) => this.nameChangeHandler(value)}
                                 label ='Name'
                                 maxLength="20"                        
                                 required={true}
                             />
                             <div className="form-group">
-                                <label >Description</label>
+                                <label >Description (optional)</label>
                                 <textarea 
                                     value={this.state.description} 
                                     className="form-control" 
@@ -516,22 +532,22 @@ class CreateAlignment extends React.Component{
                                     onChange={(e) => this.handleDropdownChange(e,'visibility')}>
                                     <option value="PUBLIC">Public</option>
                                     <option value="PRIVATE">Private</option>
-                                    <option value="TOPSECRET">TopSecret</option>
+                                    <option value="PRIVATE_GROUP">Private Group</option>
                                 </select>
                             </div>
                             {this.addUserAccessList()}
-                        
-                            
                             <br/>
-                            <SubmitButton
-                                    text='CREATE'
-                                    type='btn-outline-secondary btn-lg'
-                                    onClick={ (e) => this.onClickHandler(e)}
-                                    disabled={this.state.showError}
-                                />
+                            <div className="d-flex justify-content-start">
+                                <SubmitButton
+                                        text='CREATE'
+                                        type='btn-outline-secondary btn-lg'
+                                        onClick={ (e) => this.onClickHandler(e)}
+                                        //disabled={this.state.showError}
+                                    />
+                                {this.state.showError ? <div className="alert alert-primary ml-2" role="alert">{this.state.errormessage}</div> : null }
+                            </div>
                         </form>
                     </div>  
-                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                     {this.addModal()}
                 </div>
 

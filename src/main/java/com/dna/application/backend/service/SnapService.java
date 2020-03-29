@@ -25,12 +25,12 @@ public class SnapService extends AbstractAligner {
         if (track.isPaired()) {
             MultipartFile readFile2 = track.getRead1();
             read2 = saveFile(readFile2, folder + filename + "2" + "." + extension);
-            args.addAll(Arrays.asList("snap-aligner", "paired", folder, folder+read1, folder+read2,
+            args.addAll(Arrays.asList("snap-aligner", "paired", folder, read1, read2,
                     "-H", track.getMaxHits(),
                     "-d", track.getMaxDist(),
                     "-o", folder + "bams/" + filename + ".sam"));
         } else {
-            args.addAll(Arrays.asList("snap-aligner", "single", folder, folder+read1,
+            args.addAll(Arrays.asList("snap-aligner", "single", folder, read1,
                     "-h", track.getMaxHits(),
                     "-d", track.getMaxDist(),
                     "-o", folder + "bams/" + filename + ".sam"));
@@ -43,19 +43,19 @@ public class SnapService extends AbstractAligner {
     @Override
     protected String doIndex(boolean isExample, String filename) throws Exception {
         if(isExample){
-            runCommand(new String[]{"snap-aligner", "index",folder+"examples/"+filename+".fna", folder});
+            runCommand(new String[]{"snap-aligner", "index",folder+"examples/"+filename+".fna", folder, "-bSpace"});
         }
         else {
-            runCommand(new String[]{"snap-aligner", "index", folder+"references/"+filename+".fna", folder+filename});
+            runCommand(new String[]{"snap-aligner", "index", folder+"references/"+filename+".fna", folder+filename, "-bSpace"});
         }
         return folder;
     }
 
     @Override
     protected void deleteIndex(String filename) throws Exception {
-        runCommand(new String[]{"ls", "-la;",
-                "rm", folder + "Genome;",
-                "rm", folder + "GenomeIndex*;",
-                "rm", folder + "OverflowTable;" });
+        runCommand(new String[]{"rm", folder + "Genome"});
+        runCommand(new String[]{"rm", folder + "GenomeIndex"});
+        runCommand(new String[]{"rm", folder + "GenomeIndexHash"});
+        runCommand(new String[]{"rm", folder + "OverflowTable"});
     }
 }

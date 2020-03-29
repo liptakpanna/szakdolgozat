@@ -190,7 +190,7 @@ class EditUser extends React.Component{
     }
 
     addUserAccessList(){
-        if(this.state.item.visibility === "PRIVATE" || this.state.item.visibility === "TOPSECRET") {
+        if(this.state.item.visibility === "PRIVATE" || this.state.item.visibility === "PRIVATE_GROUP") {
             if(this.state.usernames && this.state.usernames.length > 0) {
                 return(
                     <div>
@@ -215,7 +215,7 @@ class EditUser extends React.Component{
             }
             return (
                 <div className="container">
-                <NavBar/>
+                <NavBar active="alignments"/>
                 <div className='container'>
                     <PreviousPageIcon
                         where={'/alignments/igv'}
@@ -249,7 +249,7 @@ class EditUser extends React.Component{
                                 onChange={this.handleDropdownChange.bind(this)}>
                                 <option value="PUBLIC">Public</option>
                                 <option value="PRIVATE">Private</option>
-                                <option value="TOPSECRET">Top Secret</option>
+                                <option value="PRIVATE_GROUP">Private Group</option>
                             </select>
                         </div>
                         {this.addUserAccessList()}

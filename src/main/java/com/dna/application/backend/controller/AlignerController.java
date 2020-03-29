@@ -2,6 +2,7 @@ package com.dna.application.backend.controller;
 
 import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
+import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.ReferenceExample;
@@ -12,6 +13,7 @@ import com.dna.application.backend.service.BwaService;
 import com.dna.application.backend.service.SnapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -68,9 +70,10 @@ public class AlignerController {
             else
                 throw new Exception("Not a valid aligner");
         } catch (EntityNameAlreadyExistsException e) {
-            throw new Exception("Alignment name already exists.");
+            throw new Exception("Alignment name already exists, please choose an other one.");
+        } catch (WrongFileTypeException e) {
+            throw new Exception("Wrong file type");
         }
-
     }
 
     @PostMapping("/update")
