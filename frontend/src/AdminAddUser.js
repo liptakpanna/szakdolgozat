@@ -4,6 +4,8 @@ import { Redirect } from 'react-router-dom';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
 import PreviousPageIcon from './PreviousPageIcon';
+import Cookie from "js-cookie";
+import {validateEmail} from './Common';
 
 class AdminAddUser extends React.Component{
 
@@ -14,15 +16,13 @@ class AdminAddUser extends React.Component{
             password: '',
             email: '',
             role: 'GUEST',
-            buttonDisabled: true,
+            showError: false,
+            errormessage: null
         }
     }
 
     setInputValue(property, value) {
         value = value.trim();
-        if (value.length > 12) {
-            return;
-        }
         this.setState({
             [property]: value
         })
@@ -35,13 +35,19 @@ class AdminAddUser extends React.Component{
     }
 
     async addUser() {
+        if (!this.state.username || !this.state.password || !this.state.email) {return;}
+        if(!validateEmail(this.state.item.email)) {
+            this.setState({errormessage: "Not a valid email form"})   
+            this.setState({showError:true});
+            return;
+        }
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/users/add', {
                 method: 'post',
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 }),
                 body:JSON.stringify({
@@ -50,15 +56,29 @@ class AdminAddUser extends React.Component{
                     email: this.state.email,
                     role: this.state.role
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.props.history.push('/users')
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result)
+                    this.props.history.push('/users')    
+                }
             }
         }
         catch(e) {
+            console.log("megint mas: ");
             console.log(e)
         }
     }
@@ -67,12 +87,13 @@ class AdminAddUser extends React.Component{
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return (
                 <div className="container">
-                <NavBar/>
+                <NavBar active="users"/>
                 <div className='newUserContainer'>
                     <PreviousPageIcon
                         where="/users"
                         hist={this.props.history}
                     />
+                    <form onSubmit={(e) => e.preventDefault()}>
                     <h1>Add New User</h1>
                     <InputField
                         type='text'
@@ -80,6 +101,7 @@ class AdminAddUser extends React.Component{
                         value={this.state.username ? this.state.username : ''}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
+                        required={true}
                     />
                     <InputField
                         type='password'
@@ -87,14 +109,18 @@ class AdminAddUser extends React.Component{
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
+                        required={true}
                     />
                     <InputField
-                        type='text'
+                        type='email'
                         placeholder='Enter email'
                         value={this.state.email ? this.state.email : ''}
                         onChange= { (value) => this.setInputValue('email', value)}
                         label ='Email'
+                        maxLength="50"
+                        required={true}
                     />
+                    
                     <div className="form-group">
                         <label className='col-form-label'>Role</label>
                         <select 
@@ -111,14 +137,16 @@ class AdminAddUser extends React.Component{
                         text='Add User'
                         type='btn-outline-secondary'
                         onClick={ () => this.addUser() }                        
-                    />
+                    />  
+                    </form>
                 </div>
+                {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
             );
             }
             else { 
                 return(
-                    <Redirect to="login" />
+                    <Redirect to="/login" />
                 );
             }
         }

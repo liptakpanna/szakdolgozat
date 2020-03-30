@@ -25,7 +25,7 @@ public class User extends BaseEntityAudit implements UserDetails {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -38,7 +38,7 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     private Status status;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval=true)
     @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> ownedAlignments = new HashSet<>();
 

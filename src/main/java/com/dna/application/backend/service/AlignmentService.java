@@ -1,20 +1,23 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.ReferenceExample;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.repository.AlignmentRepository;
+import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +42,10 @@ public class AlignmentService {
     @Autowired
     private ReferenceRepository referenceRepository;
 
-    @Transactional
+    @Autowired
+    private BamUrlRepository bamUrlRepository;
+
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     public List<AlignmentDto> getAlignments(User user) throws Exception {
         Set<Alignment> alignments = new HashSet<>(alignmentRepository.findByVisibility(Alignment.Visibility.PUBLIC));
         alignments.addAll(user.getOwnedAlignments());
@@ -77,27 +83,19 @@ public class AlignmentService {
         else throw new Exception("Alignment with name:" + name + " not found");
     }
 
-    public List<AlignmentDto> deleteAlignment(Long id, User user) throws Exception{
+    public Boolean deleteAlignment(Long id, User user) throws Exception{
         Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
 
         if (alignment.getOwner() != user && user.getRole() != User.Role.ADMIN)
             throw new Exception("You have no authorization to delete this object");
 
         String filename = alignment.getName().replaceAll("\\s+","_");
-        deleteAlignmentFiles(filename);
+        deleteAlignmentFiles(filename, alignment.getBamUrls().size(), alignment.getReferenceUrl().contains("/examples/"));
 
         alignmentRepository.deleteById(id);
         alignmentRepository.flush();
 
-        user.getOwnedAlignments().remove(alignment);
-        if(alignment.getUserAccess() != null)
-            for(User userAccess: alignment.getUserAccess()) {
-                if(userAccess != null) {
-                    userAccess.getAlignmentAccess().remove(alignment);
-                }
-            }
-        userRepository.saveAndFlush(user);
-        return getAlignments(user);
+        return !alignmentRepository.existsById(id);
     }
 
     public AlignmentDto updateAlignment(AlignmentRequest alignmentRequest, User user) throws Exception{
@@ -113,9 +111,12 @@ public class AlignmentService {
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
         log.warn("Alignment request: {}", usernameAccessList);
 
-        if(alignmentRequest.getName() != null) alignment.setName(name);
-        if(alignmentRequest.getDescription() != null) alignment.setDescription(description);
-        if(alignmentRequest.getVisibility() != null) alignment.setVisibility(visibility);
+        if(name != null) {
+            if (!name.equals(alignment.getName()) && alignmentRepository.existsByName(name)) throw new EntityNameAlreadyExistsException();
+            alignment.setName(name);
+        }
+        if(description != null) alignment.setDescription(description);
+        if(visibility != null) alignment.setVisibility(visibility);
 
         if(usernameAccessList != null)
             for(String username: usernameAccessList) {
@@ -134,8 +135,8 @@ public class AlignmentService {
         return referenceRepository.findAll();
     }
 
-    private void deleteAlignmentFiles(String filename) throws Exception{
-        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder};
+    private void deleteAlignmentFiles(String filename, int readSize, boolean isExample) throws Exception{
+        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder, String.valueOf(readSize), String.valueOf(isExample)};
 
         Process proc = new ProcessBuilder(args).start();
         String error = getError(proc);

@@ -1,10 +1,11 @@
 package com.dna.application.backend.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class AlignmentRequest {
 
     private MultipartFile referenceDna;
 
-    private Set<MultipartFile> readsForDna;
+    private List<ReadTrack> readsForDna;
 
     private Alignment.Visibility visibility;
 

@@ -1,7 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.UserDto;
-import com.dna.application.backend.model.Alignment;
+import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.model.UsernameListResponse;
@@ -21,7 +21,6 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -49,18 +48,22 @@ public class UserService {
         return new UsernameListResponse(usernames);
     }
 
-    public List<UserDto> deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
-        user.setStatus(User.Status.DELETED);
-        user.setAlignmentAccess(new HashSet<>());
-        userRepository.saveAndFlush(user);
-        return getUsers();
+    @Transactional
+    public Boolean deleteUser(Long id, User user) throws Exception {
+        if (user.getId().equals(id))
+            throw new Exception("You cannot delete yourself.");
+        User userForDelete = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        userForDelete.setStatus(User.Status.DELETED);
+        userForDelete.setAlignmentAccess(new HashSet<>());
+        userRepository.saveAndFlush(userForDelete);
+        return !userRepository.existsById(id);
     }
 
     @Transactional
-    public UserDto updateUser(UserRequest userRequest, String updater) throws Exception{
+    public boolean updateUser(UserRequest userRequest, String updater) throws Exception{
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
+
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
         String password = userRequest.getPassword();
@@ -68,7 +71,10 @@ public class UserService {
         User.Status status = userRequest.getStatus();
 
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
-        if(username != null) user.setUsername(username);
+        if(username != null){
+            if(!username.equals(user.getUsername()) && userRepository.existsByUsername(username)) throw new EntityNameAlreadyExistsException();
+            user.setUsername(username);
+        }
         if(email != null) user.setEmail(email);
         if(password != null) user.setPassword(passwordEncoder.encode(password));
         if(role != null) user.setRole(role);
@@ -77,7 +83,7 @@ public class UserService {
         user.setUpdatedBy(updater);
         userRepository.saveAndFlush(user);
 
-        return modelMapper.map(user, UserDto.class);
+        return ((userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()))).getUpdatedBy().equals(updater));
     }
 
     public UserDto getUserDto(String username) {
@@ -85,13 +91,13 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
-    public List<UserDto> addUser(UserRequest userRequest, String admin) throws Exception{
+    public boolean addUser(UserRequest userRequest, String admin) throws Exception{
         if (userRequest.getPassword().equals(""))
-            throw new Exception("Cannot save this user: Password required");
+            throw new Exception("Password required");
         if (userRequest.getUsername().length() > 12)
-            throw new Exception("Cannot save this user: Username too long");
+            throw new Exception("Username too long");
         if(userRepository.findByUsername(userRequest.getUsername()) != null)
-            throw new Exception("Cannot save this user: Username already in use");
+            throw new EntityNameAlreadyExistsException();
 
         User newUser = modelMapper.map(userRequest , User.class);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -100,6 +106,6 @@ public class UserService {
 
         log.warn("{}", newUser);
         userRepository.saveAndFlush(newUser);
-        return getUsers();
+        return userRepository.existsByUsername(userRequest.getUsername());
     }
 }

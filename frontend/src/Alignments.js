@@ -5,13 +5,16 @@ import SubmitButton from './SubmitButton';
 import {checkJwtToken} from './Common';
 import Moment from 'moment';
 import Modal from 'react-bootstrap/Modal';
+import Cookie from "js-cookie";
 
 class Alignments extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             items: [],
-            show: false
+            show: false,
+            showError: false,
+            errormessage: null
         }
         this.viewAlignment = this.viewAlignment.bind(this);
     }
@@ -29,19 +32,32 @@ class Alignments extends React.Component{
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + localStorage.getItem("jwtToken")
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
             });
 
             let result = await response.json();
             if(result){
-                console.log(result);
-                this.setState({items: result});
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.setState({items: result});
+                }
             }
         }
         catch(e) {
-            console.log(e)
+            console.log(e);
         }
     }
 
@@ -71,14 +87,14 @@ class Alignments extends React.Component{
                         </div>
                         <div className="p-2">
                             <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
-                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Diamond"})}>
-                                Diamond
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Bwa"})}>
+                                BWA
                             </button>
                         </div>
                         <div className="p-2">
                             <button type="button" className="btn btn-light btn-sq" style={{backgroundColor: "#e3f2fd"}}
-                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Bwa"})}>
-                                BWA
+                                onClick={() => this.props.history.push("/alignments/add", {aligner: "Snap"})}>
+                                Snap
                             </button>
                         </div>
                     </div>
@@ -142,29 +158,25 @@ class Alignments extends React.Component{
         Moment.locale('en');
         let role = localStorage.getItem("role");
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
-            if(role === "ADMIN" || role === "RESEARCHER" ) {
-                return(
-                    <div className="container">
-                        <NavBar/>
-                        {this.getBaseHtml()}
-                        <br/>
-                        <SubmitButton
-                                text='Create alignment'
-                                type='btn-lg btn-outline-secondary'
-                                onClick={ () => this.handleShow()}
-                            />
-                    </div>);
-            } else {
-                return(
-                    <div className="container">
-                        <NavBar/>
-                        {this.getBaseHtml()}
-                    </div>);
-            }
+            return(
+                <div className="container">
+                    <NavBar active="alignments"/>
+                    {this.getBaseHtml()}
+                    <br/>
+                    {role === "ADMIN" || role === "RESEARCHER" ?
+                    <SubmitButton
+                            text='Create alignment'
+                            type='btn-lg btn-outline-secondary'
+                            onClick={ () => this.handleShow()}
+                        /> : null }
+                    
+                    {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
+                </div>);
+            
         }
         else { 
             return(
-                <Redirect to="login" />
+                <Redirect to="/login" />
             );
         }
     }

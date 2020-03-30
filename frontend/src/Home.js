@@ -5,19 +5,19 @@ import {checkJwtToken} from './Common';
 
 class Home extends React.Component{
 
-    componentDidMount() {
+    componentWillMount() {
         checkJwtToken();
     }
 
     render() {
         if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
             return(
-                <NavBar/>
+                <NavBar active="home"/>
             );
         }
         else { 
             return(
-                <Redirect to="login" />
+                <Redirect to="/login" />
             );
         }
     }

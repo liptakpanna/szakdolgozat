@@ -6,7 +6,6 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -14,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity
 @Table(name="alignments")
 public class Alignment extends BaseEntityAudit {
@@ -24,13 +24,10 @@ public class Alignment extends BaseEntityAudit {
 
     private String referenceUrl;
 
-    @ElementCollection
-    @CollectionTable(
-            name="bamUrls",
-            joinColumns=@JoinColumn(name="alignment_id")
-    )
-    @Column(name="bamUrl")
-    private Set<String> bamUrls;
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
+    @Fetch(value= FetchMode.SELECT)
+    @JoinColumn(name = "alignment_id")
+    private Set<BamUrl> bamUrls;
 
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;
@@ -45,7 +42,7 @@ public class Alignment extends BaseEntityAudit {
     @Fetch(value= FetchMode.SELECT)
     private Set<User> userAccess = new HashSet<>();
 
-    public enum Visibility {PUBLIC, PRIVATE, TOPSECRET};
+    public enum Visibility {PUBLIC, PRIVATE, PRIVATE_GROUP};
 
-    public enum Aligner {BOWTIE};
+    public enum Aligner {BOWTIE, BWA, SNAP};
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
+import Cookie from "js-cookie"
 
 class LoginForm extends React.Component{
 
@@ -9,7 +10,9 @@ class LoginForm extends React.Component{
         this.state = {
             username: '',
             password: '',
-            buttonDisabled: false
+            buttonDisabled: false,
+            show: false,
+            errormessage: "Cannot connect to server. Please try again later."
         }
     }
 
@@ -48,18 +51,32 @@ class LoginForm extends React.Component{
                     username: this.state.username,
                     password: this.state.password
                 })
-            });
+            }).catch(error =>  {
+                console.log("Cannot connect to server");
+                this.setState({show:true});
+                this.setState({errormessage: "Cannot connect to server. Please try again later."})
+             });
 
             let result = await response.json();
             if (result){
                 console.log(result);
-                localStorage.setItem("isLoggedIn", true);
-                localStorage.setItem("jwtToken", result.jwttoken);
-                localStorage.setItem("username", this.state.username);
-                localStorage.setItem("id", result.id);
-                localStorage.setItem("role", result.role);
-
-                this.props.history.push('/home')
+                if(result.status === 403) {
+                    this.setState({errormessage: "Wrong username password combination"})   
+                    this.setState({show:true});
+                }
+                else if(result.status === 500) {
+                    this.setState({show:true});
+                    this.setState({errormessage: result.message})    
+                }
+                else {
+                    localStorage.setItem("isLoggedIn", true);
+                    Cookie.set("jwtToken", result.jwttoken)
+                    localStorage.setItem("username", this.state.username);
+                    localStorage.setItem("id", result.id);
+                    localStorage.setItem("role", result.role);
+    
+                    this.props.history.push('/home')    
+                }
             }
             else {
                 alert("Something went wrong...");
@@ -74,7 +91,7 @@ class LoginForm extends React.Component{
     render() {
         return(
             <div className="container p-5" style={{backgroundColor: "#e3f2fd"}} >
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <h1>
                         Welcome!
                     </h1>
@@ -85,6 +102,7 @@ class LoginForm extends React.Component{
                         value={this.state.username ? this.state.username : ''}
                         onChange= { (value) => this.setInputValue('username', value)}
                         label ='Username'
+                        required={true}
                     />
                     <InputField
                         type='password'
@@ -93,6 +111,7 @@ class LoginForm extends React.Component{
                         value={this.state.password ? this.state.password : ''}
                         onChange= { (value) => this.setInputValue('password', value)}
                         label ='Password'
+                        required={true}
                     />
                     <br/>
                     <SubmitButton
@@ -102,6 +121,7 @@ class LoginForm extends React.Component{
                         onClick={ () => this.doLogin()}
                     />
                 </form>
+        { this.state.show ? <div className="alert alert-danger mt-3" role="alert">{this.state.errormessage}</div> : null }
             </div>
         );
     }

@@ -1,72 +1,60 @@
 package com.dna.application.backend.service;
 
-import com.dna.application.backend.dto.AlignmentDto;
-import com.dna.application.backend.model.Alignment;
-import com.dna.application.backend.model.AlignmentRequest;
-import com.dna.application.backend.model.ReferenceExample;
-import com.dna.application.backend.model.User;
-import com.dna.application.backend.repository.AlignmentRepository;
-import com.dna.application.backend.repository.ReferenceRepository;
-import com.dna.application.backend.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.dna.application.backend.model.ReadTrack;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-@Slf4j
 @Service
-public class BowtieService extends BaseAligner {
-    @Autowired
-    private AlignmentRepository alignmentRepository;
+public class BowtieService extends AbstractAligner {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ReferenceRepository referenceRepository;
-
-    @Autowired
-    private AlignmentService alignmentService;
-
-    @Transactional
-    public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
-        String name = alignmentRequest.getName();
-        if(alignmentRepository.findByName(name) != null ) throw new Exception("Name already in use");
-
-        List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
-        String filename = name.replaceAll("\\s+","_");
-        Set<MultipartFile> reads = alignmentRequest.getReadsForDna();
-
-        Long referenceId = alignmentRequest.getReferenceId();
-        ReferenceExample reference = null;
-        if(referenceId != null){
-            reference = referenceRepository.findById(referenceId).orElseThrow(() -> new EntityNotFoundException(referenceId.toString()));
-            saveFilesForAligner(null, reads, folder, filename);
-            runScript(folder+"/bowtie_script", filename, folder, reads.size(), reference.getFilename());
+    @Override
+    protected List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception {
+        List<String> args = new ArrayList<>();
+        MultipartFile readFile = track.getRead1();
+        String extension = FilenameUtils.getExtension(readFile.getOriginalFilename());
+        String read1 = saveFile(readFile, folder + filename + "1" + "." + extension);
+        String read2 = "";
+        if(track.getValidCount().equals("all"))
+            args.addAll(Arrays.asList("bowtie", "-a"));
+        else if(track.getValidCount().equals("all --best"))
+            args.addAll(Arrays.asList("bowtie", "-a", "--best"));
+        else
+            args.addAll(Arrays.asList("bowtie", "-k", track.getValidCount()));
+        args.addAll(Arrays.asList("-v", track.getMismatch()));
+        if (track.isPaired()) {
+            MultipartFile readFile2 = track.getRead1();
+            read2 = saveFile(readFile2, folder + filename + "2" + "." + extension);
+            if(fastaExtensions.contains(extension))
+                args.addAll(Arrays.asList("-S", indexName, "-f", "-1", read1, "-2", read2, folder + "bams/" + filename + ".sam"));
+            else
+                args.addAll(Arrays.asList("-S", indexName, "-1", read1, "-2", read2, folder + "bams/" + filename + ".sam"));
+        } else {
+            if(fastaExtensions.contains(extension))
+                args.addAll(Arrays.asList("-S", indexName, "-f", read1, folder+"bams/"+ filename + ".sam"));
+            else
+                args.addAll(Arrays.asList("-S", indexName, read1, folder+"bams/"+ filename + ".sam"));
         }
+        runCommand(args.toArray(new String[0]));
+
+        return Arrays.asList(read1, read2);
+    }
+
+    @Override
+    protected String doIndex(boolean isExample, String filename) throws Exception{
+        if(isExample) return folder+"examples/indexes/"+filename;
         else {
-            saveFilesForAligner(alignmentRequest.getReferenceDna(), reads, folder, filename);
-            runScript(folder+"/bowtie_script", filename, folder, reads.size());
+            runCommand(new String[]{"bowtie-build", folder+"references/"+filename+".fna", folder+filename});
+            return folder+"/"+filename;
         }
+    }
 
-        Alignment alignment = Alignment.builder()
-                .aligner(Alignment.Aligner.BOWTIE)
-                .name(filename)
-                .description(alignmentRequest.getDescription())
-                .owner(user)
-                .referenceUrl(reference==null ? resourceUrl+"/references/"+filename+".fna" : resourceUrl+"/examples/"+reference.getFilename()+".fna" )
-                .bamUrls(getBamUrls(resourceUrl, filename, reads.size()))
-                .visibility(alignmentRequest.getVisibility())
-                .build();
-
-        setUserAccessSet(usernameAccessList, userRepository, alignment);
-        alignmentRepository.saveAndFlush(alignment);
-
-        return alignmentService.getAlignmentDto(name);
+    @Override
+    protected void deleteIndex(String filename) throws Exception {
+        runCommand(new String[]{"rm", folder + filename + ".*.ebwt"});
     }
 }
