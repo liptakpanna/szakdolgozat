@@ -6,12 +6,14 @@ import SubmitButton from './SubmitButton';
 import PreviousPageIcon from './PreviousPageIcon';
 import Cookie from "js-cookie";
 import {validateEmail} from './Common';
+import {checkJwtToken} from './Common';
 
 class AdminAddUser extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
+            isLoggedIn: true,
             username: '',
             password: '',
             email: '',
@@ -19,6 +21,10 @@ class AdminAddUser extends React.Component{
             showError: false,
             errormessage: null
         }
+    }
+
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
     }
 
     setInputValue(property, value) {
@@ -37,7 +43,7 @@ class AdminAddUser extends React.Component{
     async addUser() {
         if (!this.state.username || !this.state.password || !this.state.email) {return;}
         if(!validateEmail(this.state.item.email)) {
-            this.setState({errormessage: "Not a valid email form"})   
+            this.setState({errormessage: "Not a valid email form"})
             this.setState({showError:true});
             return;
         }
@@ -56,16 +62,11 @@ class AdminAddUser extends React.Component{
                     email: this.state.email,
                     role: this.state.role
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            });
-
+            })
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }
                 else if(result.status === 403) {
@@ -73,18 +74,19 @@ class AdminAddUser extends React.Component{
                 }
                 else{
                     console.log(result)
-                    this.props.history.push('/users')    
+                    this.props.history.push('/users')
                 }
             }
         }
         catch(e) {
-            console.log("megint mas: ");
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             return (
                 <div className="container">
                 <NavBar active="users"/>
@@ -120,7 +122,7 @@ class AdminAddUser extends React.Component{
                         maxLength="50"
                         required={true}
                     />
-                    
+
                     <div className="form-group">
                         <label className='col-form-label'>Role</label>
                         <select 
@@ -137,7 +139,7 @@ class AdminAddUser extends React.Component{
                         text='Add User'
                         type='btn-outline-secondary'
                         onClick={ () => this.addUser() }                        
-                    />  
+                    />
                     </form>
                 </div>
                 {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }

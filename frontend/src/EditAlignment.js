@@ -15,6 +15,7 @@ class EditUser extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            isLoggedIn: true,
             item: (this.props.location.state ? this.props.location.state.item : null),
             show: false,
             showError: false,
@@ -44,9 +45,9 @@ class EditUser extends React.Component{
             return value;
     }
 
-    componentDidMount(){
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
         if (this.isComponentMounted) {
-            checkJwtToken();
             this.getUsernames();
         }
     }
@@ -72,16 +73,12 @@ class EditUser extends React.Component{
                         description: this.state.item.description,
                         usernameAccessList: this.state.item.userAccess
                     }, this.replacer)
-                }).catch(error =>  {
-                    this.setState({errormessage: "Cannot connect to server"})   
-                    this.setState({showError:true});
-                    console.log("Cannot connect to server");
-                });
+                })
     
                 let result = await response.json();
                 if(result){
                     if(result.status === 500) {
-                        this.setState({errormessage: result.message})   
+                        this.setState({errormessage: result.message})
                         this.setState({showError:true});
                     }
                     else if(result.status === 403) {
@@ -89,12 +86,14 @@ class EditUser extends React.Component{
                     }
                     else{
                         console.log(result);
-                        this.props.history.push('/alignments/igv', {item: result})    
+                        this.props.history.push('/alignments/igv', {item: result})
                     }
                 }
             }
             catch(e) {
-                console.log(e)
+                this.setState({errormessage: "Cannot connect to server"})
+                this.setState({showError:true});
+                console.log("Cannot connect to server. " + e);
             }
         }else {
             this.setState({showError: true});
@@ -112,16 +111,12 @@ class EditUser extends React.Component{
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }
                 else if(result.status === 403) {
@@ -129,12 +124,14 @@ class EditUser extends React.Component{
                 }
                 else{
                     console.log(result);
-                    this.props.history.push('/alignments')   
+                    this.props.history.push('/alignments')
                 }
             }
         }
         catch(e) {
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -146,16 +143,12 @@ class EditUser extends React.Component{
                     'Accept': 'application/json',
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }
                 else if(result.status === 403) {
@@ -163,12 +156,14 @@ class EditUser extends React.Component{
                 }
                 else{
                     console.log(result);
-                this.setState({usernames: result.usernames});  
+                this.setState({usernames: result.usernames});
                 }
             }
         }
         catch(e) {
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -207,7 +202,7 @@ class EditUser extends React.Component{
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             if(!this.state.item) {
                 return(
                     <Redirect to="/alignments" />
@@ -269,7 +264,7 @@ class EditUser extends React.Component{
                 { this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>
                 </div>
-            );      
+            );
         }
             else { 
                 return(

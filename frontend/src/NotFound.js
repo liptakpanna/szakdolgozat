@@ -5,12 +5,19 @@ import {checkJwtToken} from './Common';
 
 class NotFound extends React.Component{
 
-    componentDidMount() {
-        checkJwtToken();
+    constructor(props){
+        super(props);
+        this.state = {
+            isLoggedIn : true,
+        }
+    }
+
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             return(<>
                 <NavBar/>
                 <div className="container">

@@ -13,6 +13,7 @@ class CreateAlignment extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            isLoggedIn: true,
             referenceFile: null,
             readFile: [
                 {
@@ -44,8 +45,8 @@ class CreateAlignment extends React.Component{
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
     }
 
-    componentDidMount() {
-        checkJwtToken();
+    async componentDidMount() {
+        this.setState({isLoggedIn: await checkJwtToken()});
         this.getReferences();
         this.getUsernames();
     }
@@ -112,7 +113,7 @@ class CreateAlignment extends React.Component{
                 this.setState({showError:true});
                 this.setState({isLoading: false});
                 console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
@@ -139,7 +140,10 @@ class CreateAlignment extends React.Component{
         }
         catch(e) {
             this.setState({isLoading: false});
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({showError:true});
+            this.setState({isLoading: false});
+            console.log("Cannot connect to server. " + e);
         }
     };
 
@@ -178,7 +182,7 @@ class CreateAlignment extends React.Component{
                 this.setState({errormessage: "Cannot connect to server"})   
                 this.setState({showError:true});
                 console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
@@ -196,7 +200,9 @@ class CreateAlignment extends React.Component{
             }
         }
         catch(e) {
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -232,7 +238,7 @@ class CreateAlignment extends React.Component{
                 this.setState({errormessage: "Cannot connect to server"})   
                 this.setState({showError:true});
                 console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
@@ -250,7 +256,9 @@ class CreateAlignment extends React.Component{
             }
         }
         catch(e) {
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -478,7 +486,7 @@ class CreateAlignment extends React.Component{
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             return(
                 <div className="container">
                     <NavBar active="alignments"/>

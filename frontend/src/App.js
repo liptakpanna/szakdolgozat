@@ -7,7 +7,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'react-widgets/dist/css/react-widgets.css';
 
 class App extends React.Component{
-
     render() {
         return(
             <div className="app">

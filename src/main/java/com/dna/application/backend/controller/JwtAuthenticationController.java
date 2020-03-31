@@ -4,6 +4,7 @@ import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.JwtResponse;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.UserDetailsServiceImpl;
+import com.dna.application.backend.service.UserService;
 import com.dna.application.backend.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -29,6 +32,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -62,5 +68,11 @@ public class JwtAuthenticationController {
                 }
         }
         return ResponseEntity.ok(false);
+    }
+
+    @GetMapping("/forgotpassword")
+    @ResponseBody
+    public ResponseEntity<List<String>> getAdminEmail() {
+        return ResponseEntity.ok(userService.getAdminEmail());
     }
 }

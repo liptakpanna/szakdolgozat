@@ -12,8 +12,13 @@ class LoginForm extends React.Component{
             password: '',
             buttonDisabled: false,
             show: false,
-            errormessage: "Cannot connect to server. Please try again later."
+            errormessage: "Cannot connect to server. Please try again later.",
+            adminEmail: []
         }
+    }
+
+    componentDidMount(){
+        this.getAdminEmail();
     }
 
     setInputValue(property, value) {
@@ -34,6 +39,34 @@ class LoginForm extends React.Component{
         })
     }
 
+    async getAdminEmail(){
+        try {
+            let response = await fetch(process.env.REACT_APP_API_URL + '/forgotpassword', {
+                method: 'get',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            let result = await response.json();
+            if (result){
+                console.log(result);
+                if(result.status === 500) {
+                    this.setState({show:true});
+                    this.setState({errormessage: result.message})
+                }
+                else {
+                    let emails = JSON.stringify(result);
+                    this.setState({adminEmail: emails.substring(1,emails.length-1)})
+                }
+            }
+        }
+        catch(e) {
+            console.log(e)
+        }
+    }
+
     async doLogin() {
         if (!this.state.username) {return;}
         if (!this.state.password) {return;}
@@ -51,22 +84,20 @@ class LoginForm extends React.Component{
                     username: this.state.username,
                     password: this.state.password
                 })
-            }).catch(error =>  {
-                console.log("Cannot connect to server");
-                this.setState({show:true});
-                this.setState({errormessage: "Cannot connect to server. Please try again later."})
-             });
+            })
 
             let result = await response.json();
             if (result){
                 console.log(result);
                 if(result.status === 403) {
-                    this.setState({errormessage: "Wrong username password combination"})   
+                    this.setState({errormessage: "Wrong username password combination. If you have forgotten your password please contact an admin: " + this.state.adminEmail})
                     this.setState({show:true});
+                    this.setState({buttonDisabled: false})
                 }
                 else if(result.status === 500) {
                     this.setState({show:true});
-                    this.setState({errormessage: result.message})    
+                    this.setState({errormessage: result.message})
+                    this.setState({buttonDisabled: false})
                 }
                 else {
                     localStorage.setItem("isLoggedIn", true);
@@ -74,15 +105,14 @@ class LoginForm extends React.Component{
                     localStorage.setItem("username", this.state.username);
                     localStorage.setItem("id", result.id);
                     localStorage.setItem("role", result.role);
-    
-                    this.props.history.push('/home')    
+
+                    this.props.history.push('/home')
                 }
-            }
-            else {
-                alert("Something went wrong...");
             }
         }
         catch(e) {
+            this.setState({show:true});
+            this.setState({errormessage: "Cannot connect to server, please try again later."})
             console.log(e)
             this.resetForm();
         }

@@ -5,17 +5,21 @@ import { Redirect } from 'react-router-dom';
 import Moment from 'moment';
 import PreviousPageIcon from './PreviousPageIcon';
 import Cookie from "js-cookie";
+import {checkJwtToken} from './Common';
 
 class IgvBrowser extends Component {
     constructor(props){
       super(props);
       this.state = {
+        isLoggedIn: true,
         item: (this.props.location.state ? this.props.location.state.item : null)
       }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+      this.setState({isLoggedIn: await checkJwtToken()});
       if(this.state.item) {
+        if(this.state.item) {
         var igvContainer = document.getElementById('igv-div');
         var igvOptions =
         {
@@ -67,8 +71,9 @@ class IgvBrowser extends Component {
     }
   
     render() {
-      if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+      if(this.state.isLoggedIn) {
         if(!this.state.item) {
+          if(!this.state.item) {
           return(
               <Redirect to="/alignments" />
           );

@@ -108,4 +108,8 @@ public class UserService {
         userRepository.saveAndFlush(newUser);
         return userRepository.existsByUsername(userRequest.getUsername());
     }
+
+    public List<String> getAdminEmail(){
+        return userRepository.findAdminEmails();
+    }
 }

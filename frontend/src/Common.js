@@ -8,33 +8,27 @@ export async function checkJwtToken() {
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 }
             })
-            .catch(error =>  {
-                logout();
-                console.log("Cannot connect to server");
-             });
 
             let result = await response.json();
             console.log(result);
             if (result != null){
                 if(result === false)
                     logout();
-                else
-                    localStorage.setItem("isLoggedIn", true);
-                return result.valid;
+                return result;
             }
             else {
                 alert("Something went wrong.")
             }
         }
         catch(e) {
-            console.log(e)
+            logout();
+            console.log("Cannot connect to server. " + e);
+            return false;
         }
-        logout();
         return false;
 }
 
 export function logout() {
-    localStorage.setItem("isLoggedIn", false);
     Cookie.set("jwtToken", null);
     localStorage.setItem("username", "");
     localStorage.setItem("id", "");

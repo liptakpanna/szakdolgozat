@@ -14,6 +14,7 @@ class EditUser extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            isLoggedIn : true,
             item: (this.props.location.state ? this.props.location.state.item : null),
             isAdmin: (this.props.location.state ? this.props.location.state.isAdmin : false),
             show: false,
@@ -23,10 +24,8 @@ class EditUser extends React.Component{
         this.replacer = this.replacer.bind(this);
     }
 
-    componentDidMount(){
-        if (this.isComponentMounted) {
-            checkJwtToken();
-        }
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
     }
 
     setInputValue(property, value) {
@@ -61,7 +60,7 @@ class EditUser extends React.Component{
             let url, body, username;
             username = this.state.item.username === this.props.location.state.item.username ? null : this.state.item.username;
             if(!validateEmail(this.state.item.email)) {
-                this.setState({errormessage: "Not a valid email form"})   
+                this.setState({errormessage: "Not a valid email form"})
                 this.setState({showError:true});
                 return;
             }
@@ -91,18 +90,14 @@ class EditUser extends React.Component{
                         "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                     }),
                     body: body
-                }).catch(error =>  {
-                    this.setState({errormessage: "Cannot connect to server"})   
-                    this.setState({showError:true});
-                    console.log("Cannot connect to server");
-                });
+                })
     
                 let result = await response.json();
                 if(result){
                     if(result.status === 500) {
-                        this.setState({errormessage: result.message})   
+                        this.setState({errormessage: result.message})
                         this.setState({showError:true});
-                    } 
+                    }
                     else if(result.status === 403) {
                         this.props.history.push("/login");
                     }
@@ -113,12 +108,14 @@ class EditUser extends React.Component{
                 }
             }
             catch(e) {
-                console.log(e)
+                this.setState({errormessage: "Cannot connect to server"})
+                this.setState({showError:true});
+                console.log("Cannot connect to server. " + e);
             }
         } else{
             this.setState({showError: true});
-            this.setState({errormessage: "There are no modifications."})   
-        } 
+            this.setState({errormessage: "There are no modifications."})
+        }
     }
 
     async deleteUser() {
@@ -130,18 +127,14 @@ class EditUser extends React.Component{
                     'Content-Type': 'application/json',
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    this.setState({errormessage: result.message})
                     this.setState({showError:true});
-                } 
+                }
                 else if(result.status === 403) {
                     this.props.history.push("/login");
                 }
@@ -152,7 +145,9 @@ class EditUser extends React.Component{
             }
         }
         catch(e) {
-            console.log(e)
+            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -161,7 +156,7 @@ class EditUser extends React.Component{
             return(
                 <div className="form-group">
                     <label className='col-form-label'>Role</label>
-                    <select 
+                    <select
                         className="form-control"
                         value={this.state.item.role}
                         onChange={this.handleDropdownChange.bind(this)}>
@@ -204,7 +199,7 @@ class EditUser extends React.Component{
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             if(!this.state.item) {
                 return(
                     <Redirect to="/home" />
@@ -250,7 +245,7 @@ class EditUser extends React.Component{
                             <SubmitButton
                                 text='Edit User'
                                 type='btn-outline-secondary btn-lg'
-                                onClick={ () => this.editUser() }                        
+                                onClick={ () => this.editUser() }
                             />
                             {this.addDeleteButton()}
                         </div>

@@ -53,6 +53,10 @@ public abstract class AbstractAligner {
 
     final static List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
 
+    final static List<String> fileErrorMessages = Arrays.asList("Unknown file type","FASTA file doesn't beging with a contig name",
+            "Reference file does not seem to be a FASTA file",
+            "reads file does not look like");
+
     protected abstract List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception;
 
     protected abstract String doIndex(boolean isExample, String filename) throws Exception;
@@ -151,10 +155,6 @@ public abstract class AbstractAligner {
         proc.waitFor();
         log.warn(input+error);
     }
-    //Bwa, Bowtie
-    static List<String> fileErrorMessages = Arrays.asList("Unknown file type","FASTA file doesn't beging with a contig name",
-            "Reference file does not seem to be a FASTA file",
-            "reads file does not look like");
 
     @Transactional
     private Set<BamUrl> getBamUrls(String filename, List<ReadTrack> tracks){

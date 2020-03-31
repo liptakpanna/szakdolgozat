@@ -4,13 +4,19 @@ import { Redirect } from 'react-router-dom';
 import {checkJwtToken} from './Common';
 
 class Home extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            isLoggedIn : true,
+        }
+    }
 
-    componentWillMount() {
-        checkJwtToken();
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
     }
 
     render() {
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             return(
                 <NavBar active="home"/>
             );

@@ -11,6 +11,7 @@ class Alignments extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            isLoggedIn: true,
             items: [],
             show: false,
             showError: false,
@@ -19,8 +20,8 @@ class Alignments extends React.Component{
         this.viewAlignment = this.viewAlignment.bind(this);
     }
 
-    componentDidMount() {
-        checkJwtToken();
+    async componentDidMount(){
+        this.setState({isLoggedIn: await checkJwtToken()});
         this.getAlignments();
     }
 
@@ -35,16 +36,12 @@ class Alignments extends React.Component{
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
 
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            });
+            })
 
             let result = await response.json();
             if(result){
                 if(result.status === 500) {
-                    this.setState({errormessage: result.message})   
+                    this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }
                 else if(result.status === 403) {
@@ -57,7 +54,9 @@ class Alignments extends React.Component{
             }
         }
         catch(e) {
-            console.log(e);
+            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({showError:true});
+            console.log("Cannot connect to server. " + e);
         }
     }
 
@@ -157,7 +156,7 @@ class Alignments extends React.Component{
     render() {
         Moment.locale('en');
         let role = localStorage.getItem("role");
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+        if(this.state.isLoggedIn) {
             return(
                 <div className="container">
                     <NavBar active="alignments"/>
@@ -169,10 +168,10 @@ class Alignments extends React.Component{
                             type='btn-lg btn-outline-secondary'
                             onClick={ () => this.handleShow()}
                         /> : null }
-                    
+
                     {this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }
                 </div>);
-            
+
         }
         else { 
             return(
