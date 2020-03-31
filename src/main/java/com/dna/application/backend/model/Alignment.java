@@ -20,6 +20,7 @@ public class Alignment extends BaseEntityAudit {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private Aligner aligner;
 
     private String referenceUrl;
@@ -32,6 +33,7 @@ public class Alignment extends BaseEntityAudit {
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private Visibility visibility;
 
     @ManyToOne

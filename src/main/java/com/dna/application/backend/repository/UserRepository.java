@@ -13,11 +13,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByUsername(List<String> username);
 
-    @Query("select t.username from User t where t.status=0")
+    @Query("select t.username from User t where t.status=ENABLED")
     List<String> findUsernames();
 
     boolean existsByUsername(String username);
 
-    @Query("select t.email from User t where t.role=0")
+    @Query("select t.email from User t where t.role=ADMIN")
     List<String> findAdminEmails();
 }

@@ -32,10 +32,12 @@ public class User extends BaseEntityAudit implements UserDetails {
     private String password;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String createdBy;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval=true)
