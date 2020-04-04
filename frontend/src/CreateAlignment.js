@@ -147,9 +147,9 @@ class CreateAlignment extends React.Component{
         }
     };
 
-    handleDropdownChange(event, dropdown) {
+    handleDropdownChange(event) {
         this.setState({
-            [dropdown]: event.target.value
+            visibility: event.target.value
         })
     }
 
@@ -537,7 +537,7 @@ class CreateAlignment extends React.Component{
                                 <select 
                                     className="form-control"
                                     value={this.state.visibility}
-                                    onChange={(e) => this.handleDropdownChange(e,'visibility')}>
+                                    onChange={(e) => this.handleDropdownChange(e)}>
                                     <option value="PUBLIC">Public</option>
                                     <option value="PRIVATE">Private</option>
                                     <option value="PRIVATE_GROUP">Private Group</option>

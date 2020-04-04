@@ -42,7 +42,7 @@ class AdminAddUser extends React.Component{
 
     async addUser() {
         if (!this.state.username || !this.state.password || !this.state.email) {return;}
-        if(!validateEmail(this.state.item.email)) {
+        if(!validateEmail(this.state.email)) {
             this.setState({errormessage: "Not a valid email form"})
             this.setState({showError:true});
             return;

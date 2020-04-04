@@ -12,7 +12,5 @@ public interface AlignmentRepository extends JpaRepository<Alignment, Long> {
 
     Alignment findByName(String name);
 
-    List<Alignment> findByOwnerId(Long id);
-
     boolean existsByName(String name);
 }

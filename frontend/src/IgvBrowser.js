@@ -7,6 +7,8 @@ import PreviousPageIcon from './PreviousPageIcon';
 import Cookie from "js-cookie";
 import {checkJwtToken} from './Common';
 
+let download = require('downloadjs/download.min.js');
+
 class IgvBrowser extends Component {
     constructor(props){
       super(props);
@@ -14,6 +16,7 @@ class IgvBrowser extends Component {
         isLoggedIn: true,
         item: (this.props.location.state ? this.props.location.state.item : null)
       }
+
     }
 
     async componentDidMount() {
@@ -32,6 +35,7 @@ class IgvBrowser extends Component {
         };
 
         return igv.createBrowser(igvContainer, igvOptions);
+        }
       }
     }
 
@@ -69,11 +73,23 @@ class IgvBrowser extends Component {
           );
       }
     }
+
+    async downloadBamFile(url) {
+      return fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + Cookie.get("jwtToken")
+        }
+      }).then(function(resp) {
+        return resp.blob();
+      }).then(function(blob) {
+        download(blob, url.substring(url.lastIndexOf("/"), url.length));
+      });
+    }
   
     render() {
       if(this.state.isLoggedIn) {
         if(!this.state.item) {
-          if(!this.state.item) {
           return(
               <Redirect to="/alignments" />
           );
@@ -105,6 +121,14 @@ class IgvBrowser extends Component {
                       </div>
                     </div>
                     <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.state.item.description}</p>
+                    <p className="card-text">Download bam files: </p>
+                    <div className="d-flex flex-wrap">
+                      {this.state.item.bamUrls.map(function(bam,index) {
+                        return <div className="p-2" key={index}>
+                          <button className="btn btn-light" onClick={() => this.downloadBamFile(bam.url)}>Track: {bam.name}</button>
+                          </div>
+                      }, this)}
+                    </div>
                   </div>
               </div>
               <br/>

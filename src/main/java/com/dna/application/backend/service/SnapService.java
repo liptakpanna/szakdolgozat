@@ -46,7 +46,7 @@ public class SnapService extends AbstractAligner {
             runCommand(new String[]{"snap-aligner", "index",folder+"examples/"+filename+".fna", folder, "-bSpace"});
         }
         else {
-            runCommand(new String[]{"snap-aligner", "index", folder+"references/"+filename+".fna", folder+filename, "-bSpace"});
+            runCommand(new String[]{"snap-aligner", "index", folder+"references/"+filename+".fna", folder, "-bSpace"});
         }
         return folder;
     }
