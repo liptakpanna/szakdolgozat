@@ -1,6 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.*;
@@ -151,6 +152,8 @@ public abstract class AbstractAligner {
         String error = getError(proc);
         if(fileErrorMessages.parallelStream().anyMatch(error::contains) || fileErrorMessages.parallelStream().anyMatch(input::contains) )
             throw new WrongFileTypeException();
+        if(error.toLowerCase().contains("command not found") || input.toLowerCase().contains("command not found"))
+            throw new CommandNotFoundException();
 
         proc.waitFor();
         log.warn(input+error);

@@ -1,6 +1,7 @@
 package com.dna.application.backend.controller;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.Alignment;
@@ -73,6 +74,8 @@ public class AlignerController {
             throw new Exception("Alignment name already exists, please choose an other one.");
         } catch (WrongFileTypeException e) {
             throw new Exception("Wrong file type");
+        } catch (CommandNotFoundException e) {
+            throw new Exception("A command was not found, the server does not have everything installed to work properly.");
         }
     }
 
