@@ -39,7 +39,7 @@ class EditUser extends React.Component{
     }
 
     replacer(key, value) {
-        if (value === null || value ==='' || this.state.item.key === value)
+        if (value === null || value ==='' )
             return undefined;
         else
             return value;
@@ -65,13 +65,14 @@ class EditUser extends React.Component{
                         "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                     }),
                     body: JSON.stringify({
-                        id: this.props.location.state.item.id,
+                        id: this.state.item.id,
                         name: this.state.item.name,
                         visibility: this.state.item.visibility,
                         description: this.state.item.description,
                         usernameAccessList: this.state.item.userAccess
                     }, this.replacer)
                 })
+                console.log("bu");
     
                 let result = await response.json();
                 if(result){

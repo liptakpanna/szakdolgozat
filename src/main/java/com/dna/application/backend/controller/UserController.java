@@ -67,7 +67,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        if (userRequest.getRole() != null) throw new Exception("You cannot change your role");
+        if (userRequest.getRole() != null && user.getId().equals(userRequest.getId())) throw new Exception("You cannot change your role");
         try{
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {

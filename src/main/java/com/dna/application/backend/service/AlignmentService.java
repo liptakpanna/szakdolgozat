@@ -102,7 +102,7 @@ public class AlignmentService {
         Long id = alignmentRequest.getId();
         Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
 
-        if (alignment.getOwner() != user && user.getRole() != User.Role.ADMIN)
+        if (!alignment.getOwner().getUsername().equals(user.getUsername()) && user.getRole() != User.Role.ADMIN)
             throw new Exception("You have no authorization to edit this object");
 
         String name = alignmentRequest.getName();

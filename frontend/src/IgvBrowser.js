@@ -70,8 +70,8 @@ class IgvBrowser extends Component {
       if(this.state.item.updatedAt) {
         return(            
           <>
-          <p className="card-text">Updated At: {this.state.item.updatedAt ? Moment(this.state.item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
-          <p className="card-text">Updated By: {this.state.item.updatedBy}</p>
+          <p className="card-text"><strong>Updated At:</strong> {this.state.item.updatedAt ? Moment(this.state.item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+          <p className="card-text"><strong>Updated By:</strong> {this.state.item.updatedBy}</p>
           </>
           );
       }
@@ -121,22 +121,22 @@ class IgvBrowser extends Component {
                       </h5>
                     </a>
                   </div>
-                  <div id="collapseOne1" className="collapse" role="tabpanel" aria-labelledby="headingOne1"
+                  <div id="collapseOne1" className={"collapse " + (this.state.open ? "show" : "")} role="tabpanel" aria-labelledby="headingOne1"
                     data-parent="#accordionEx">
                     <div className="card-body">
                       <div className="row">
                         <div className="col">
-                          <p className="card-text">Aligner: {this.state.item.aligner}</p>
-                          <p className="card-text">Owner: {this.state.item.owner}</p>
-                          <p className="card-text">Visibility: {this.state.item.visibility}</p>
+                          <p className="card-text"><strong>Aligner:</strong> {this.state.item.aligner}</p>
+                          <p className="card-text"><strong>Owner:</strong> {this.state.item.owner}</p>
+                          <p className="card-text"><strong>Visibility:</strong> {this.state.item.visibility}</p>
                         </div>
                         <div className="col">
-                          <p className="card-text">Created At: {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                          <p className="card-text"><strong>Created At:</strong> {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
                           {this.addUpdated()}
                         </div>
                       </div>
-                      <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.state.item.description}</p>
-                      <p className="card-text mb-0">Download bam files: </p>
+                      <p className="card-text" style={{marginTop: "1rem"}}><strong>Description:</strong> {this.state.item.description}</p>
+                      <p className="card-text mb-0"><strong>Download bam files:</strong> </p>
                       <div className="d-flex flex-wrap">
                         {this.state.item.bamUrls.map(function(bam,index) {
                           return <div className="p-2" key={index}>

@@ -6,6 +6,7 @@ import {checkJwtToken} from './Common';
 import Moment from 'moment';
 import Modal from 'react-bootstrap/Modal';
 import Cookie from "js-cookie";
+import EllipsisText from "react-ellipsis-text";
 
 class Alignments extends React.Component{
     constructor(props) {
@@ -140,7 +141,7 @@ class Alignments extends React.Component{
                                 data-toogle="tooltip" data-placement="top" title="Click to view alignment">
                                 <th>{item.name}</th>
                                 <td> {item.aligner} </td>
-                                <td> {item.description} </td>
+                                <td><EllipsisText text={item.description} length={100} /></td>
                                 <td> {item.owner} </td>
                                 <td> {item.visibility} </td>
                                 <td> {item.updatedBy} </td>

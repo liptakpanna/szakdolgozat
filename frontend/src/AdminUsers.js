@@ -93,7 +93,7 @@ class AdminUsers extends React.Component{
                             {this.state.items.map(function(item, index) {
                                 return <tr 
                                         onClick={(e) =>this.onEditClick(e, item)}
-                                        className="userListItem" 
+                                        className="userListItem pointer" 
                                         key={index} 
                                         data-toogle="tooltip" data-placement="top" title="Click to edit user">
                                         <th>{item.id}</th>
