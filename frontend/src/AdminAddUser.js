@@ -95,8 +95,8 @@ class AdminAddUser extends React.Component{
                         where="/users"
                         hist={this.props.history}
                     />
+                    <h1 className="d-inline">Add New User</h1>
                     <form onSubmit={(e) => e.preventDefault()}>
-                    <h1>Add New User</h1>
                     <InputField
                         type='text'
                         placeholder='Enter username'

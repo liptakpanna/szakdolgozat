@@ -47,9 +47,7 @@ class EditUser extends React.Component{
 
     async componentDidMount(){
         this.setState({isLoggedIn: await checkJwtToken()});
-        if (this.isComponentMounted) {
-            this.getUsernames();
-        }
+        this.getUsernames();
     }
 
     isChanged(){
@@ -188,7 +186,7 @@ class EditUser extends React.Component{
         if(this.state.item.visibility === "PRIVATE" || this.state.item.visibility === "PRIVATE_GROUP") {
             if(this.state.usernames && this.state.usernames.length > 0) {
                 return(
-                    <div>
+                    <div className="mb-3">
                         <label htmlFor="userSelect">View permission for users: </label>
                             <Multiselect
                                 data={this.state.usernames}
@@ -217,8 +215,8 @@ class EditUser extends React.Component{
                         item = {this.state.item}
                         hist={this.props.history}
                     />
+                    <h1 className="d-inline">Edit Alignment</h1>
                     <form onSubmit={(e) => e.preventDefault()}>
-                        <h1>Edit Alignment</h1>
                         {this.addModal()}
                         <InputField
                             type='text'

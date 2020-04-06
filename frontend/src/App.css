@@ -7,6 +7,20 @@ body {
   cursor: default;
 }
 
+a {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
 .app {
   height: 100%;
   background-color: white;

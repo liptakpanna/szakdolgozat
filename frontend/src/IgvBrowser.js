@@ -14,7 +14,8 @@ class IgvBrowser extends Component {
       super(props);
       this.state = {
         isLoggedIn: true,
-        item: (this.props.location.state ? this.props.location.state.item : null)
+        item: (this.props.location.state ? this.props.location.state.item : null),
+        open: false
       }
 
     }
@@ -58,7 +59,9 @@ class IgvBrowser extends Component {
       if(localStorage.getItem("username") === this.state.item.owner || localStorage.getItem("role") === 'ADMIN')
       {
         return(
-          <button className='btn btn-outline-secondary btn-lg w-25' onClick={ () => this.props.history.push('/alignments/edit',  {item : this.state.item})}>Edit</button>
+          <div className="p-2 w-25">
+            <button className='btn btn-outline-secondary btn-lg w-100' onClick={ () => this.props.history.push('/alignments/edit',  {item : this.state.item})}>Edit</button>
+          </div>
         );
       }
     }
@@ -102,34 +105,48 @@ class IgvBrowser extends Component {
                             where={'/alignments'}
                             hist={this.props.history}
                         />
-                <h1 className="w-75 d-inline-block">IGV Genome browser</h1>
-                {this.addEditButton()}
+                <div className="d-inline-flex justify-content-between" style={{width: "95%"}}>
+                  <div className="p-2"><h1 className="d-inline-block">IGV Genome browser</h1></div>
+                  {this.addEditButton()}
+                </div>
               </div>
               <br/>
-              <div className="card">
-                  <h5 className="card-header" style={{backgroundColor: "#e3f2fd"}}>{this.state.item.name}</h5>
-                  <div className="card-body">
-                    <div className="row">
-                      <div className="col">
-                        <p className="card-text">Aligner: {this.state.item.aligner}</p>
-                        <p className="card-text">Owner: {this.state.item.owner}</p>
-                        <p className="card-text">Visibility: {this.state.item.visibility}</p>
+              <div className="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true">
+                <div className="card">
+                  <div className="card-header" role="tab" id="headingOne1" style={{backgroundColor: "#e3f2fd"}} 
+                  onClick={() => this.setState({open: !this.state.open})}>
+                    <a data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne1" aria-expanded="true" aria-controls="collapseOne1">
+                      <h5 className="mb-0">
+                      {this.state.item.name} <i className={"fa fa-angle-" + (this.state.open ? "down" : "right")}></i>
+                      </h5>
+                    </a>
+                  </div>
+                  <div id="collapseOne1" className="collapse" role="tabpanel" aria-labelledby="headingOne1"
+                    data-parent="#accordionEx">
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="col">
+                          <p className="card-text">Aligner: {this.state.item.aligner}</p>
+                          <p className="card-text">Owner: {this.state.item.owner}</p>
+                          <p className="card-text">Visibility: {this.state.item.visibility}</p>
+                        </div>
+                        <div className="col">
+                          <p className="card-text">Created At: {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
+                          {this.addUpdated()}
+                        </div>
                       </div>
-                      <div className="col">
-                        <p className="card-text">Created At: {this.state.item.createdAt ? Moment(this.state.item.createdAt).format("YYYY.MM.DD. HH:mm") : ""}</p>
-                        {this.addUpdated()}
+                      <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.state.item.description}</p>
+                      <p className="card-text mb-0">Download bam files: </p>
+                      <div className="d-flex flex-wrap">
+                        {this.state.item.bamUrls.map(function(bam,index) {
+                          return <div className="p-2" key={index}>
+                            <button className="btn btn-outline-primary" onClick={() => this.downloadBamFile(bam.url)}>Track: {bam.name}</button>
+                            </div>
+                        }, this)}
                       </div>
-                    </div>
-                    <p className="card-text" style={{marginTop: "1rem"}}>Description: {this.state.item.description}</p>
-                    <p className="card-text">Download bam files: </p>
-                    <div className="d-flex flex-wrap">
-                      {this.state.item.bamUrls.map(function(bam,index) {
-                        return <div className="p-2" key={index}>
-                          <button className="btn btn-light" onClick={() => this.downloadBamFile(bam.url)}>Track: {bam.name}</button>
-                          </div>
-                      }, this)}
                     </div>
                   </div>
+                </div>
               </div>
               <br/>
               <div className='igvContainer'>

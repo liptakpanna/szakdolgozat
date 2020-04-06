@@ -2,6 +2,7 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/filter/JwtRequestFilter.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/BowtieService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/dto/AlignmentDto.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/exception/CommandNotFoundException.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/JwtResponse.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserDetailsServiceImpl.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserRequest.java

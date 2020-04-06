@@ -495,8 +495,8 @@ class CreateAlignment extends React.Component{
                             where="/alignments"
                             hist={this.props.history}
                         />
+                        <h1 className="d-inline"> Create new alignment with {this.state.aligner}</h1>
                         <form onSubmit={(e) => e.preventDefault()}>
-                            <h1> Create new alignment with {this.state.aligner}</h1>
                             <InputField
                                 type='text'
                                 value={this.state.name}

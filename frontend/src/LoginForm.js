@@ -1,7 +1,8 @@
 import React from 'react';
 import InputField from './InputField';
 import SubmitButton from './SubmitButton';
-import Cookie from "js-cookie"
+import Cookie from "js-cookie";
+import ParticlesBg from 'particles-bg';
 
 class LoginForm extends React.Component{
 
@@ -120,6 +121,7 @@ class LoginForm extends React.Component{
 
     render() {
         return(
+            <>
             <div className="container p-5" style={{backgroundColor: "#e3f2fd"}} >
                 <form onSubmit={(e) => e.preventDefault()}>
                     <h1>
@@ -153,6 +155,8 @@ class LoginForm extends React.Component{
                 </form>
         { this.state.show ? <div className="alert alert-danger mt-3" role="alert">{this.state.errormessage}</div> : null }
             </div>
+            <ParticlesBg color="#acd7fa" num={100} type="cobweb" bg={true} />
+            </>
         );
     }
 }

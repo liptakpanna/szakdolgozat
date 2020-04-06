@@ -10,4 +10,4 @@ INSERT INTO reference_dnas(name, description, filename) VALUES('Rotavirus', 'Rot
 
 INSERT INTO reference_dnas(name, description, filename) VALUES('H1N1', 'Influenza A virus (A/Puerto Rico/8/1934(H1N1)) segment 1, complete sequence', 'h1n1');
 
-INSERT INTO users(username, email, password, role, created_by, status) VALUES('admin', 'liptakpanna@gmail.com', '$2a$10$LMLROt6ZAB/k/US4UKZE..KEYSznLVXfFDEXOxR/d8iGz2m5aijo2', 'ADMIN', '', 'ENABLED');
+INSERT INTO users(username, email, password, role, created_by, status, created_at) VALUES('admin', 'liptakpanna@gmail.com', '$2a$10$LMLROt6ZAB/k/US4UKZE..KEYSznLVXfFDEXOxR/d8iGz2m5aijo2', 'ADMIN', '[initial]', 'ENABLED', now());

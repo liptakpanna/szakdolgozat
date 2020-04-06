@@ -119,6 +119,7 @@ class EditUser extends React.Component{
     }
 
     async deleteUser() {
+        this.setState({show: false});
         try {
             let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete?id=' + this.props.location.state.item.id, {
                 method: 'post',
@@ -207,13 +208,13 @@ class EditUser extends React.Component{
             }
             return (
                 <div className="container">
-                <NavBar active="users"/>
+                <NavBar active={this.state.isAdmin ? "users" : "profile"}/>
                 <div className='editUserContainer'>
                     <PreviousPageIcon
                         where={this.props.location.state.origin}
                         hist={this.props.history}
                     />
-                    <h1>Edit User</h1>
+                    <h1 className="d-inline">Edit User</h1>
                     {this.addModal()}
                     <form onSubmit={(e) => e.preventDefault()}>
                         <InputField
