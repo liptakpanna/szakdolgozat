@@ -14,7 +14,6 @@ import com.dna.application.backend.service.BwaService;
 import com.dna.application.backend.service.SnapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -71,9 +70,9 @@ public class AlignerController {
             else
                 throw new Exception("Not a valid aligner");
         } catch (EntityNameAlreadyExistsException e) {
-            throw new Exception("Alignment name already exists, please choose an other one.");
+            throw new Exception("Alignment name already exists.");
         } catch (WrongFileTypeException e) {
-            throw new Exception("Wrong file type");
+            throw new Exception("Wrong file type.");
         } catch (CommandNotFoundException e) {
             throw new Exception("A command was not found, the server does not have everything installed to work properly.");
         }

@@ -165,7 +165,12 @@ class CreateAlignment extends React.Component{
             <div className="form-group">
                 <h4 className="mt-1 mb-0">Reference DNA file</h4>
                 <br/>
-                <input className="form-control-title" type="file" accept=".fasta,.fna,.fa"  required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
+                <input className="form-control-title" id="referenceFile" style={{"display":"none"}} type="file" accept=".fasta,.fna,.fa"  required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
+                <label className="pointer" htmlFor="referenceFile">
+                    <span className="fileInput">Choose file</span>
+                    {console.log(this.state.referenceFile)}
+                    {this.state.referenceFile === null ? " No file chosen" : this.state.referenceFile.name}
+                </label>
             </div>
         );
     }
@@ -279,7 +284,7 @@ class CreateAlignment extends React.Component{
         }
     }
 
-    setValueForRead(property, value, index, event) {
+    setValueForRead(property, value, index) {
         let reads = [...this.state.readFile];
         let read = {...reads[index]};
         if(property === "name")
@@ -316,6 +321,11 @@ class CreateAlignment extends React.Component{
         else if(property === "maxhits")
             read.maxHits = value;
         reads[index] = read;
+        if(read.name === "" && read.file.length === 0 && index+1 < reads.length) {
+            reads.splice(index, 1);
+            console.log(reads);
+            this.setState({trackCount: this.state.trackCount-1});
+        }
         if(read.name !== null && read.file.length > 0 && index+1 === reads.length) {
             this.setState({trackCount: this.state.trackCount+1});
             let newRead = {...reads[index+1]};
@@ -438,9 +448,13 @@ class CreateAlignment extends React.Component{
             tracks.push(<tr 
                 key={i} >
                 <th>{i+1}</th>
-                <td> <input className="form-control-title pr-0" style={{"width":"230px"}} type="file" accept={this.state.acceptedFormat}
+                <td> <input id={"readfileInput" + i} className="form-control-title pr-0" style={{"display":"none"}} type="file" accept={this.state.acceptedFormat}
                     required={this.state.trackCount === 1 || this.state.trackCount>i+1}
-                    multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i, e)}}/> </td>
+                    multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i)}}/>
+                    <label htmlFor={"readfileInput" + i} style={{"width":"230px"}} className="pointer">
+                        <span className="fileInput">Choose Files</span> {this.state.readFile[i].file.length > 1 ? "2 files chosen" : (this.state.readFile[i].file.length === 0 ? "No file chosen" : this.state.readFile[i].file[0].name)}
+                    </label>
+                </td>
                 <td> <input className="form-control"
                         type='text' style={{"width":"120px"}}
                         value={this.state.readFile[i].name ? this.state.readFile[i].name : ""}

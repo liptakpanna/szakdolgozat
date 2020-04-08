@@ -98,7 +98,7 @@ class IgvBrowser extends Component {
           );
         }
         return (<div className="container">
-            <NavBar/>
+            <NavBar active="alignments"/>
             <div className="container">
               <div className="container">
                 <PreviousPageIcon

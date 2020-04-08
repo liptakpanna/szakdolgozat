@@ -227,7 +227,7 @@ class EditUser extends React.Component{
                             required={true}
                         />
                         <div className="form-group">
-                            <label >Description</label>
+                            <label >Description (optional)</label>
                             <textarea 
                                 value={this.state.item.description} 
                                 className="form-control" 

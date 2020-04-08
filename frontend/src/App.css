@@ -21,6 +21,15 @@ a:hover {
   cursor: pointer;
 }
 
+.fileInput{
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
 .app {
   height: 100%;
   padding: 0px 10px;
