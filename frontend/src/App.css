@@ -21,6 +21,10 @@ a:hover {
   cursor: pointer;
 }
 
+.link {
+  text-decoration: underline !important;
+}
+
 .fileInput{
   border: 2px solid gray;
   color: gray;
