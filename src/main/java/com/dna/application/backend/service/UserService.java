@@ -56,7 +56,7 @@ public class UserService {
         userForDelete.setStatus(User.Status.DELETED);
         userForDelete.setAlignmentAccess(new HashSet<>());
         userRepository.saveAndFlush(userForDelete);
-        return !userRepository.existsById(id);
+        return (userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()))).getStatus() == User.Status.DELETED;
     }
 
     @Transactional
