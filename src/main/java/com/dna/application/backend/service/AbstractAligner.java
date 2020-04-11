@@ -60,7 +60,7 @@ public abstract class AbstractAligner {
 
     protected abstract List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception;
 
-    protected abstract String doIndex(boolean isExample, String filename) throws Exception;
+    protected abstract String getIndex(boolean isExample, String filename) throws Exception;
 
     protected abstract void deleteIndex(String filename) throws Exception;
 
@@ -78,14 +78,14 @@ public abstract class AbstractAligner {
         String indexFile;
         if(referenceId != null){
             reference = referenceRepository.findById(referenceId).orElseThrow(() -> new EntityNotFoundException(referenceId.toString()));
-            indexFile = doIndex(true, reference.getFilename());
+            indexFile = getIndex(true, reference.getFilename());
         }
         else {
             saveFile(alignmentRequest.getReferenceDna(), folder+"references/"+filename+".fna");
-            indexFile = doIndex(false, filename);
+            indexFile = getIndex(false, filename);
         }
 
-        doAlignmentOnTracks(readTracks, filename, indexFile, referenceId);
+        doAlignmentOnTracks(readTracks, filename, indexFile, referenceId, alignmentRequest.getAligner() == Alignment.Aligner.SNAP);
 
         Alignment alignment = Alignment.builder()
                 .aligner(alignmentRequest.getAligner())
@@ -177,7 +177,7 @@ public abstract class AbstractAligner {
         }
     }
 
-    private void doAlignmentOnTracks(List<ReadTrack> readTracks, String filename, String indexFile, Long referenceId) throws Exception{
+    private void doAlignmentOnTracks(List<ReadTrack> readTracks, String filename, String indexFile, Long referenceId, boolean isSnap) throws Exception{
         int trackCount=1;
         if(readTracks == null) throw new Exception("No reads.");
         for(ReadTrack track : readTracks) {
@@ -186,6 +186,7 @@ public abstract class AbstractAligner {
             trackCount++;
             deleteReadFiles(readNames);
         }
-        deleteIndex(filename);
+        if (referenceId == null || isSnap)
+            deleteIndex(filename);
     }
 }

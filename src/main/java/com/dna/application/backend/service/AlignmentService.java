@@ -1,11 +1,10 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
+import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
-import com.dna.application.backend.model.Alignment;
-import com.dna.application.backend.model.AlignmentRequest;
-import com.dna.application.backend.model.ReferenceExample;
-import com.dna.application.backend.model.User;
+import com.dna.application.backend.exception.WrongFileTypeException;
+import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
@@ -32,6 +31,9 @@ import java.util.stream.Collectors;
 public class AlignmentService {
     @Value("${data.resource.folder}")
     private String folder;
+
+    @Value("${static.resource.url}")
+    public String resourceUrl;
 
     @Autowired
     private AlignmentRepository alignmentRepository;
@@ -113,6 +115,8 @@ public class AlignmentService {
 
         if(name != null) {
             if (!name.equals(alignment.getName()) && alignmentRepository.existsByName(name)) throw new EntityNameAlreadyExistsException();
+            String newRefUrl = renameAlignmentFiles(alignment.getName().replaceAll("\\s+","_"), name.replaceAll("\\s+","_"), alignment.getBamUrls(), alignment.getReferenceUrl().contains("/examples/"));
+            if(newRefUrl != null) alignment.setReferenceUrl(newRefUrl);
             alignment.setName(name);
         }
         if(description != null) alignment.setDescription(description);
@@ -135,14 +139,26 @@ public class AlignmentService {
         return referenceRepository.findAll();
     }
 
+    private String renameAlignmentFiles(String oldFilename, String newFilename, Set<BamUrl> bams, boolean isExample) throws Exception {
+        int i = 1;
+        for(BamUrl bam: bams) {
+            runCommand(new String[]{"mv", folder+"bams/"+oldFilename+i+".bam", folder+"bams/"+newFilename+i+".bam"});
+            runCommand(new String[]{"mv", folder+"bams/"+oldFilename+i+".bam.bai", folder+"bams/"+newFilename+i+".bam.bai"});
+            bam.setUrl(resourceUrl+"/bams/"+newFilename+i+".bam");
+            i++;
+        }
+        bamUrlRepository.saveAll(bams);
+
+        if(!isExample) {
+            runCommand(new String[]{"mv", folder+"references/"+oldFilename+".fna", folder+"references/"+newFilename+".fna"});
+            runCommand(new String[]{"mv", folder+"references/"+oldFilename+".fna.fai", folder+"references/"+newFilename+".fna.fai"});
+            return resourceUrl+"/references/"+newFilename+".fna";
+        }
+        return null;
+    }
+
     private void deleteAlignmentFiles(String filename, int readSize, boolean isExample) throws Exception{
-        String[] args = new String[]{folder+"/delete_alignment_script", filename, folder, String.valueOf(readSize), String.valueOf(isExample)};
-
-        Process proc = new ProcessBuilder(args).start();
-        String error = getError(proc);
-
-        proc.waitFor();
-        log.warn(error);
+        runCommand(new String[]{folder+"/delete_alignment_script", filename, folder, String.valueOf(readSize), String.valueOf(isExample)});
     }
 
     private String getError(Process proc) throws IOException {
@@ -163,4 +179,13 @@ public class AlignmentService {
             return alignment.getOwner().getUsername();
         }
     }
+
+    private void runCommand(String[] args) throws Exception {
+        Process proc = new ProcessBuilder(args).start();
+        String error = getError(proc);
+
+        proc.waitFor();
+        log.warn(error);
+    }
+
 }

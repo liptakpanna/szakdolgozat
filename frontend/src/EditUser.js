@@ -83,7 +83,7 @@ class EditUser extends React.Component{
             }
             try {
                 let response = await fetch(url, {
-                    method: 'post',
+                    method: 'put',
                     headers: new Headers({
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -121,8 +121,8 @@ class EditUser extends React.Component{
     async deleteUser() {
         this.setState({show: false});
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete?id=' + this.props.location.state.item.id, {
-                method: 'post',
+            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete/' + this.props.location.state.item.id, {
+                method: 'delete',
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

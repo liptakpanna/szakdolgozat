@@ -58,7 +58,7 @@ class EditUser extends React.Component{
         if(this.isChanged()){
             try {
                 let response = await fetch(process.env.REACT_APP_API_URL + '/align/update', {
-                    method: 'post',
+                    method: 'put',
                     headers: new Headers({
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -102,8 +102,8 @@ class EditUser extends React.Component{
 
     async deleteAlignment() {
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/align/delete?id=' + this.props.location.state.item.id, {
-                method: 'post',
+            let response = await fetch(process.env.REACT_APP_API_URL + '/align/delete/' + this.props.location.state.item.id, {
+                method: 'delete',
                 headers: new Headers({
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

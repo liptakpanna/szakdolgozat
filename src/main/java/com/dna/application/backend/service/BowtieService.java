@@ -45,16 +45,24 @@ public class BowtieService extends AbstractAligner {
     }
 
     @Override
-    protected String doIndex(boolean isExample, String filename) throws Exception{
+    protected String getIndex(boolean isExample, String filename) throws Exception{
         if(isExample) return folder+"examples/indexes/"+filename;
         else {
             runCommand(new String[]{"bowtie-build", folder+"references/"+filename+".fna", folder+filename});
-            return folder+"/"+filename;
+            return folder+filename;
         }
     }
 
     @Override
     protected void deleteIndex(String filename) throws Exception {
-        runCommand(new String[]{"rm", folder + filename + ".*.ebwt"});
+        List<String> args = new ArrayList<>();
+        args.add("rm");
+        for(int i = 1; i <=4; i++) {
+            args.add(folder+filename+"."+i+".ebwt");
+            if(i<=2){
+                args.add(folder+filename+".rev."+i+".ebwt");
+            }
+        }
+        runCommand(args.toArray(new String[0]));
     }
 }

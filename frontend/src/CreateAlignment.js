@@ -7,6 +7,7 @@ import {checkJwtToken} from './Common';
 import PreviousPageIcon from './PreviousPageIcon';
 import { Multiselect } from 'react-widgets';
 import Cookie from "js-cookie";
+import EllipsisText from "react-ellipsis-text";
 
 class CreateAlignment extends React.Component{
 
@@ -43,6 +44,7 @@ class CreateAlignment extends React.Component{
             acceptedFormat: this.props.location.state.aligner === "Snap" ? ".fastq,.fq"  : ".fastq,.fq,.fasta,.fna,.fa" ,
         }
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
+        this.regexp = /^[A-Za-z0-9\s]*$/;
     }
 
     async componentDidMount() {
@@ -65,6 +67,11 @@ class CreateAlignment extends React.Component{
         else if(this.state.refType !=="upload" && !this.state.referencId) {
             this.setState({showError: true});
             this.setState({errormessage: "Please choose reference genome or upload one."})
+            return;
+        }
+        if(!this.regexp.test(this.state.name)) {
+            this.setState({showError:true});
+            this.setState({errormessage:"The alignment name can only contain letters, numbers and space."});
             return;
         }
         if(this.state.referenceFile)
@@ -167,7 +174,7 @@ class CreateAlignment extends React.Component{
                 <br/>
                 <input className="form-control-title" id="referenceFile" style={{"display":"none"}} type="file" accept=".fasta,.fna,.fa"  required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
                 <label className="pointer" htmlFor="referenceFile">
-                    <span className="fileInput">Choose file</span>
+                    <span className="fileInput mr-2">Choose file</span>
                     {console.log(this.state.referenceFile)}
                     {this.state.referenceFile === null ? " No file chosen" : this.state.referenceFile.name}
                 </label>
@@ -452,7 +459,8 @@ class CreateAlignment extends React.Component{
                     required={this.state.trackCount === 1 || this.state.trackCount>i+1}
                     multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i)}}/>
                     <label htmlFor={"readfileInput" + i} style={{"width":"230px"}} className="pointer">
-                        <span className="fileInput">Choose Files</span> {this.state.readFile[i].file.length > 1 ? "2 files chosen" : (this.state.readFile[i].file.length === 0 ? "No file chosen" : this.state.readFile[i].file[0].name)}
+                        <span className="fileInput mr-2">Choose Files</span>
+                        <EllipsisText length={15} text={this.state.readFile[i].file.length > 1 ? "2 files chosen" : (this.state.readFile[i].file.length === 0 ? "No file chosen" : this.state.readFile[i].file[0].name)}/>
                     </label>
                 </td>
                 <td> <input className="form-control"
@@ -493,7 +501,7 @@ class CreateAlignment extends React.Component{
     }
 
     nameChangeHandler(value){
-        if(this.state.showError && this.state.errormessage === "Alignment name already exists, please choose an other one.") {
+        if(this.state.showError && (this.state.errormessage === "Alignment name already exists, please choose an other one." || this.state.errormessage === "The alignment name can only contain letters, numbers and space.")) {
             this.setState({showError:false});
         }
         this.setState({name: value});

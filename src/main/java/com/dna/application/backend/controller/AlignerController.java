@@ -45,10 +45,10 @@ public class AlignerController {
         return alignmentService.getAlignments((User)authentication.getPrincipal());
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     @ResponseBody
-    public ResponseEntity<Boolean> deleteAlignment(@RequestParam Long id, Authentication authentication) throws Exception{
+    public ResponseEntity<Boolean> deleteAlignment(@PathVariable Long id, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
         if (alignmentService.deleteAlignment(id, user))
             return ResponseEntity.ok(true);
@@ -78,7 +78,7 @@ public class AlignerController {
         }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     public ResponseEntity<AlignmentDto> updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();

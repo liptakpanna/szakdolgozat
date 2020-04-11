@@ -41,7 +41,7 @@ public class SnapService extends AbstractAligner {
     }
 
     @Override
-    protected String doIndex(boolean isExample, String filename) throws Exception {
+    protected String getIndex(boolean isExample, String filename) throws Exception {
         if(isExample){
             runCommand(new String[]{"snap-aligner", "index",folder+"examples/"+filename+".fna", folder, "-bSpace"});
         }
@@ -53,9 +53,6 @@ public class SnapService extends AbstractAligner {
 
     @Override
     protected void deleteIndex(String filename) throws Exception {
-        runCommand(new String[]{"rm", folder + "Genome"});
-        runCommand(new String[]{"rm", folder + "GenomeIndex"});
-        runCommand(new String[]{"rm", folder + "GenomeIndexHash"});
-        runCommand(new String[]{"rm", folder + "OverflowTable"});
+        runCommand(new String[]{"rm", folder + "Genome", folder + "GenomeIndex", folder + "GenomeIndexHash", folder + "OverflowTable"});
     }
 }

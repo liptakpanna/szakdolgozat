@@ -34,7 +34,7 @@ public class BwaService extends AbstractAligner {
     }
 
     @Override
-    protected String doIndex(boolean isExample, String filename) throws Exception {
+    protected String getIndex(boolean isExample, String filename) throws Exception {
         if(isExample) return folder+"examples/"+filename+".fna";
         else {
             runCommand(new String[]{"bwa", "index", folder+"references/"+filename+".fna"});

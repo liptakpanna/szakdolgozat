@@ -26,7 +26,7 @@ class Profile extends React.Component{
 
     async getUser() {
         try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/users/me?username=' + localStorage.getItem("username"), {
+            let response = await fetch(process.env.REACT_APP_API_URL + '/users/me', {
                 method: 'get',
                 headers: new Headers({
                     'Accept': 'application/json',

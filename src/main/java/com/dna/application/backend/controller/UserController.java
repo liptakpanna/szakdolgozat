@@ -38,17 +38,17 @@ public class UserController {
         return userService.getUsernames(user.getUsername());
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
-    public ResponseEntity<Boolean> deleteUser(@RequestParam Long id, Authentication authentication) throws Exception {
+    public ResponseEntity<Boolean> deleteUser(@PathVariable Long id, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         if (userService.deleteUser(id, user))
             return ResponseEntity.ok(true);
         else throw new Exception("Delete was not successful");
     }
 
-    @PostMapping("/me/update")
+    @PutMapping("/me/update")
     @ResponseBody
     public ResponseEntity<Boolean> updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
@@ -62,7 +62,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
@@ -77,10 +77,9 @@ public class UserController {
 
     @GetMapping("/me")
     @ResponseBody
-    public UserDto getUser(@RequestParam String username, Authentication authentication) throws Exception {
+    public UserDto getUser(Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        if (user.getUsername().equals(username)) return userService.getUserDto(username);
-        else throw new Exception("You only can get your information.");
+        return userService.getUserDto(user.getUsername());
     }
 
     @PostMapping("/add")
