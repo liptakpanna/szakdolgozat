@@ -40,7 +40,7 @@ public class User extends BaseEntityAudit implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> ownedAlignments = new HashSet<>();
 
@@ -80,5 +80,5 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     public enum Role {ADMIN, RESEARCHER, GUEST}
 
-    public enum Status{ENABLED, DELETED}
+    public enum Status {ENABLED, DELETED}
 }

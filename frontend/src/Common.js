@@ -12,7 +12,7 @@ export async function checkJwtToken() {
             let result = await response.json();
             console.log(result);
             if (result != null){
-                if(result === false)
+                if(result === false || result.status === 403)
                     logout();
                 return result;
             }

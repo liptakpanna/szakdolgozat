@@ -22,7 +22,6 @@ com/dna/application/backend/repository/AlignmentRepository.class
 com/dna/application/backend/controller/AlignerController.class
 com/dna/application/backend/model/Alignment.class
 com/dna/application/backend/model/Alignment$Visibility.class
-com/dna/application/backend/controller/TestController.class
 com/dna/application/backend/dto/UserDto.class
 com/dna/application/backend/model/BaseEntityAudit.class
 com/dna/application/backend/service/UserService$1.class
@@ -34,8 +33,6 @@ com/dna/application/backend/repository/UserRepository.class
 com/dna/application/backend/model/BamUrl.class
 com/dna/application/backend/exception/WrongFileTypeException.class
 com/dna/application/backend/service/UserService.class
-com/dna/application/backend/service/TestService.class
-com/dna/application/backend/model/JwtValidResponse.class
 com/dna/application/backend/service/UserDetailsServiceImpl.class
 com/dna/application/backend/security/WebSecurityConfig.class
 com/dna/application/backend/service/AbstractAligner.class
