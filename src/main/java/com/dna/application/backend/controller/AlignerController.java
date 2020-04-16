@@ -40,14 +40,12 @@ public class AlignerController {
     private AlignmentService alignmentService;
 
     @GetMapping("/list")
-    @ResponseBody
     public List<AlignmentDto> getAlignments(Authentication authentication) throws Exception{
         return alignmentService.getAlignments((User)authentication.getPrincipal());
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    @ResponseBody
     public ResponseEntity<Boolean> deleteAlignment(@PathVariable Long id, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
         if (alignmentService.deleteAlignment(id, user))
@@ -58,17 +56,20 @@ public class AlignerController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public ResponseEntity<AlignmentDto> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<AlignmentDto> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication)
+            throws Exception {
         User user = (User)authentication.getPrincipal();
         try {
-            if(alignmentRequest.getAligner() == Alignment.Aligner.BOWTIE)
-                return ResponseEntity.ok(bowtieService.align(alignmentRequest, user));
-            if(alignmentRequest.getAligner() == Alignment.Aligner.BWA)
-                return ResponseEntity.ok(bwaService.align(alignmentRequest, user));
-            if(alignmentRequest.getAligner() == Alignment.Aligner.SNAP)
-                return ResponseEntity.ok(snapService.align(alignmentRequest, user));
-            else
-                throw new Exception("Not a valid aligner");
+            switch(alignmentRequest.getAligner()) {
+                case BOWTIE:
+                    return ResponseEntity.ok(bowtieService.align(alignmentRequest, user));
+                case SNAP:
+                    return ResponseEntity.ok(snapService.align(alignmentRequest, user));
+                case BWA:
+                    return ResponseEntity.ok(bwaService.align(alignmentRequest, user));
+                default:
+                    throw new Exception("Not a valid aligner");
+            }
         } catch (EntityNameAlreadyExistsException e) {
             throw new Exception("Alignment name already exists.");
         } catch (WrongFileTypeException e) {

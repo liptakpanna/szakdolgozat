@@ -56,7 +56,6 @@ public class JwtAuthenticationController {
     }
 
     @GetMapping("/validate")
-    @ResponseBody
     public ResponseEntity<Boolean> validateJwtToken(@RequestHeader("Authorization") String jwtToken, Authentication authentication) {
         if(authentication != null && !authentication.getName().equals("")) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
@@ -71,7 +70,6 @@ public class JwtAuthenticationController {
     }
 
     @GetMapping("/forgotpassword")
-    @ResponseBody
     public ResponseEntity<List<String>> getAdminEmail() {
         return ResponseEntity.ok(userService.getAdminEmail());
     }

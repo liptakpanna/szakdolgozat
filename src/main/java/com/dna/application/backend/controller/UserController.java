@@ -15,24 +15,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
 @CrossOrigin
+@RestController
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
 
-
     @GetMapping("/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseBody
     public List<UserDto> getUsers( ){
         return userService.getUsers();
     }
 
     @GetMapping("/usernamelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    @ResponseBody
     public UsernameListResponse getUsernames(Authentication authentication ){
         User user = (User)authentication.getPrincipal();
         return userService.getUsernames(user.getUsername());
@@ -40,7 +37,6 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseBody
     public ResponseEntity<Boolean> deleteUser(@PathVariable Long id, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         if (userService.deleteUser(id, user))
@@ -49,7 +45,6 @@ public class UserController {
     }
 
     @PutMapping("/me/update")
-    @ResponseBody
     public ResponseEntity<Boolean> updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         userRequest.setId(user.getId());
@@ -64,11 +59,11 @@ public class UserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseBody
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        if (userRequest.getRole() != null && user.getId().equals(userRequest.getId())) throw new Exception("You cannot change your role");
-        try{
+        if (userRequest.getRole() != null && user.getId().equals(userRequest.getId()))
+            throw new Exception("You cannot change your role");
+        try {
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists",e);
@@ -76,7 +71,6 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @ResponseBody
     public UserDto getUser(Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         return userService.getUserDto(user.getUsername());
@@ -84,7 +78,6 @@ public class UserController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ResponseBody
     public ResponseEntity<Boolean> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
         try{

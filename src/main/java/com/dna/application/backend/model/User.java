@@ -41,14 +41,12 @@ public class User extends BaseEntityAudit implements UserDetails {
     private Status status;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
-    @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> ownedAlignments = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_x_alignment",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "alignment_id"))
-    @Fetch(value= FetchMode.SELECT)
     private Set<Alignment> alignmentAccess = new HashSet<>();
 
     @Override

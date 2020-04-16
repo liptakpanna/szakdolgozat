@@ -25,11 +25,6 @@ public class Alignment extends BaseEntityAudit {
 
     private String referenceUrl;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
-    @Fetch(value= FetchMode.SELECT)
-    @JoinColumn(name = "alignment_id")
-    private Set<BamUrl> bamUrls;
-
     @Column(columnDefinition = "VARCHAR(1000)", length=1000)
     private String description;
 
@@ -37,12 +32,14 @@ public class Alignment extends BaseEntityAudit {
     private Visibility visibility;
 
     @ManyToOne
-    @Fetch(value= FetchMode.SELECT)
     private User owner;
 
     @ManyToMany(mappedBy = "alignmentAccess", fetch = FetchType.EAGER)
-    @Fetch(value= FetchMode.SELECT)
     private Set<User> userAccess = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name = "alignment_id")
+    private Set<BamUrl> bamUrls;
 
     public enum Visibility {PUBLIC, PRIVATE, PRIVATE_GROUP};
 
