@@ -1,8 +1,8 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import SubmitButton from './SubmitButton';
-import {checkJwtToken} from './Common';
+import SubmitButton from '../../util/SubmitButton';
+import {checkJwtToken} from '../../util/Common';
 import Moment from 'moment';
 import Modal from 'react-bootstrap/Modal';
 import Cookie from "js-cookie";

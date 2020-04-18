@@ -8,6 +8,7 @@ import com.dna.application.backend.service.UserService;
 import com.dna.application.backend.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +37,9 @@ public class JwtAuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Value("${default.error.message}")
+    private String errorMessage;
+
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -52,6 +56,8 @@ public class JwtAuthenticationController {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 
@@ -70,7 +76,11 @@ public class JwtAuthenticationController {
     }
 
     @GetMapping("/forgotpassword")
-    public ResponseEntity<List<String>> getAdminEmail() {
-        return ResponseEntity.ok(userService.getAdminEmail());
+    public ResponseEntity<List<String>> getAdminEmail() throws Exception{
+        try {
+            return ResponseEntity.ok(userService.getAdminEmail());
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 }

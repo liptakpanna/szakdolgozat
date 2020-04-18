@@ -1,20 +1,21 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import LoginForm from "./LoginForm";
-import IgvBrowser from "./IgvBrowser";
-import Home from "./Home";
-import AdminUsers from "./AdminUsers";
-import AdminAddUser from "./AdminAddUser";
-import EditUser from "./EditUser";
-import Profile from "./Profile";
-import Alignments from "./Alignments";
-import CreateAlignment from "./CreateAlignment";
-import EditAlignment from "./EditAlignment";
-import NotFound from "./NotFound";
+import LoginForm from "./pages/LoginPage";
+import IgvBrowser from "./pages/alignment/IgvBrowser";
+import Home from "./pages/Home";
+import AdminUsers from "./pages/user/AdminUsers";
+import AdminAddUser from "./pages/user/AdminAddUser";
+import EditUser from "./pages/user/EditUser";
+import Profile from "./pages/user/Profile";
+import Alignments from "./pages/alignment/Alignments";
+import CreateAlignment from "./pages/alignment/CreateAlignment";
+import EditAlignment from "./pages/alignment/EditAlignment";
+import NotFound from "./pages/NotFoundPage";
+import { checkJwtToken } from "./util/Common";
 
 
 export default function Routes() {
-  if(JSON.parse(localStorage.getItem("isLoggedIn"))) {
+  if(checkJwtToken()) {
     let role = localStorage.getItem("role");
     if(role === "ADMIN") {
       return (

@@ -13,10 +13,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class SnapService extends AbstractAligner {
-
-
     @Override
-    protected List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName) throws Exception {
+    protected List<String> doAlignmentOnTrack(ReadTrack track, String filename, String indexName)
+            throws Exception {
         List<String> args = new ArrayList<>();
         MultipartFile readFile = track.getRead1();
         String extension = FilenameUtils.getExtension(readFile.getOriginalFilename());
@@ -42,12 +41,10 @@ public class SnapService extends AbstractAligner {
 
     @Override
     protected String getIndex(boolean isExample, String filename) throws Exception {
-        if(isExample){
+        if(isExample)
             runCommand(new String[]{"snap-aligner", "index",folder+"examples/"+filename+".fna", folder, "-bSpace"});
-        }
-        else {
+        else
             runCommand(new String[]{"snap-aligner", "index", folder+"references/"+filename+".fna", folder, "-bSpace"});
-        }
         return folder;
     }
 

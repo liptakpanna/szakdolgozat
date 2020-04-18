@@ -1,8 +1,6 @@
 package com.dna.application.backend.model;
 
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -34,10 +32,10 @@ public class Alignment extends BaseEntityAudit {
     @ManyToOne
     private User owner;
 
-    @ManyToMany(mappedBy = "alignmentAccess", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "alignmentAccess")
     private Set<User> userAccess = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(orphanRemoval=true)
     @JoinColumn(name = "alignment_id")
     private Set<BamUrl> bamUrls;
 

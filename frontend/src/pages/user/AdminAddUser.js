@@ -1,12 +1,11 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import InputField from './InputField';
-import SubmitButton from './SubmitButton';
-import PreviousPageIcon from './PreviousPageIcon';
+import InputField from '../../util/InputField';
+import SubmitButton from '../../util/SubmitButton';
+import PreviousPageIcon from '../../util/PreviousPageIcon';
 import Cookie from "js-cookie";
-import {validateEmail} from './Common';
-import {checkJwtToken} from './Common';
+import {validateEmail, checkJwtToken} from '../../util/Common';
 
 class AdminAddUser extends React.Component{
 

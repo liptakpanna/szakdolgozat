@@ -1,10 +1,10 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import SubmitButton from './SubmitButton';
-import InputField from './InputField';
-import {checkJwtToken} from './Common';
-import PreviousPageIcon from './PreviousPageIcon';
+import SubmitButton from '../../util/SubmitButton';
+import InputField from '../../util/InputField';
+import {checkJwtToken} from '../../util/Common';
+import PreviousPageIcon from '../../util/PreviousPageIcon';
 import { Multiselect } from 'react-widgets';
 import Cookie from "js-cookie";
 import EllipsisText from "react-ellipsis-text";

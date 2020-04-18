@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import igv from 'igv/dist/igv.esm.min.js';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
 import Moment from 'moment';
-import PreviousPageIcon from './PreviousPageIcon';
+import PreviousPageIcon from '../../util/PreviousPageIcon';
 import Cookie from "js-cookie";
-import {checkJwtToken} from './Common';
+import {checkJwtToken} from '../../util/Common';
 
 let download = require('downloadjs/download.min.js');
 

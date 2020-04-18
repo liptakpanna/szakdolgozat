@@ -7,10 +7,10 @@ import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,17 +22,28 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Value("${default.error.message}")
+    private String errorMessage;
+
     @GetMapping("/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<UserDto> getUsers( ){
-        return userService.getUsers();
+    public List<UserDto> getUsers() throws Exception{
+        try {
+            return userService.getUsers();
+        } catch(Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 
     @GetMapping("/usernamelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public UsernameListResponse getUsernames(Authentication authentication ){
+    public UsernameListResponse getUsernames(Authentication authentication ) throws Exception{
         User user = (User)authentication.getPrincipal();
-        return userService.getUsernames(user.getUsername());
+        try {
+            return userService.getUsernames(user.getUsername());
+        } catch(Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -53,27 +64,36 @@ public class UserController {
         try{
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists",e);
+            throw new Exception("Username already exists");
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication)
+            throws Exception {
         User user = (User)authentication.getPrincipal();
         if (userRequest.getRole() != null && user.getId().equals(userRequest.getId()))
             throw new Exception("You cannot change your role");
         try {
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists",e);
+            throw new Exception("Username already exists");
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 
     @GetMapping("/me")
     public UserDto getUser(Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
-        return userService.getUserDto(user.getUsername());
+        try {
+            return userService.getUserDto(user.getUsername());
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 
     @PostMapping("/add")
@@ -83,7 +103,9 @@ public class UserController {
         try{
             return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists",e);
+            throw new Exception("Username already exists");
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 }

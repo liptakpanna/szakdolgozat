@@ -1,9 +1,9 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import SubmitButton from './SubmitButton';
+import SubmitButton from '../../util/SubmitButton';
 import Moment from 'moment';
-import {checkJwtToken} from './Common';
+import {checkJwtToken} from '../../util/Common';
 import Cookie from "js-cookie";
 
 class AdminUsers extends React.Component{

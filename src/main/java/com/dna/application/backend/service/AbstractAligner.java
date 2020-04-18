@@ -17,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,7 +28,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public abstract class AbstractAligner {
+public abstract class AbstractAligner extends BaseCommandRunner {
     @Autowired
     private AlignmentRepository alignmentRepository;
 
@@ -49,7 +47,7 @@ public abstract class AbstractAligner {
     @Value("${data.resource.folder}")
     public String folder;
 
-    @Value("${static.resource.url}")
+    @Value("${data.resource.url}")
     public String resourceUrl;
 
     final static List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
@@ -68,14 +66,14 @@ public abstract class AbstractAligner {
     public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
         if(alignmentRepository.findByName(name) != null ) throw new EntityNameAlreadyExistsException();
+        String filename = name.replaceAll("\\s+","_");
 
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
-        String filename = name.replaceAll("\\s+","_");
         List<ReadTrack> readTracks = alignmentRequest.getReadsForDna();
-
         Long referenceId = alignmentRequest.getReferenceId();
         ReferenceExample reference = null;
         String indexFile;
+
         if(referenceId != null){
             reference = referenceRepository.findById(referenceId).orElseThrow(() -> new EntityNotFoundException(referenceId.toString()));
             indexFile = getIndex(true, reference.getFilename());
@@ -101,28 +99,6 @@ public abstract class AbstractAligner {
         alignmentRepository.saveAndFlush(alignment);
 
         return alignmentService.getAlignmentDto(name);
-    }
-
-    static String getInput(Process proc) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        StringBuilder ans = new StringBuilder();
-        String line;
-
-        while((line = reader.readLine()) != null) {
-            ans.append(line);
-        }
-        return ans.toString();
-    }
-
-    static String getError(Process proc) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        StringBuilder ans = new StringBuilder();
-        String line;
-
-        while((line = reader.readLine()) != null) {
-            ans.append(line);
-        }
-        return ans.toString();
     }
 
     static String saveFile(MultipartFile multipartFile, String filename) {

@@ -15,9 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +32,7 @@ public class UserService {
     private AlignmentRepository alignmentRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private  ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper = new ModelMapper();
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
@@ -78,7 +78,7 @@ public class UserService {
         if(email != null) user.setEmail(email);
         if(password != null) user.setPassword(passwordEncoder.encode(password));
         if(role != null) user.setRole(role);
-        if (status != null) user.setStatus(status);
+        if(status != null) user.setStatus(status);
 
         user.setUpdatedBy(updater);
         userRepository.saveAndFlush(user);
@@ -91,12 +91,13 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
+    @Transactional
     public boolean addUser(UserRequest userRequest, String admin) throws Exception{
         if (userRequest.getPassword().equals(""))
             throw new Exception("Password required");
         if (userRequest.getUsername().length() > 12)
             throw new Exception("Username too long");
-        if(userRepository.findByUsername(userRequest.getUsername()) != null)
+        if(userRepository.existsByUsername(userRequest.getUsername()))
             throw new EntityNameAlreadyExistsException();
 
         User newUser = modelMapper.map(userRequest , User.class);
@@ -104,7 +105,6 @@ public class UserService {
         newUser.setCreatedBy(admin);
         newUser.setStatus(User.Status.ENABLED);
 
-        log.warn("{}", newUser);
         userRepository.saveAndFlush(newUser);
         return userRepository.existsByUsername(userRequest.getUsername());
     }

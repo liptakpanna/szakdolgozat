@@ -1,11 +1,11 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import InputField from './InputField';
-import SubmitButton from './SubmitButton';
-import {checkJwtToken, validateEmail} from './Common';
+import InputField from '../../util/InputField';
+import SubmitButton from '../../util/SubmitButton';
+import {checkJwtToken, validateEmail} from '../../util/Common';
 import Modal from 'react-bootstrap/Modal';
-import PreviousPageIcon from './PreviousPageIcon';
+import PreviousPageIcon from '../../util/PreviousPageIcon';
 import _ from 'lodash';
 import Cookie from "js-cookie";
 

@@ -4,7 +4,6 @@ import com.dna.application.backend.dto.AlignmentDto;
 import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.exception.WrongFileTypeException;
-import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.ReferenceExample;
 import com.dna.application.backend.model.User;
@@ -14,6 +13,7 @@ import com.dna.application.backend.service.BwaService;
 import com.dna.application.backend.service.SnapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -39,9 +39,16 @@ public class AlignerController {
     @Autowired
     private AlignmentService alignmentService;
 
+    @Value("${default.error.message}")
+    private String errorMessage;
+
     @GetMapping("/list")
     public List<AlignmentDto> getAlignments(Authentication authentication) throws Exception{
-        return alignmentService.getAlignments((User)authentication.getPrincipal());
+        try {
+            return alignmentService.getAlignments((User)authentication.getPrincipal());
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -76,6 +83,8 @@ public class AlignerController {
             throw new Exception("Wrong file type.");
         } catch (CommandNotFoundException e) {
             throw new Exception("A command was not found, the server does not have everything installed to work properly.");
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 
@@ -87,12 +96,18 @@ public class AlignerController {
             return ResponseEntity.ok(alignmentService.updateAlignment(alignmentRequest, user));
         } catch (EntityNameAlreadyExistsException e){
             throw new Exception("Alignment name already exists.");
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
         }
     }
 
     @GetMapping("/referencelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public List<ReferenceExample> getReferences(){
-        return alignmentService.getReferences();
+    public List<ReferenceExample> getReferences() throws Exception{
+        try {
+            return alignmentService.getReferences();
+        } catch (Exception e) {
+            throw new Exception(errorMessage);
+        }
     }
 }

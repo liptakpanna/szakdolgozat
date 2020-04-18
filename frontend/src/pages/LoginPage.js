@@ -1,10 +1,10 @@
 import React from 'react';
-import InputField from './InputField';
-import SubmitButton from './SubmitButton';
+import InputField from '../util/InputField';
+import SubmitButton from '../util/SubmitButton';
 import Cookie from "js-cookie";
 import ParticlesBg from 'particles-bg';
 
-class LoginForm extends React.Component{
+class LoginPage extends React.Component{
 
     constructor(props) {
         super(props);
@@ -161,4 +161,4 @@ class LoginForm extends React.Component{
     }
 }
 
-export default LoginForm;
+export default LoginPage;

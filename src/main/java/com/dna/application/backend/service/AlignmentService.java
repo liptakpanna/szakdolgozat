@@ -1,9 +1,7 @@
 package com.dna.application.backend.service;
 
 import com.dna.application.backend.dto.AlignmentDto;
-import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
-import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.*;
 import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
@@ -17,9 +15,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,11 +23,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class AlignmentService {
+public class AlignmentService extends BaseCommandRunner {
     @Value("${data.resource.folder}")
     private String folder;
 
-    @Value("${static.resource.url}")
+    @Value("${data.resource.url}")
     public String resourceUrl;
 
     @Autowired
@@ -161,17 +156,6 @@ public class AlignmentService {
         runCommand(new String[]{folder+"/delete_alignment_script", filename, folder, String.valueOf(readSize), String.valueOf(isExample)});
     }
 
-    private String getError(Process proc) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        StringBuilder ans = new StringBuilder();
-        String line;
-
-        while((line = reader.readLine()) != null) {
-            ans.append(line);
-        }
-        return ans.toString();
-    }
-
     private String getOwnerName(Alignment alignment) {
         if(alignment.getOwner().getStatus() == User.Status.DELETED) {
             return "[deleted user]";
@@ -179,13 +163,4 @@ public class AlignmentService {
             return alignment.getOwner().getUsername();
         }
     }
-
-    private void runCommand(String[] args) throws Exception {
-        Process proc = new ProcessBuilder(args).start();
-        String error = getError(proc);
-
-        proc.waitFor();
-        log.warn(error);
-    }
-
 }

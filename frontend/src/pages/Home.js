@@ -1,7 +1,7 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import {checkJwtToken} from './Common';
+import {checkJwtToken} from '../util/Common';
 
 class Home extends React.Component{
     constructor(props){

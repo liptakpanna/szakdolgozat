@@ -1,9 +1,9 @@
 import React from 'react';
-import NavBar from './NavBar';
+import NavBar from '../util/NavBar';
 import { Redirect } from 'react-router-dom';
-import {checkJwtToken} from './Common';
+import {checkJwtToken} from '../util/Common';
 
-class NotFound extends React.Component{
+class NotFoundPage extends React.Component{
 
     constructor(props){
         super(props);
@@ -35,4 +35,4 @@ class NotFound extends React.Component{
     }
 }
 
-export default NotFound;
+export default NotFoundPage;

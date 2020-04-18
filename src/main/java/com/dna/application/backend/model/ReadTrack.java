@@ -27,4 +27,5 @@ public class ReadTrack {
 
     private String maxHits;
 
-    private String maxDist;}
+    private String maxDist;
+}

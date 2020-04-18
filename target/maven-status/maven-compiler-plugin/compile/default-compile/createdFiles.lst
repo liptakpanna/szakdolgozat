@@ -4,6 +4,7 @@ com/dna/application/backend/model/JwtRequest.class
 com/dna/application/backend/model/Alignment$Aligner.class
 com/dna/application/backend/repository/ReferenceRepository.class
 com/dna/application/backend/exception/EntityNameAlreadyExistsException.class
+com/dna/application/backend/service/BaseCommandRunner.class
 com/dna/application/backend/service/AlignmentService.class
 com/dna/application/backend/service/BwaService.class
 com/dna/application/backend/Application.class
@@ -30,6 +31,7 @@ com/dna/application/backend/model/User$Status.class
 com/dna/application/backend/util/JwtTokenUtil.class
 com/dna/application/backend/model/BaseEntity.class
 com/dna/application/backend/repository/UserRepository.class
+com/dna/application/backend/controller/AlignerController$1.class
 com/dna/application/backend/model/BamUrl.class
 com/dna/application/backend/exception/WrongFileTypeException.class
 com/dna/application/backend/service/UserService.class
