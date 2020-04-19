@@ -23,7 +23,6 @@ class IgvBrowser extends Component {
     async componentDidMount() {
       this.setState({isLoggedIn: await checkJwtToken()});
       if(this.state.item) {
-        if(this.state.item) {
         var igvContainer = document.getElementById('igv-div');
         var igvOptions =
         {
@@ -36,7 +35,6 @@ class IgvBrowser extends Component {
         };
 
         return igv.createBrowser(igvContainer, igvOptions);
-        }
       }
     }
 
@@ -44,7 +42,7 @@ class IgvBrowser extends Component {
       var tracksForIgv = [];
       for(var x = 0; x < this.state.item.bamUrls.length; x++) {
         tracksForIgv.push({
-          "url": this.state.item.bamUrls[x].url,
+          url: this.state.item.bamUrls[x].url,
           indexed: true,
           format: "bam",
           name: this.state.item.bamUrls[x].name,

@@ -572,7 +572,6 @@ class CreateAlignment extends React.Component{
                                         text='CREATE'
                                         type='btn-outline-secondary btn-lg'
                                         onClick={ (e) => this.onClickHandler(e)}
-                                        //disabled={this.state.showError}
                                     />
                                 {this.state.showError ? <div className="alert alert-primary ml-2" role="alert">{this.state.errormessage}</div> : null }
                             </div>
