@@ -73,6 +73,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
         if(username != null){
             if(!username.equals(user.getUsername()) && userRepository.existsByUsername(username)) throw new EntityNameAlreadyExistsException();
+            if(updater.equals(user.getUsername())) updater = username;
             user.setUsername(username);
         }
         if(email != null) user.setEmail(email);
