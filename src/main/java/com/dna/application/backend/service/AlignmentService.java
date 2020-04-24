@@ -7,6 +7,7 @@ import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
 import com.dna.application.backend.repository.UserRepository;
+import com.dna.application.backend.util.BaseCommandRunner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,7 +26,7 @@ public class AlignmentService extends BaseCommandRunner {
     private String folder;
 
     @Value("${data.resource.url}")
-    public String resourceUrl;
+    private String resourceUrl;
 
     @Autowired
     private AlignmentRepository alignmentRepository;
@@ -81,7 +79,9 @@ public class AlignmentService extends BaseCommandRunner {
     }
 
     public Boolean deleteAlignment(Long id, User user) throws Exception{
-        Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        Optional<Alignment> optionalAlignment = alignmentRepository.findById(id);
+        if(optionalAlignment.isEmpty()) throw new EntityNotFoundException(id.toString());
+        Alignment alignment = optionalAlignment.get();
 
         if (alignment.getOwner() != user && user.getRole() != User.Role.ADMIN)
             throw new Exception("You have no authorization to delete this object");
@@ -97,7 +97,9 @@ public class AlignmentService extends BaseCommandRunner {
 
     public AlignmentDto updateAlignment(AlignmentRequest alignmentRequest, User user) throws Exception{
         Long id = alignmentRequest.getId();
-        Alignment alignment = alignmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id.toString()));
+        Optional<Alignment> optionalAlignment = alignmentRepository.findById(id);
+        if(optionalAlignment.isEmpty()) throw new EntityNotFoundException(id.toString());
+        Alignment alignment = optionalAlignment.get();
 
         if (!alignment.getOwner().getUsername().equals(user.getUsername()) && user.getRole() != User.Role.ADMIN)
             throw new Exception("You have no authorization to edit this object");
@@ -163,4 +165,6 @@ public class AlignmentService extends BaseCommandRunner {
             return alignment.getOwner().getUsername();
         }
     }
+
+    public void setFolderForTest(String testFolder){folder = testFolder;}
 }

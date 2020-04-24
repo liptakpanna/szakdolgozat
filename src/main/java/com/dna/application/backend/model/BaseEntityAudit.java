@@ -1,5 +1,6 @@
 package com.dna.application.backend.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,13 +11,13 @@ import java.util.Date;
 @MappedSuperclass
 public abstract class BaseEntityAudit extends BaseEntity implements Serializable {
 
-    private String updatedBy;
+    protected String updatedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    protected Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    protected Date updatedAt;
 
     @PrePersist
     public void setCreationDate() {

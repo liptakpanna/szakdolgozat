@@ -1,5 +1,6 @@
 package com.dna.application.backend.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AlignmentRequest {
     private Long id;
 
@@ -28,4 +30,11 @@ public class AlignmentRequest {
     private List<String> usernameAccessList;
 
     private Long referenceId;
+
+    public AlignmentRequest(Long _id, String _name, String _description, Alignment.Visibility _visibility) {
+        id = _id;
+        name = _name;
+        description = _description;
+        visibility = _visibility;
+    }
 }

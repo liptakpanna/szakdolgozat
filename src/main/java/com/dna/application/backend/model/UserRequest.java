@@ -1,8 +1,6 @@
 package com.dna.application.backend.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,4 +17,17 @@ public class UserRequest {
     private User.Role role;
 
     private User.Status status;
+
+    public UserRequest(Long i, String n) {
+        id = i;
+        username = n;
+    }
+
+    public UserRequest(Long i, String n, String e, String p, User.Role r) {
+        id = i;
+        username = n;
+        email = e;
+        password = p;
+        role = r;
+    }
 }

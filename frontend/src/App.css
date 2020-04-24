@@ -17,6 +17,10 @@ a:hover {
   color: black !important;
 }
 
+a.disabled {
+  pointer-events: none !important;
+}
+
 .pointer {
   cursor: pointer;
 }

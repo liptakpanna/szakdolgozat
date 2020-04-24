@@ -1,5 +1,6 @@
 package com.dna.application.backend.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReadTrack {
     private String name;
 

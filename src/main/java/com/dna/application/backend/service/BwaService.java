@@ -28,7 +28,7 @@ public class BwaService extends AbstractAligner {
         args.addAll(Arrays.asList(folder+"bwa_script", filename, folder, indexName));
         args.addAll(track.getPenalties());
         args.addAll(Arrays.asList(String.valueOf(track.isPaired()), read1, read2));
-        runCommand(args.toArray(new String[0]));
+        runAlignCommand(args.toArray(new String[0]));
 
         return Arrays.asList(read1, read2);
     }

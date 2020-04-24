@@ -9,6 +9,7 @@ import com.dna.application.backend.repository.AlignmentRepository;
 import com.dna.application.backend.repository.BamUrlRepository;
 import com.dna.application.backend.repository.ReferenceRepository;
 import com.dna.application.backend.repository.UserRepository;
+import com.dna.application.backend.util.BaseCommandRunner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -65,7 +63,7 @@ public abstract class AbstractAligner extends BaseCommandRunner {
     @Transactional
     public AlignmentDto align(AlignmentRequest alignmentRequest, User user) throws Exception{
         String name = alignmentRequest.getName();
-        if(alignmentRepository.findByName(name) != null ) throw new EntityNameAlreadyExistsException();
+        if(alignmentRepository.existsByName(name)) throw new EntityNameAlreadyExistsException();
         String filename = name.replaceAll("\\s+","_");
 
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
@@ -75,7 +73,9 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         String indexFile;
 
         if(referenceId != null){
-            reference = referenceRepository.findById(referenceId).orElseThrow(() -> new EntityNotFoundException(referenceId.toString()));
+            Optional<ReferenceExample> optionalReference = referenceRepository.findById(referenceId);
+            if(optionalReference.isEmpty()) throw new EntityNotFoundException(referenceId.toString());
+            reference = optionalReference.get();
             indexFile = getIndex(true, reference.getFilename());
         }
         else {
@@ -122,7 +122,7 @@ public abstract class AbstractAligner extends BaseCommandRunner {
             }
     }
 
-    static void runCommand(String[] args) throws Exception {
+    protected void runAlignCommand(String[] args) throws Exception {
         Process proc = new ProcessBuilder(args).start();
         String input = getInput(proc);
         String error = getError(proc);
@@ -132,7 +132,7 @@ public abstract class AbstractAligner extends BaseCommandRunner {
             throw new CommandNotFoundException();
 
         proc.waitFor();
-        log.warn(input+error);
+        //log.warn(input+error);
     }
 
     @Transactional
@@ -165,4 +165,6 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         if (referenceId == null || isSnap)
             deleteIndex(filename);
     }
+
+    public void setFolderForTest(String testFolder){folder = testFolder;}
 }

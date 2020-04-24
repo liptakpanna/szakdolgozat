@@ -511,7 +511,7 @@ class CreateAlignment extends React.Component{
         if(this.state.isLoggedIn) {
             return(
                 <div className="container">
-                    <NavBar active="alignments"/>
+                    <NavBar active="alignments" disabled={this.state.isLoading}/>
                     <div className="container">
                         <PreviousPageIcon
                             where="/alignments"

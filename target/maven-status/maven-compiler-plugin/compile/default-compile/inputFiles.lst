@@ -8,6 +8,7 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UserRequest.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/ReadTrack.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/AlignmentService.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/util/RequirementCheckUtil.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/ReferenceExample.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/JwtAuthenticationController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/util/JwtTokenUtil.java
@@ -17,7 +18,6 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/exception/WrongFileTypeException.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/BaseEntity.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/AlignmentRequest.java
-/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/BaseCommandRunner.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/SnapService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/controller/AlignerController.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/UsernameListResponse.java
@@ -29,6 +29,7 @@
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/repository/AlignmentRepository.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/Application.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/dto/UserDto.java
+/home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/util/BaseCommandRunner.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/service/UserService.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/security/WebSecurityConfig.java
 /home/panni/IdeaProjects/szakdolgozat/src/main/java/com/dna/application/backend/model/User.java

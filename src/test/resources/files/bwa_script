@@ -1,0 +1,27 @@
+#!/bin/bash
+# BWA script
+#Params: 1.NAME 2.FOLDER 3.REFNAME 4.MISMATCH PEN 5.GAP OPEN PEN 6.GAP EXT PEN 7.IS PAIRED 8.READ1 9.READ2
+
+READLENGTH=$(awk '{if(NR%4==2) {count++; bases += length} } END{print bases/count}' "${8}" )
+
+if [ "$READLENGTH" -gt 70 ]
+then
+    if [ "${7}" = "true" ]
+    then
+        bwa mem -B "${4}" -O "${5}" -E "${6}" "${3}" "${8}" "${9}" > "${2}"bams/"${1}".sam
+    else
+        bwa mem -B "${4}" -O "${5}" -E "${6}" "${3}" "${8}" > "${2}"bams/"${1}".sam
+    fi
+else
+    if [ "${7}" = "true" ]
+    then
+        bwa aln -M "${4}" -O "${5}" -E "${6}" "${3}" "${8}" > "${2}"bams/"${1}".sai;
+        bwa aln -M "${4}" -O "${5}" -E "${6}" "${3}" "${9}" > "${2}"bams/"${1}"2.sai;
+        bwa sampe "${3}" "${2}"bams/"${1}".sai "${2}"bams/"${1}"2.sai "${8}" "${9}" > "${2}"bams/"${1}".sam
+        rm "${2}"bams/"${1}"2.sai;
+    else
+        bwa aln -M "${4}" -O "${5}" -E "${6}" "${3}" "${8}" > "${2}"bams/"${1}".sai;
+        bwa samse "${3}" "${2}"bams/"${1}".sai "${8}" > "${2}"bams/"${1}".sam
+    fi
+    rm "${2}"bams/"${1}".sai;
+fi

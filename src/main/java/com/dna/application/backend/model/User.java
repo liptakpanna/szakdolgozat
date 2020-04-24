@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,6 +53,31 @@ public class User extends BaseEntityAudit implements UserDetails {
         final Set<GrantedAuthority> grntdAuths = new HashSet<GrantedAuthority>();
         grntdAuths.add(new SimpleGrantedAuthority("ROLE_" + this.getRole().toString()));
         return grntdAuths;
+    }
+
+    public User(Long _id, String _username, String _email, Role _role, Date _createdAt,
+                Date _updatedAt, Status _status, String _createdBy, String _updatedBy,
+                Set<Alignment> _ownedAlignments, Set<Alignment> _alignmentAcces) {
+        id = _id;
+        username = _username;
+        email = _email;
+        role = _role;
+        updatedBy = _updatedBy;
+        createdAt = _createdAt;
+        updatedAt = _updatedAt;
+        createdBy = _createdBy;
+        status = _status;
+        ownedAlignments = _ownedAlignments;
+        alignmentAccess = _alignmentAcces;
+    }
+
+    public User(Long _id, String _username, String _email, String _password, Role _role, String _updatedBy) {
+        id = _id;
+        username = _username;
+        email = _email;
+        password = _password;
+        role = _role;
+        updatedBy = _updatedBy;
     }
 
     @Override

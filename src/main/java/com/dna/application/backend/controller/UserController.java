@@ -6,6 +6,7 @@ import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/api/users")
@@ -98,7 +100,7 @@ public class UserController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Boolean> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
+    public ResponseEntity<String> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
         User user = (User)authentication.getPrincipal();
         try{
             return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
