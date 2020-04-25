@@ -56,8 +56,6 @@ public class JwtAuthenticationController {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
         }
     }
 
@@ -76,11 +74,7 @@ public class JwtAuthenticationController {
     }
 
     @GetMapping("/forgotpassword")
-    public ResponseEntity<List<String>> getAdminEmail() throws Exception{
-        try {
-            return ResponseEntity.ok(userService.getAdminEmail());
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
-        }
+    public ResponseEntity<List<String>> getAdminEmail() {
+        return ResponseEntity.ok(userService.getAdminEmail());
     }
 }

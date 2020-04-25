@@ -5,6 +5,7 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +23,8 @@ public class TestDataGenerator {
     private Date timestamp = new Date();
     private Date timestamp2 = new Date();
 
-    private User admin = new User(1L, "admin","admin@email.com", User.Role.ADMIN, timestamp, timestamp2,User.Status.ENABLED, "creator", "updater", new HashSet<>(), new HashSet<>());
-    private UserDto adminDto = new UserDto( 1L,"admin","admin@email.com", User.Role.ADMIN, "updater", timestamp, timestamp2,"creator" );
+    private User admin = new User(1L, "admin","admin@email.com", User.Role.ADMIN, timestamp, timestamp2,User.Status.ENABLED, "[initial]", "updater", new HashSet<>(), new HashSet<>());
+    private UserDto adminDto = new UserDto( 1L,"admin","admin@email.com", User.Role.ADMIN, "updater", timestamp, timestamp2,"[initial]" );
     private User guest = new User(2L, "guest","guest@email.com", User.Role.GUEST, timestamp2, timestamp,User.Status.ENABLED, "creator", "updater", new HashSet<>(), new HashSet<>());
     private UserDto guestDto = new UserDto( 2L,"guest","guest@email.com", User.Role.GUEST, "updater", timestamp, timestamp2,"creator" );
     private User researcher = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.ENABLED, "admin", "admin2", new HashSet<>(), new HashSet<>());
@@ -72,6 +73,4 @@ public class TestDataGenerator {
         return new MockMultipartFile(filename,
                 filename, contentType, content);
     }
-
-
 }

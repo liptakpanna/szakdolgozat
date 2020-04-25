@@ -44,11 +44,7 @@ public class AlignerController {
 
     @GetMapping("/list")
     public List<AlignmentDto> getAlignments(Authentication authentication) throws Exception{
-        try {
-            return alignmentService.getAlignments((User)authentication.getPrincipal());
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
-        }
+        return alignmentService.getAlignments((User)authentication.getPrincipal());
     }
 
     @DeleteMapping("/delete/{id}")
@@ -103,11 +99,7 @@ public class AlignerController {
 
     @GetMapping("/referencelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public List<ReferenceExample> getReferences() throws Exception{
-        try {
-            return alignmentService.getReferences();
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
-        }
+    public List<ReferenceExample> getReferences() {
+        return alignmentService.getReferences();
     }
 }

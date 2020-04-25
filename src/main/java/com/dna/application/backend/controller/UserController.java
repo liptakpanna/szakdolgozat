@@ -29,23 +29,15 @@ public class UserController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<UserDto> getUsers() throws Exception{
-        try {
-            return userService.getUsers();
-        } catch(Exception e) {
-            throw new Exception(errorMessage);
-        }
+    public List<UserDto> getUsers() {
+        return userService.getUsers();
     }
 
     @GetMapping("/usernamelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public UsernameListResponse getUsernames(Authentication authentication ) throws Exception{
+    public UsernameListResponse getUsernames(Authentication authentication )  {
         User user = (User)authentication.getPrincipal();
-        try {
-            return userService.getUsernames(user.getUsername());
-        } catch(Exception e) {
-            throw new Exception(errorMessage);
-        }
+        return userService.getUsernames(user.getUsername());
     }
 
     @DeleteMapping("/delete/{id}")
@@ -67,8 +59,6 @@ public class UserController {
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists");
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
         }
     }
 
@@ -83,19 +73,13 @@ public class UserController {
             return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists");
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
         }
     }
 
     @GetMapping("/me")
-    public UserDto getUser(Authentication authentication) throws Exception {
+    public UserDto getUser(Authentication authentication) {
         User user = (User)authentication.getPrincipal();
-        try {
-            return userService.getUserDto(user.getUsername());
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
-        }
+        return userService.getUserDto(user.getUsername());
     }
 
     @PostMapping("/add")
@@ -106,8 +90,6 @@ public class UserController {
             return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists");
-        } catch (Exception e) {
-            throw new Exception(errorMessage);
         }
     }
 }

@@ -18,16 +18,11 @@ public class UserRequest {
 
     private User.Status status;
 
-    public UserRequest(Long i, String n) {
-        id = i;
-        username = n;
-    }
-
-    public UserRequest(Long i, String n, String e, String p, User.Role r) {
-        id = i;
-        username = n;
-        email = e;
-        password = p;
-        role = r;
+    public UserRequest(Long _id, String _username, String _email, String _password, User.Role _role) {
+        id = _id;
+        username = _username;
+        email = _email;
+        password = _password;
+        role = _role;
     }
 }
