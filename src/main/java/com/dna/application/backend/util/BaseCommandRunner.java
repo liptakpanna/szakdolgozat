@@ -39,6 +39,7 @@ public abstract class BaseCommandRunner {
             String error = getError(proc);
 
             proc.waitFor();
+            log.debug(input+error);
             return input+error;
         } catch(IOException e) {
             if(String.valueOf(e).toLowerCase().contains("cannot run")) {

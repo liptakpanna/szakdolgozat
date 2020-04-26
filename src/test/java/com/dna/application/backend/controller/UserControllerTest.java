@@ -45,7 +45,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void a_getUsers_NoJwt_Denied() {
+    public void a_getList_NoJwt_Denied() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<?> response = restTemplate.exchange(
                 apiUrl+"/users/list", HttpMethod.GET, entity, String.class);
@@ -54,7 +54,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void b_getUsers_JwtAdmin_ReturnUsers() {
+    public void b_getList_JwtAdmin_ReturnUsers() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<?> response = restTemplate.exchange(

@@ -95,7 +95,8 @@ public abstract class AbstractAligner extends BaseCommandRunner {
                 .visibility(alignmentRequest.getVisibility())
                 .build();
 
-        setUserAccessSet(usernameAccessList, alignment);
+        Set<User> userAccess = setUserAccessSet(usernameAccessList, alignment);
+        alignment.setUserAccess(userAccess);
         alignmentRepository.saveAndFlush(alignment);
 
         return alignmentService.getAlignmentDto(name);
@@ -112,14 +113,18 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         return filename;
     }
 
-    private void setUserAccessSet(List<String> usernameAccessList, Alignment alignment){
+    @Transactional
+    private Set<User> setUserAccessSet(List<String> usernameAccessList, Alignment alignment){
+        Set<User> userAccess = new HashSet<>();
         if(usernameAccessList != null)
             for(String username: usernameAccessList) {
                 User userToAdd = userRepository.findByUsername(username);
                 if(userToAdd != null){
                     userToAdd.getAlignmentAccess().add(alignment);
+                    userAccess.add(userToAdd);
                 }
             }
+        return userAccess;
     }
 
     protected void runAlignCommand(String[] args) throws Exception {
@@ -132,7 +137,7 @@ public abstract class AbstractAligner extends BaseCommandRunner {
             throw new CommandNotFoundException();
 
         proc.waitFor();
-        //log.warn(input+error);
+        log.debug(input+error);
     }
 
     @Transactional

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Table;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class AlignmentService extends BaseCommandRunner {
         return alignmentDtos;
     }
 
+    @Transactional
     public AlignmentDto getAlignmentDto(String name) throws Exception {
         Alignment alignment = alignmentRepository.findByName(name);
         if(alignment != null)
@@ -83,7 +85,7 @@ public class AlignmentService extends BaseCommandRunner {
         if(optionalAlignment.isEmpty()) throw new EntityNotFoundException(id.toString());
         Alignment alignment = optionalAlignment.get();
 
-        if (alignment.getOwner() != user && user.getRole() != User.Role.ADMIN)
+        if (!alignment.getOwner().getId().equals(user.getId()) && user.getRole() != User.Role.ADMIN)
             throw new Exception("You have no authorization to delete this object");
 
         String filename = alignment.getName().replaceAll("\\s+","_");
@@ -95,6 +97,7 @@ public class AlignmentService extends BaseCommandRunner {
         return !alignmentRepository.existsById(id);
     }
 
+    @Transactional
     public AlignmentDto updateAlignment(AlignmentRequest alignmentRequest, User user) throws Exception{
         Long id = alignmentRequest.getId();
         Optional<Alignment> optionalAlignment = alignmentRepository.findById(id);

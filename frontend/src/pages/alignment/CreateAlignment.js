@@ -418,7 +418,7 @@ class CreateAlignment extends React.Component{
                     /> 
                 </td>
                 <td>
-                    <input type="number" min="0" length="2" style={{"width":"50px"}}
+                    <input type="number" min="0" max="63" length="2" style={{"width":"50px"}}
                         value={this.state.readFile[i].maxDist} 
                         onChange= { (e) => this.setValueForRead("maxdist", e.target.value, i)}
                     /> 

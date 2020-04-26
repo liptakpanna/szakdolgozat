@@ -80,6 +80,7 @@ public class AlignerController {
         } catch (CommandNotFoundException e) {
             throw new Exception("A command was not found, the server does not have everything installed to work properly.");
         } catch (Exception e) {
+            log.warn(String.valueOf(e));
             throw new Exception(errorMessage);
         }
     }
