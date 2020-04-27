@@ -162,8 +162,8 @@ public class AlignmentService extends BaseCommandRunner {
     }
 
     private String getOwnerName(Alignment alignment) {
-        if(alignment.getOwner().getStatus() == User.Status.DELETED) {
-            return "[deleted user]";
+        if(alignment.getOwner().getStatus() == User.Status.DISABLED) {
+            return "[disabled user]";
         } else {
             return alignment.getOwner().getUsername();
         }

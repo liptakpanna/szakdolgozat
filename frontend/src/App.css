@@ -75,6 +75,15 @@ a.disabled {
   -webkit-transform: rotate(135deg);
 }
 
+tr.disabledUser {
+  background-color: #a3a3a3;
+  color: white;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th {
+  vertical-align: middle;
+}
+
 @media screen and (min-width: 768px) {
   .nav-logout {
     border: solid 2px rgba(121, 117, 117, 0.753);

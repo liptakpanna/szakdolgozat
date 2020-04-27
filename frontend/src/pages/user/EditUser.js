@@ -4,7 +4,6 @@ import { Redirect } from 'react-router-dom';
 import InputField from '../../util/InputField';
 import SubmitButton from '../../util/SubmitButton';
 import {checkJwtToken, validateEmail} from '../../util/Common';
-import Modal from 'react-bootstrap/Modal';
 import PreviousPageIcon from '../../util/PreviousPageIcon';
 import _ from 'lodash';
 import Cookie from "js-cookie";
@@ -17,7 +16,6 @@ class EditUser extends React.Component{
             isLoggedIn : true,
             item: (this.props.location.state ? this.props.location.state.item : null),
             isAdmin: (this.props.location.state ? this.props.location.state.isAdmin : false),
-            show: false,
             showError: false,
             errormessage: "There are no modifications"
         }
@@ -118,40 +116,6 @@ class EditUser extends React.Component{
         }
     }
 
-    async deleteUser() {
-        this.setState({show: false});
-        try {
-            let response = await fetch(process.env.REACT_APP_API_URL + '/users/delete/' + this.props.location.state.item.id, {
-                method: 'delete',
-                headers: new Headers({
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
-                })
-            })
-
-            let result = await response.json();
-            if(result){
-                if(result.status === 500) {
-                    this.setState({errormessage: result.message})
-                    this.setState({showError:true});
-                }
-                else if(result.status === 403) {
-                    this.props.history.push("/login");
-                }
-                else {
-                    console.log(result);
-                    this.props.history.push('/users')
-                }
-            }
-        }
-        catch(e) {
-            this.setState({errormessage: "Cannot connect to server"})
-            this.setState({showError:true});
-            console.log("Cannot connect to server. " + e);
-        }
-    }
-
     addRoleDropdown(){
         if(this.state.isAdmin){
             return(
@@ -166,35 +130,6 @@ class EditUser extends React.Component{
                         <option value="GUEST">Guest</option>
                     </select>
                 </div>
-            )
-        }
-    }
-  
-    handleClose = () => {this.setState({show: false})};
-    handleShow = () => {this.setState({show: true})};
-
-    addModal(){
-        return(
-            <Modal show={this.state.show} onHide={this.handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Are you sure you want to delete this user?</Modal.Title>
-                </Modal.Header>
-                <Modal.Footer>
-                    <SubmitButton type=" btn-secondary" text="Close" onClick={this.handleClose}/>
-                    <SubmitButton type=" btn-danger" text="Delete" onClick={() => this.deleteUser()}/>
-                </Modal.Footer>
-            </Modal>
-        )
-    }
-
-    addDeleteButton(){
-        if(this.state.isAdmin){
-            return(
-                <SubmitButton
-                text='Delete User'
-                type='btn-outline-danger btn-lg'
-                onClick={ () => {this.handleShow()} }                        
-                />
             )
         }
     }
@@ -248,7 +183,6 @@ class EditUser extends React.Component{
                                 type='btn-outline-secondary btn-lg'
                                 onClick={ () => this.editUser() }
                             />
-                            {this.addDeleteButton()}
                         </div>
                     </form>
                     { this.state.showError ? <div className="alert alert-primary mt-3" role="alert">{this.state.errormessage}</div> : null }

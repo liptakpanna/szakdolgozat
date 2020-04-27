@@ -53,7 +53,6 @@ class AdminAddUser extends React.Component{
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
-
                 }),
                 body:JSON.stringify({
                     username: this.state.username,
@@ -62,7 +61,7 @@ class AdminAddUser extends React.Component{
                     role: this.state.role
                 })
             })
-            let result = await response.json();
+            let result = response.json();
             if(result){
                 if(result.status === 500) {
                     this.setState({errormessage: result.message})
@@ -72,8 +71,8 @@ class AdminAddUser extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result)
-                    this.props.history.push('/users')
+                    console.log(result);
+                    this.props.history.push('/users');
                 }
             }
         }

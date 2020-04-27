@@ -63,7 +63,49 @@ class AdminUsers extends React.Component{
     }
 
     onEditClick(event, item) {
+        if (event.target.id === "disableButton") return;
         this.props.history.push("/user/edit", {item: item, isAdmin: true, origin: "/users"});
+    }
+
+    async changeStatus(id, status) {
+        try {
+            let response = await fetch(process.env.REACT_APP_API_URL + '/users/update', {
+                method: 'put',
+                headers: new Headers({
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    "Authorization": 'Bearer ' + Cookie.get("jwtToken")
+                }),
+                body : JSON.stringify({
+                    id: id,
+                    status: status
+                })
+            }).catch(error =>  {
+                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({showError:true});
+                console.log("Cannot connect to server");
+            })
+
+            let result = await response.json();
+            if(result){
+                if(result.status === 500) {
+                    this.setState({errormessage: result.message})   
+                    this.setState({showError:true});
+                }
+                else if(result.status === 403) {
+                    this.props.history.push("/login");
+                }
+                else{
+                    console.log(result);
+                    this.getUsers();
+                }
+            }
+        }
+        catch(e) {
+            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({showError:true});
+            console.log("Cannot connect to server. "+ e);
+        }
     }
 
     render() {
@@ -72,7 +114,7 @@ class AdminUsers extends React.Component{
             return(
                 <div className="container">
                     <NavBar active="users"/>
-                    <div className="container table-responsive-lg">
+                    <div className="container table-responsive-xl">
                         <h1>
                             User List
                         </h1>
@@ -87,15 +129,17 @@ class AdminUsers extends React.Component{
                                     <th scope="col">Updated At</th>
                                     <th scope="col">Created By</th>
                                     <th scope="col">Created At</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                             {this.state.items.map(function(item, index) {
                                 return <tr 
-                                        onClick={(e) =>this.onEditClick(e, item)}
-                                        className="userListItem pointer" 
+                                        onClick={(e) => item.status === "ENABLED" ? this.onEditClick(e, item) : null}
+                                        className={"pointer" + (item.status === "DISABLED" ? " disabledUser" : "")} 
                                         key={index} 
-                                        data-toogle="tooltip" data-placement="top" title="Click to edit user">
+                                        data-toogle="tooltip" data-placement="top" title={(item.status === "DISABLED" ? "User DISABLED, click on Enable to change it" : "Click to edit user")}>
                                         <th>{item.id}</th>
                                         <td> {item.username} </td>
                                         <td> {item.role} </td>
@@ -104,6 +148,11 @@ class AdminUsers extends React.Component{
                                         <td> {item.updatedAt ? Moment(item.updatedAt).format("YYYY.MM.DD. HH:mm") : ""} </td>
                                         <td> {item.createdBy} </td>
                                         <td> {item.createdAt ? Moment(item.createdAt).format("YYYY.MM.DD. HH:mm") : ""} </td>
+                                        <td>{item.status}</td>
+                                        <td>
+                                        {(item.status === "DISABLED" ? <button className="btn btn-success" onClick={() => this.changeStatus(item.id,"ENABLED")}>ENABLE</button>
+                                         : <button className="btn btn-danger" id="disableButton" onClick={() => this.changeStatus(item.id,"DISABLED")}>DISABLE</button>)}
+                                        </td>
                                     </tr>
                             }, this)}
                             </tbody>

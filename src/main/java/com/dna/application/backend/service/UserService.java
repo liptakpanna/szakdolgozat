@@ -28,13 +28,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private ModelMapper modelMapper = new ModelMapper();
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        users.removeIf(user -> user.getStatus() == User.Status.DELETED);
 
         Type listType = new TypeToken<List<UserDto>>() {}.getType();
         return modelMapper.map(users, listType);
@@ -47,23 +45,12 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean deleteUser(Long id, User user) throws Exception {
-        if (user.getId().equals(id))
-            throw new Exception("You cannot delete yourself.");
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty())
-            throw new EntityNotFoundException(id.toString());
-        User userForDelete = optionalUser.get();
-        userForDelete.setStatus(User.Status.DELETED);
-        userForDelete.setAlignmentAccess(new HashSet<>());
-        User savedUser = userRepository.saveAndFlush(userForDelete);
-        return savedUser.getStatus() == User.Status.DELETED;
-    }
-
-    @Transactional
-    public boolean updateUser(UserRequest userRequest, String updater) throws Exception{
+    public boolean updateUser(UserRequest userRequest, User updater) throws Exception{
         Long id = userRequest.getId();
         if (id == null) throw new Exception("Id for updating not provided");
+        if (userRequest.getRole() != null && userRequest.getId().equals(updater.getId())) throw new Exception("You cannot change your role");
+        if (userRequest.getStatus() != null && userRequest.getId().equals(updater.getId())) throw new Exception("You cannot change your status");
+        String updaterName = updater.getUsername();
 
         String username = userRequest.getUsername();
         String email = userRequest.getEmail();
@@ -77,7 +64,7 @@ public class UserService {
         User user = optionalUser.get();
         if(username != null){
             if(!username.equals(user.getUsername()) && userRepository.existsByUsername(username)) throw new EntityNameAlreadyExistsException();
-            if(updater.equals(user.getUsername())) updater = username;
+            if(updaterName.equals(user.getUsername())) updaterName = username;
             user.setUsername(username);
         }
         if(email != null) user.setEmail(email);
@@ -85,10 +72,10 @@ public class UserService {
         if(role != null) user.setRole(role);
         if(status != null) user.setStatus(status);
 
-        user.setUpdatedBy(updater);
+        user.setUpdatedBy(updaterName);
         User savedUser = userRepository.saveAndFlush(user);
 
-        return savedUser.getUpdatedBy().equals(updater);
+        return savedUser.getUpdatedBy().equals(updaterName);
     }
 
     public UserDto getUserDto(String username) {

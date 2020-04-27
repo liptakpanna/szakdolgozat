@@ -102,5 +102,5 @@ public class User extends BaseEntityAudit implements UserDetails {
 
     public enum Role {ADMIN, RESEARCHER, GUEST}
 
-    public enum Status {ENABLED, DELETED}
+    public enum Status {ENABLED, DISABLED}
 }

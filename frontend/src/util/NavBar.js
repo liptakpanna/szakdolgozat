@@ -28,7 +28,7 @@ class NavBar extends React.Component{
                 <nav className="navbar navbar-expand-md fixed-top navbar-light" style={{backgroundColor: "#e3f2fd"}}>
                     <div className="container">
                         <div className="navbar-header">
-                            <a className={"navbar-brand " + this.props.disabled ? "disabled" : "" } href="/home">DNA</a>
+                            <a className={"navbar-brand " + (this.props.disabled ? "disabled" : "")} href="/home">DNA</a>
                             <button className="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                                 <span className="navbar-toggler-icon"></span>
                             </button>
@@ -42,7 +42,7 @@ class NavBar extends React.Component{
                             </ul>
                             <ul className="nav navbar-nav navbar-right">
                                 <li className="nav-item mr-5"><span className="navbar-text">User: {localStorage.getItem("username")}</span></li>
-                                <li className="nav-item"><a className={this.getLinkClass()+ "nav-logout"} href="/login" onClick={ (e) =>  (this.props.disabled ? e.preventDefault() : logout())}>Logout</a></li>
+                                <li className="nav-item"><a className={this.getLinkClass()+ " nav-logout"} href="/login" onClick={ (e) =>  (this.props.disabled ? e.preventDefault() : logout())}>Logout</a></li>
                             </ul>
                         </div>
                     </div>

@@ -24,14 +24,14 @@ public class TestDataGenerator {
     private Date timestamp = new Date();
     private Date timestamp2 = new Date();
 
-    private User admin = new User(1L, "admin","admin@email.com", User.Role.ADMIN, timestamp, timestamp2,User.Status.ENABLED, "[initial]", "updater", new HashSet<>(), new HashSet<>());
-    private UserDto adminDto = new UserDto( 1L,"admin","admin@email.com", User.Role.ADMIN, "updater", timestamp, timestamp2,"[initial]" );
-    private User guest = new User(2L, "guest","guest@email.com", User.Role.GUEST, timestamp2, timestamp,User.Status.ENABLED, "creator", "updater", new HashSet<>(), new HashSet<>());
-    private UserDto guestDto = new UserDto( 2L,"guest","guest@email.com", User.Role.GUEST, "updater", timestamp, timestamp2,"creator" );
-    private User researcher = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.ENABLED, "admin", "admin2", new HashSet<>(), new HashSet<>());
-    private UserDto researcherDto = new UserDto( 3L,"test","test@test.com", User.Role.RESEARCHER, "admin2", timestamp2, timestamp,"admin" );
-    private User researcherDeleted = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.DELETED, "admin", "admin2", new HashSet<>(), new HashSet<>());
-    private User updatedUser = new User(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER, "updater");
+    private User admin = new User(1L, "admin","admin@email.com", User.Role.ADMIN, timestamp, timestamp2,User.Status.ENABLED, "[initial]", "admin", new HashSet<>(), new HashSet<>());
+    private UserDto adminDto = new UserDto( 1L,"admin","admin@email.com", User.Role.ADMIN, User.Status.ENABLED,"admin", timestamp, timestamp2,"[initial]" );
+    private User guest = new User(2L, "guest","guest@email.com", User.Role.GUEST, timestamp2, timestamp,User.Status.ENABLED, "creator", "admin", new HashSet<>(), new HashSet<>());
+    private UserDto guestDto = new UserDto( 2L,"guest","guest@email.com", User.Role.GUEST, User.Status.ENABLED,"admin", timestamp, timestamp2,"creator" );
+    private User researcher = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.ENABLED, "admin", "admin", new HashSet<>(), new HashSet<>());
+    private UserDto researcherDto = new UserDto( 3L,"test","test@test.com", User.Role.RESEARCHER, User.Status.ENABLED,"admin", timestamp2, timestamp,"admin" );
+    private User researcherDeleted = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.DISABLED, "admin", "admin", new HashSet<>(), new HashSet<>());
+    private User updatedUser = new User(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER, "admin");
 
     private UserRequest userRequest = new UserRequest(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER);
 

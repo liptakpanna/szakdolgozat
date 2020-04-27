@@ -19,6 +19,8 @@ public class UserDto {
 
     private User.Role role;
 
+    private User.Status status;
+
     private String updatedBy;
 
     private Date createdAt;

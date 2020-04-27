@@ -89,7 +89,6 @@ public class UserControllerTest {
         Assert.assertTrue(actual.contains("Username already exists"));
     }
 
-
     @Test
     public void e_getUsers_JwtAdmin_ReturnTwoUsers() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
@@ -168,11 +167,14 @@ public class UserControllerTest {
     }
 
     @Test
-    public void k_deleteId_AdminJwt_Successful() {
+    public void k_putUpdate_AdminJwtDisableUser_Successful() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        UserRequest userRequest = new UserRequest();
+        userRequest.setId(2L);
+        userRequest.setStatus(User.Status.DISABLED);
+        HttpEntity<UserRequest> entity = new HttpEntity<>(userRequest, headers);
         ResponseEntity<?> response = restTemplate.exchange(
-                apiUrl+"/users/delete/2", HttpMethod.DELETE, entity, String.class);
+                apiUrl+"/users/update", HttpMethod.PUT, entity, String.class);
         String actual = response.toString();
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
@@ -192,6 +194,19 @@ public class UserControllerTest {
     }
 
     @Test
+    public void l_getList_AdminJwt_EmptyList() {
+        headers.set("Authorization", "Bearer " + adminJwtToken);
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<?> response = restTemplate.exchange(
+                apiUrl+"/users/list", HttpMethod.GET, entity, String.class);
+        int header = response.getStatusCodeValue();
+        Assert.assertEquals(200, header);
+        String actual = response.toString();
+        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\",\"status\":\"ENABLED\""));
+        Assert.assertTrue(actual.contains("\"id\":2,\"username\":\"testuser\",\"email\":\"new@email.com\",\"role\":\"GUEST\",\"status\":\"DISABLED\""));
+    }
+
+    @Test
     public void m_getMe_AdminJwt_ReturnAdmin() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
@@ -200,8 +215,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        log.warn(actual);
-        Assert.assertTrue(actual.contains("{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\",\"updatedBy\":null,"));
+        Assert.assertTrue(actual.contains("{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\",\"status\":\"ENABLED\",\"updatedBy\":null"));
     }
 
     private String getTokenForUser(String username, String password) {

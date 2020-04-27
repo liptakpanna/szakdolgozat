@@ -48,16 +48,18 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUsers_MultipleUsers_ReturnEnabled() {
-        User deletedGuest = testDataGenerator.getGuest();
-        deletedGuest.setStatus(User.Status.DELETED);
-        List<User> repoResult = new ArrayList<>(Arrays.asList(testDataGenerator.getAdmin(), deletedGuest, testDataGenerator.getResearcher()));
+    public void getUsers_MultipleUsers_ReturnAll() {
+        User disabledGuest = testDataGenerator.getGuest();
+        disabledGuest.setStatus(User.Status.DISABLED);
+        UserDto disabledGuestDto = testDataGenerator.getGuestDto();
+        disabledGuestDto.setStatus(User.Status.DISABLED);
+        List<User> repoResult = new ArrayList<>(Arrays.asList(testDataGenerator.getAdmin(), disabledGuest, testDataGenerator.getResearcher()));
 
         given(userRepository.findAll(Sort.by(Sort.Direction.ASC, "id")))
                 .willReturn(repoResult);
 
         List<UserDto> result = userService.getUsers();
-        Assert.assertEquals(Arrays.asList(testDataGenerator.getAdminDto(), testDataGenerator.getResearcherDto()), result);
+        Assert.assertEquals(Arrays.asList(testDataGenerator.getAdminDto(), disabledGuestDto,testDataGenerator.getResearcherDto()), result);
     }
 
     @Test
@@ -73,31 +75,29 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUser_DeleteSelf_Exception() throws Exception {
+    public void putUser_DisableSelf_Exception() throws Exception {
         exceptionRule.expect(Exception.class);
-        exceptionRule.expectMessage("You cannot delete yourself.");
-        userService.deleteUser(1L, testDataGenerator.getAdmin());
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void deleteUser_NotFound_Exception() throws Exception {
-        Long id = 3L;
-        given(userRepository.findById(id))
-                .willReturn(Optional.empty());
-        userService.deleteUser(id, testDataGenerator.getAdmin());
+        exceptionRule.expectMessage("You cannot change your status");
+        UserRequest userRequest = new UserRequest();
+        userRequest.setId(1L);
+        userRequest.setStatus(User.Status.DISABLED);
+        userService.updateUser(userRequest, testDataGenerator.getAdmin());
     }
 
     @Test
     public void deleteUser_Existing_Successful() throws Exception {
         Long id = 2L;
         User user = testDataGenerator.getGuest();
-        User deletedUser = testDataGenerator.getGuest();
-        deletedUser.setStatus(User.Status.DELETED);
+        User disabledUser = testDataGenerator.getGuest();
+        disabledUser.setStatus(User.Status.DISABLED);
         given(userRepository.findById(id))
                 .willReturn(Optional.of(user));
         given(userRepository.saveAndFlush(user))
-                .willReturn(deletedUser);
-        Assert.assertTrue(userService.deleteUser(id, testDataGenerator.getAdmin()));
+                .willReturn(disabledUser);
+        UserRequest userRequest = new UserRequest();
+        userRequest.setId(id);
+        userRequest.setStatus(User.Status.DISABLED);
+        Assert.assertTrue(userService.updateUser(userRequest, testDataGenerator.getAdmin()));
     }
 
     @Test(expected = EntityNameAlreadyExistsException.class)
@@ -109,7 +109,7 @@ public class UserServiceTest {
                 .willReturn(Optional.of(user));
         given(userRepository.existsByUsername("newname"))
                 .willReturn(true);
-        userService.updateUser(request, "updater");
+        userService.updateUser(request, testDataGenerator.getAdmin());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class UserServiceTest {
                 .willReturn(false);
         given(userRepository.saveAndFlush(oldUser))
                 .willReturn(updatedUser);
-        Assert.assertTrue(userService.updateUser(request, "updater"));
+        Assert.assertTrue(userService.updateUser(request, testDataGenerator.getAdmin()));
     }
 
     @Test

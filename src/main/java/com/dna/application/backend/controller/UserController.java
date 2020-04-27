@@ -40,23 +40,12 @@ public class UserController {
         return userService.getUsernames(user.getUsername());
     }
 
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable Long id, Authentication authentication) throws Exception {
-        User user = (User)authentication.getPrincipal();
-        if (userService.deleteUser(id, user))
-            return ResponseEntity.ok(true);
-        else throw new Exception("Delete was not successful");
-    }
-
     @PutMapping("/me/update")
     public ResponseEntity<Boolean> updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
         User user = (User)authentication.getPrincipal();
         userRequest.setId(user.getId());
-        if (userRequest.getRole() != null) throw new Exception("You cannot change your role");
-        if (userRequest.getStatus() != null) throw new Exception("You cannot change your status");
         try{
-            return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
+            return ResponseEntity.ok(userService.updateUser(userRequest, user));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists");
         }
@@ -67,10 +56,8 @@ public class UserController {
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication)
             throws Exception {
         User user = (User)authentication.getPrincipal();
-        if (userRequest.getRole() != null && user.getId().equals(userRequest.getId()))
-            throw new Exception("You cannot change your role");
         try {
-            return ResponseEntity.ok(userService.updateUser(userRequest, user.getUsername()));
+            return ResponseEntity.ok(userService.updateUser(userRequest, user));
         } catch(EntityNameAlreadyExistsException e) {
             throw new Exception("Username already exists");
         }

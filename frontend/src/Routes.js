@@ -11,11 +11,9 @@ import Alignments from "./pages/alignment/Alignments";
 import CreateAlignment from "./pages/alignment/CreateAlignment";
 import EditAlignment from "./pages/alignment/EditAlignment";
 import NotFound from "./pages/NotFoundPage";
-import { checkJwtToken } from "./util/Common";
 
 
 export default function Routes() {
-  if(checkJwtToken()) {
     let role = localStorage.getItem("role");
     if(role === "ADMIN") {
       return (
@@ -49,7 +47,7 @@ export default function Routes() {
                 <Route component={NotFound} />
         </Switch>
       );
-    } else {
+    } else if (role === "GUEST") {
       return (
         <Switch>
                 <Route path="/login" component={LoginForm} />
@@ -62,24 +60,13 @@ export default function Routes() {
                 <Route component={NotFound} />
         </Switch>
       );
+    } else {
+      return(
+        <Switch>
+          <Route path="/login" component={LoginForm} />
+          <Redirect from="*" to="/login" />
+        </Switch>
+      )
     }
-
-  } else {
-    return (
-      <Switch>
-              <Route path="/login" component={LoginForm} />
-              <Route path='/alignments/igv' component={IgvBrowser} />
-              <Route path='/home' component={Home} />
-              <Route path='/users/add' component={AdminAddUser} />
-              <Route path='/user/edit' component={EditUser} />
-              <Route path='/users' component={AdminUsers} />
-              <Route path='/profile' component={Profile} />
-              <Route path='/alignments/edit' component={EditAlignment} />
-              <Route path='/alignments/add' component={CreateAlignment} />
-              <Route path='/alignments' component={Alignments} />
-              <Redirect from="*" to="/login" />
-      </Switch>
-    );
-  }
 }
 

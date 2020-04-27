@@ -91,7 +91,10 @@ class LoginPage extends React.Component{
             if (result){
                 console.log(result);
                 if(result.status === 403) {
-                    this.setState({errormessage: "Wrong username password combination. If you have forgotten your password please contact an admin: " + this.state.adminEmail})
+                    if(result.trace.includes("USER_DISABLED"))
+                        this.setState({errormessage: "Your profile has been disabled. If you want use the application please contact an admin: " + this.state.adminEmail})
+                    else
+                        this.setState({errormessage: "Wrong username password combination. If you have forgotten your password please contact an admin: " + this.state.adminEmail})
                     this.setState({show:true});
                     this.setState({buttonDisabled: false})
                 }
