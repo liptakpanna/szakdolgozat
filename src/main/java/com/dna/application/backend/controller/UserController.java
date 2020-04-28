@@ -4,11 +4,9 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
-import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -24,9 +22,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Value("${default.error.message}")
-    private String errorMessage;
-
     @GetMapping("/list")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDto> getUsers() {
@@ -35,20 +30,9 @@ public class UserController {
 
     @GetMapping("/usernamelist")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public UsernameListResponse getUsernames(Authentication authentication )  {
+    public ResponseEntity<List<String>> getUsernames(Authentication authentication )  {
         User user = (User)authentication.getPrincipal();
-        return userService.getUsernames(user.getUsername());
-    }
-
-    @PutMapping("/me/update")
-    public ResponseEntity<Boolean> updateOwnData(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception {
-        User user = (User)authentication.getPrincipal();
-        userRequest.setId(user.getId());
-        try{
-            return ResponseEntity.ok(userService.updateUser(userRequest, user));
-        } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists");
-        }
+        return ResponseEntity.ok(userService.getUsernames(user.getUsername()));
     }
 
     @PutMapping("/update")
@@ -56,6 +40,7 @@ public class UserController {
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication)
             throws Exception {
         User user = (User)authentication.getPrincipal();
+        if(userRequest.getId() == null) userRequest.setId(user.getId());
         try {
             return ResponseEntity.ok(userService.updateUser(userRequest, user));
         } catch(EntityNameAlreadyExistsException e) {

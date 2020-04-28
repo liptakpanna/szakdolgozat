@@ -17,11 +17,7 @@ public class RequirementCheckUtil extends BaseCommandRunner {
     @EventListener(ApplicationReadyEvent.class)
     public void checkIfRequirementsAreMet() throws Exception {
         for (String command : commands) {
-            try {
-                runCommand(command.split(" "));
-            } catch(CommandNotFoundException e) {
-                throw new CommandNotFoundException(e);
-            }
+            runCommand(command.split(" "));
         }
     }
 

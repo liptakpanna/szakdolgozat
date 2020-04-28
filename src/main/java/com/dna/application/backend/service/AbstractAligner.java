@@ -48,9 +48,9 @@ public abstract class AbstractAligner extends BaseCommandRunner {
     @Value("${data.resource.url}")
     public String resourceUrl;
 
-    final static List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
+    final protected List<String> fastaExtensions = Arrays.asList("fna", "fa", "fasta");
 
-    final static List<String> fileErrorMessages = Arrays.asList("Unknown file type","FASTA file doesn't beging with a contig name",
+    final protected List<String> fileErrorMessages = Arrays.asList("Unknown file type","FASTA file doesn't beging with a contig name",
             "Reference file does not seem to be a FASTA file",
             "reads file does not look like");
 
@@ -102,7 +102,7 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         return alignmentService.getAlignmentDto(name);
     }
 
-    static String saveFile(MultipartFile multipartFile, String filename) {
+    protected String saveFile(MultipartFile multipartFile, String filename) {
         try {
             byte[] bytes = multipartFile.getBytes();
             Path path = Paths.get(filename);

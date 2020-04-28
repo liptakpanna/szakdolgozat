@@ -4,7 +4,6 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
-import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -38,10 +37,10 @@ public class UserService {
         return modelMapper.map(users, listType);
     }
 
-    public UsernameListResponse getUsernames(String requester) {
+    public List<String> getUsernames(String requester) {
         List<String> usernames = userRepository.findUsernames();
         usernames.remove(requester);
-        return new UsernameListResponse(usernames);
+        return usernames;
     }
 
     @Transactional

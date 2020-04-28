@@ -4,6 +4,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class UserRequest {
     private Long id;
@@ -17,12 +18,4 @@ public class UserRequest {
     private User.Role role;
 
     private User.Status status;
-
-    public UserRequest(Long _id, String _username, String _email, String _password, User.Role _role) {
-        id = _id;
-        username = _username;
-        email = _email;
-        password = _password;
-        role = _role;
-    }
 }

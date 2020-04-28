@@ -12,8 +12,9 @@ class Home extends React.Component{
         this.role = localStorage.getItem("role");
     }
 
-    async componentDidMount(){
-        this.setState({isLoggedIn: await checkJwtToken()});
+    componentDidMount(){
+        this.setState({isLoggedIn: checkJwtToken()});
+        console.log("home" + this.state.isLoggedIn);
     }
 
     addCreateAlignmentsText(){
@@ -39,7 +40,7 @@ class Home extends React.Component{
     }
 
     render() {
-        if(this.state.isLoggedIn) {
+        if(this.state.isLoggedIn && localStorage.getItem("username") !== "") {
             return(
                 <div className="container">
                     <NavBar active="home"/>

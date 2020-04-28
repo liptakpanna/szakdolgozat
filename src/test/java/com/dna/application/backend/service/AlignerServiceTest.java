@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StopWatch;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 
 @Slf4j
+@ActiveProfiles("test")
 @RunWith(MockitoJUnitRunner.class)
 public class AlignerServiceTest extends BaseCommandRunner {
     @Mock

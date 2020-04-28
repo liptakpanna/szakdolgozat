@@ -33,7 +33,7 @@ public class TestDataGenerator {
     private User researcherDeleted = new User(3L, "test","test@test.com", User.Role.RESEARCHER, timestamp2, timestamp,User.Status.DISABLED, "admin", "admin", new HashSet<>(), new HashSet<>());
     private User updatedUser = new User(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER, "admin");
 
-    private UserRequest userRequest = new UserRequest(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER);
+    private UserRequest userRequest = new UserRequest(2L, "newname", "new@email.com", "newpwd", User.Role.RESEARCHER, null);
 
     private AlignmentRequest alignmentRequest = new AlignmentRequest(1L, "b", "New Description", Alignment.Visibility.PRIVATE);
 

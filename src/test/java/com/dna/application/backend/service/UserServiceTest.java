@@ -5,7 +5,6 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
-import com.dna.application.backend.model.UsernameListResponse;
 import com.dna.application.backend.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -17,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Sort;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,11 +65,11 @@ public class UserServiceTest {
         List<String> repoResult = new ArrayList<>(Arrays.asList("admin", "guest", "test"));
         given(userRepository.findUsernames())
                 .willReturn(repoResult);
-        UsernameListResponse result = userService.getUsernames("admin");
-        Assert.assertTrue(result.getUsernames().contains("guest"));
-        Assert.assertTrue(result.getUsernames().contains("test"));
-        Assert.assertFalse(result.getUsernames().contains("admin"));
-        Assert.assertEquals(2, result.getUsernames().size());
+        List<String> result = userService.getUsernames("admin");
+        Assert.assertTrue(result.contains("guest"));
+        Assert.assertTrue(result.contains("test"));
+        Assert.assertFalse(result.contains("admin"));
+        Assert.assertEquals(2, result.size());
     }
 
     @Test

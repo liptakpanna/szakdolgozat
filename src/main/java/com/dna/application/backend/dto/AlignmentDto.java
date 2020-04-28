@@ -10,8 +10,6 @@ import java.util.Set;
 
 @Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlignmentDto {
@@ -38,9 +36,4 @@ public class AlignmentDto {
     private String updatedBy;
 
     private List<String> userAccess;
-
-    public AlignmentDto(String n, Alignment.Visibility v) {
-        name = n;
-        visibility = v;
-    }
 }

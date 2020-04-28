@@ -64,6 +64,7 @@ export default function Routes() {
       return(
         <Switch>
           <Route path="/login" component={LoginForm} />
+          <Route path='/home' component={Home} />
           <Redirect from="*" to="/login" />
         </Switch>
       )

@@ -55,7 +55,7 @@ class EditUser extends React.Component{
     async editUser() {
         if (!this.state.item.username || !this.state.item.email) {return;}
         if(this.isChanged()) {
-            let url, body, username;
+            let body, username;
             username = this.state.item.username === this.props.location.state.item.username ? null : this.state.item.username;
             if(!validateEmail(this.state.item.email)) {
                 this.setState({errormessage: "Not a valid email form"})
@@ -63,7 +63,6 @@ class EditUser extends React.Component{
                 return;
             }
             if (this.state.isAdmin) {
-                url = process.env.REACT_APP_API_URL + '/users/update';
                 body = JSON.stringify({
                     id: this.props.location.state.item.id,
                     username: username,
@@ -72,7 +71,6 @@ class EditUser extends React.Component{
                     role: this.state.item.role
                 }, this.replacer);
             } else {
-                url = process.env.REACT_APP_API_URL + '/users/me/update';
                 body = JSON.stringify({
                     username: username,
                     password: this.state.item.password,
@@ -80,7 +78,7 @@ class EditUser extends React.Component{
                 }, this.replacer);
             }
             try {
-                let response = await fetch(url, {
+                let response = await fetch(process.env.REACT_APP_API_URL + '/users/update', {
                     method: 'put',
                     headers: new Headers({
                         'Accept': 'application/json',
@@ -150,7 +148,6 @@ class EditUser extends React.Component{
                         hist={this.props.history}
                     />
                     <h1 className="d-inline">Edit User</h1>
-                    {this.addModal()}
                     <form onSubmit={(e) => e.preventDefault()}>
                         <InputField
                             type='text'

@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString
 @Entity
@@ -41,7 +41,7 @@ public class Alignment extends BaseEntityAudit {
 
     @OneToMany(orphanRemoval=true)
     @JoinColumn(name = "alignment_id")
-    private Set<BamUrl> bamUrls;
+    private Set<BamUrl> bamUrls = new HashSet<>();
 
     public enum Visibility {PUBLIC, PRIVATE, PRIVATE_GROUP};
 

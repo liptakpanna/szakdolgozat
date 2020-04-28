@@ -32,7 +32,7 @@ public abstract class BaseCommandRunner {
         return ans.toString();
     }
 
-    public String runCommand(String[] args) throws Exception {
+    protected String runCommand(String[] args) throws Exception {
         try {
             Process proc = new ProcessBuilder(args).start();
             String input = getInput(proc);
