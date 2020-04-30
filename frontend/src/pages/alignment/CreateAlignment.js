@@ -155,6 +155,7 @@ class CreateAlignment extends React.Component{
     };
 
     handleDropdownChange(event) {
+        if(event.target.value === "PUBLIC") this.setState({userAccess : []});
         this.setState({
             visibility: event.target.value
         })
@@ -190,10 +191,6 @@ class CreateAlignment extends React.Component{
                     'Accept': 'application/json',
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
             })
 
             let result = await response.json();
@@ -263,7 +260,7 @@ class CreateAlignment extends React.Component{
                 }
                 else{
                     console.log(result);
-                    this.setState({usernames: result.usernames});
+                    this.setState({usernames: result});
                 } 
             }
         }
@@ -455,7 +452,7 @@ class CreateAlignment extends React.Component{
             tracks.push(<tr 
                 key={i} >
                 <th>{i+1}</th>
-                <td> <input id={"readfileInput" + i} className="form-control-title pr-0" style={{"display":"none"}} type="file" accept={this.state.acceptedFormat}
+                <td className="fileInputWrapper"> <input id={"readfileInput" + i} className="form-control-title pr-0" type="file" accept={this.state.acceptedFormat}
                     required={this.state.trackCount === 1 || this.state.trackCount>i+1}
                     multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i)}}/>
                     <label htmlFor={"readfileInput" + i} style={{"width":"230px"}} className="pointer">

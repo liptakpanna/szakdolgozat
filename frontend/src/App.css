@@ -38,6 +38,26 @@ a.disabled {
   font-weight: bold;
 }
 
+.fileInputWrapper {
+  position: relative;
+}
+
+.fileInputWrapper input {
+  width: 210px;
+}
+
+.fileInputWrapper label {
+  position: absolute;
+  left: 1px;
+  width: 100%;
+  padding: 5px;
+  background-color: white;
+}
+
+tr:hover .fileInputWrapper label {
+  background-color: #edebeb;
+}
+
 .app {
   height: 100%;
   padding: 0px 10px;
@@ -61,6 +81,7 @@ a.disabled {
 
 .igvContainer {
   background-color: white;
+  overflow: scroll;
 }
 
 .previousIcon {

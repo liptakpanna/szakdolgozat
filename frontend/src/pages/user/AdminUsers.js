@@ -80,10 +80,6 @@ class AdminUsers extends React.Component{
                     id: id,
                     status: status
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
             })
 
             let result = await response.json();

@@ -29,6 +29,12 @@ class Home extends React.Component{
                 </ul>
                 <p>You can add different parameters to the different aligners.</p>
                 <p>For creating an alignment you will need a reference genome (FASTA file) and one or more read files (FASTQ/FASTA files).</p>
+                <p>You can set the "Visibility" of the alignment:</p>
+                <ul>
+                    <li><strong>PUBLIC</strong>: Every user can see these.</li>
+                    <li><strong>PRIVATE</strong>: On default you and the admins can see these, but you can add users, who also can.</li>
+                    <li><strong>PRIVATE_GROUP</strong>: On default only you can see these, but you can add users, who also can.</li>
+                </ul>
                 </>)
     }
 

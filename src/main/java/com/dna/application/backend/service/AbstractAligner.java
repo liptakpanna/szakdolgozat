@@ -162,10 +162,9 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         int trackCount=1;
         if(readTracks == null) throw new Exception("No reads.");
         for(ReadTrack track : readTracks) {
-            List<String> readNames = doAlignmentOnTrack(track, filename, indexFile);
+            deleteReadFiles(doAlignmentOnTrack(track, filename, indexFile));
             runCommand(new String[]{folder+ "sam_to_bam_script",filename, folder, String.valueOf(trackCount), String.valueOf(referenceId != null)});
             trackCount++;
-            deleteReadFiles(readNames);
         }
         if (referenceId == null || isSnap)
             deleteIndex(filename);

@@ -32,16 +32,11 @@ public class JwtAuthenticationControllerTest {
 
     private JwtRequest request = new JwtRequest("admin", "1234");
 
-    private JacksonTester<JwtResponse> jwtResponseJacksonTester;
-    private JacksonTester<JwtRequest> jwtRequestJacksonTester;
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private String jwtToken;
     private String apiUrl;
 
     @Before
     public void setup() {
-        JacksonTester.initFields(this, new ObjectMapper());
         apiUrl = "http://localhost:"+port+"/api";
         JwtRequest request = new JwtRequest("admin", "1234");
         HttpEntity<JwtRequest> entity = new HttpEntity<>(request, headers);

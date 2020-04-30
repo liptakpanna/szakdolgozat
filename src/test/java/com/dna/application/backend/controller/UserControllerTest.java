@@ -121,7 +121,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("{\"usernames\":[\"admin\"]}"));
+        Assert.assertTrue(actual.contains("{[\"admin\"]}"));
     }
 
     @Test
@@ -139,14 +139,14 @@ public class UserControllerTest {
     }
 
     @Test
-    public void i_putMeUpdate_ResearcherJwt_Updated(){
+    public void i_putUpdate_ResearcherJwt_Updated(){
         headers.set("Authorization", "Bearer " + researcherJwtToken);
         UserRequest userRequest = testDataGenerator.getUserRequest();
         userRequest.setRole(null);
         userRequest.setUsername("testuser");
         HttpEntity<UserRequest> entity = new HttpEntity<>(userRequest, headers);
         ResponseEntity<?> response = restTemplate.exchange(
-                apiUrl+"/users/me/update", HttpMethod.PUT, entity, String.class);
+                apiUrl+"/users/update", HttpMethod.PUT, entity, String.class);
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
@@ -167,7 +167,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void k_putUpdate_AdminJwtDisableUser_Successful() {
+    public void k_putUpdate_AdminJwtDisableUser_Updated() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
         UserRequest userRequest = new UserRequest();
         userRequest.setId(2L);
@@ -190,11 +190,11 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("{\"usernames\":[]}"));
+        Assert.assertTrue(actual.contains("{[]}"));
     }
 
     @Test
-    public void l_getList_AdminJwt_EmptyList() {
+    public void l_getList_AdminJwt_ReturnUpdatedList() {
         headers.set("Authorization", "Bearer " + adminJwtToken);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         ResponseEntity<?> response = restTemplate.exchange(
