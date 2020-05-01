@@ -36,11 +36,13 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication)
             throws Exception {
         User user = (User)authentication.getPrincipal();
-        if(userRequest.getId() == null) userRequest.setId(user.getId());
+        if(userRequest.getId() == null)
+            userRequest.setId(user.getId());
+        else if(user.getRole() != User.Role.ADMIN)
+            throw new Exception("No id provided");
         try {
             return ResponseEntity.ok(userService.updateUser(userRequest, user));
         } catch(EntityNameAlreadyExistsException e) {

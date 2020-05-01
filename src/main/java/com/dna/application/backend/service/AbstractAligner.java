@@ -127,14 +127,22 @@ public abstract class AbstractAligner extends BaseCommandRunner {
         return userAccess;
     }
 
-    protected void runAlignCommand(String[] args) throws Exception {
+    protected void runAlignCommand(String[] args, List<String> readFiles, String filename, boolean indexCreated) throws Exception {
         Process proc = new ProcessBuilder(args).start();
         String input = getInput(proc);
         String error = getError(proc);
-        if(fileErrorMessages.parallelStream().anyMatch(error::contains) || fileErrorMessages.parallelStream().anyMatch(input::contains) )
+        if(fileErrorMessages.parallelStream().anyMatch(error::contains) || fileErrorMessages.parallelStream().anyMatch(input::contains) ) {
+            deleteReadFiles(readFiles);
+            if(indexCreated)
+                deleteIndex(filename);
             throw new WrongFileTypeException();
-        if(error.toLowerCase().contains("command not found") || input.toLowerCase().contains("command not found"))
+        }
+        if(error.toLowerCase().contains("command not found") || input.toLowerCase().contains("command not found")){
+            deleteReadFiles(readFiles);
+            if (indexCreated)
+                deleteIndex(filename);
             throw new CommandNotFoundException();
+        }
 
         proc.waitFor();
         log.debug(input+error);

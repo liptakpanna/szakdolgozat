@@ -16,11 +16,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Table;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class AlignmentService extends BaseCommandRunner {
     @Value("${data.resource.folder}")
@@ -111,7 +109,6 @@ public class AlignmentService extends BaseCommandRunner {
         String description = alignmentRequest.getDescription();
         Alignment.Visibility visibility = alignmentRequest.getVisibility();
         List<String> usernameAccessList = alignmentRequest.getUsernameAccessList();
-        log.warn("Alignment request: {}", usernameAccessList);
 
         if(name != null) {
             if (!name.equals(alignment.getName()) && alignmentRepository.existsByName(name)) throw new EntityNameAlreadyExistsException();

@@ -39,7 +39,7 @@ public class BowtieService extends AbstractAligner {
             else
                 args.addAll(Arrays.asList("-S", indexName, read1, folder+"bams/"+ filename + ".sam"));
         }
-        runAlignCommand(args.toArray(new String[0]));
+        runAlignCommand(args.toArray(new String[0]), Arrays.asList(read1, read2), filename, !indexName.contains("examples/"));
 
         return Arrays.asList(read1, read2);
     }

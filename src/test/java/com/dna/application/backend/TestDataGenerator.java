@@ -5,9 +5,8 @@ import com.dna.application.backend.dto.UserDto;
 import com.dna.application.backend.model.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
+import org.junit.Ignore;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
+@Ignore
 @Getter
 public class TestDataGenerator {
     private String testFolder = "src/test/resources/files/";

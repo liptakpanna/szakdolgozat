@@ -1,13 +1,10 @@
 package com.dna.application.backend.controller;
 
 import com.dna.application.backend.TestDataGenerator;
-import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
-import com.dna.application.backend.model.Alignment;
 import com.dna.application.backend.model.AlignmentRequest;
 import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.util.BaseCommandRunner;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -26,9 +23,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-@Slf4j
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -77,7 +72,6 @@ public class AlignerControllerTest extends BaseCommandRunner {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        log.warn(actual);
         Assert.assertTrue(actual.contains("{\"id\":1,\"name\":\"integr test\",\"aligner\":\"BOWTIE\"," +
                 "\"description\":\"Lorem ipsum dosum\"," +
                 "\"referenceUrl\":\"http://localhost:9090/resources/files/references/integr_test.fna\"," +
@@ -128,7 +122,6 @@ public class AlignerControllerTest extends BaseCommandRunner {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        log.warn(actual);
         Assert.assertTrue(actual.contains("{\"id\":1,\"name\":\"new name\",\"aligner\":\"BOWTIE\"," +
                 "\"description\":\"Lorem ipsum dosum\"," +
                 "\"referenceUrl\":\"http://localhost:9090/resources/files/references/new_name.fna\"," +
@@ -191,7 +184,6 @@ public class AlignerControllerTest extends BaseCommandRunner {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        log.warn(actual);
         Assert.assertTrue(actual.contains("{\"id\":2,\"name\":\"test bwa\",\"aligner\":\"BWA\"," +
                 "\"description\":\"Lorem ipsum dosum\"," +
                 "\"referenceUrl\":\"http://localhost:9090/resources/files/examples/ecoli.fna\"," +
@@ -300,7 +292,6 @@ public class AlignerControllerTest extends BaseCommandRunner {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        log.warn(actual);
         Assert.assertTrue(actual.contains("{\"id\":3,\"name\":\"test snap\",\"aligner\":\"SNAP\"," +
                 "\"description\":\"Lorem ipsum dosum\"," +
                 "\"referenceUrl\":\"http://localhost:9090/resources/files/references/test_snap.fna\"," +

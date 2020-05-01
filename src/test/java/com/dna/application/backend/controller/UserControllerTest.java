@@ -4,8 +4,6 @@ import com.dna.application.backend.TestDataGenerator;
 import com.dna.application.backend.model.JwtRequest;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.model.UserRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -15,11 +13,13 @@ import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@Slf4j
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -121,7 +121,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("{[\"admin\"]}"));
+        Assert.assertTrue(actual.contains("[\"admin\"]"));
     }
 
     @Test
@@ -142,6 +142,7 @@ public class UserControllerTest {
     public void i_putUpdate_ResearcherJwt_Updated(){
         headers.set("Authorization", "Bearer " + researcherJwtToken);
         UserRequest userRequest = testDataGenerator.getUserRequest();
+        userRequest.setId(null);
         userRequest.setRole(null);
         userRequest.setUsername("testuser");
         HttpEntity<UserRequest> entity = new HttpEntity<>(userRequest, headers);
@@ -190,7 +191,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("{[]}"));
+        Assert.assertTrue(actual.contains("[]"));
     }
 
     @Test

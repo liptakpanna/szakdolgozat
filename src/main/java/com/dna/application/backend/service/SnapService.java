@@ -34,7 +34,7 @@ public class SnapService extends AbstractAligner {
                     "-d", track.getMaxDist(),
                     "-o", folder + "bams/" + filename + ".sam"));
         }
-        runAlignCommand(args.toArray(new String[0]));
+        runAlignCommand(args.toArray(new String[0]), Arrays.asList(read1, read2), filename, true);
 
         return Arrays.asList(read1, read2);
     }

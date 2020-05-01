@@ -1,7 +1,6 @@
 package com.dna.application.backend.util;
 
 import com.dna.application.backend.exception.CommandNotFoundException;
-import com.dna.application.backend.exception.WrongFileTypeException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;

@@ -1,7 +1,5 @@
 package com.dna.application.backend.util;
 
-import com.dna.application.backend.exception.CommandNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

@@ -1,14 +1,11 @@
 package com.dna.application.backend.model;
 
-import com.dna.application.backend.dto.AlignmentDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
