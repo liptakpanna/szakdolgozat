@@ -131,7 +131,7 @@ class CreateAlignment extends React.Component{
                         this.setState({errormessage: "Maximum upload size (" + max/1000000 + "MB) exceeded."})
                     }
                     else if(result.message === "Wrong file type")
-                    this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and readfiles with one of the following extensions: " + this.state.acceptedFormat})
+                    this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and read files with one of the following extensions: " + this.state.acceptedFormat})
                     else
                         this.setState({errormessage: result.message})   
                     this.setState({showError:true});
