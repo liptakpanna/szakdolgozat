@@ -146,8 +146,9 @@ class AdminUsers extends React.Component{
                                         <td> {item.createdAt ? Moment(item.createdAt).format("YYYY.MM.DD. HH:mm") : ""} </td>
                                         <td>{item.status}</td>
                                         <td>
-                                        {(item.status === "DISABLED" ? <button className="btn btn-success" onClick={() => this.changeStatus(item.id,"ENABLED")}>ENABLE</button>
-                                         : <button className="btn btn-danger" id="disableButton" onClick={() => this.changeStatus(item.id,"DISABLED")}>DISABLE</button>)}
+                                        {(item.id.toString() === localStorage.getItem("id") ? "" :
+                                        (item.status === "DISABLED" ? <button className="btn btn-success" onClick={() => this.changeStatus(item.id,"ENABLED")}>ENABLE</button>
+                                         : <button className="btn btn-danger" id="disableButton" onClick={() => this.changeStatus(item.id,"DISABLED")}>DISABLE</button>))}
                                         </td>
                                     </tr>
                             }, this)}
