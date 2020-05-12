@@ -19,7 +19,7 @@ import java.util.*;
 @Ignore
 @Getter
 public class TestDataGenerator {
-    private String testFolder = "backend/src/test/resources/files/";
+    private String testFolder = "src/test/resources/files/";
 
     private Date timestamp = new Date();
     private Date timestamp2 = new Date();
