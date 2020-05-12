@@ -20,7 +20,7 @@ class EditUser extends React.Component{
             show: false,
             showError: false,
             errormessage: null,
-            username: []
+            usernames: []
         }
     }
 
@@ -155,7 +155,7 @@ class EditUser extends React.Component{
                 }
                 else{
                     console.log(result);
-                this.setState({usernames: result.usernames});
+                    this.setState({usernames: result});
                 }
             }
         }
@@ -185,6 +185,7 @@ class EditUser extends React.Component{
 
     addUserAccessList(){
         if(this.state.item.visibility === "PRIVATE" || this.state.item.visibility === "PRIVATE_GROUP") {
+            console.log(this.state.usernames)
             if(this.state.usernames && this.state.usernames.length > 0) {
                 return(
                     <div className="mb-3">

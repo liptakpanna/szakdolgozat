@@ -61,8 +61,10 @@ class AdminAddUser extends React.Component{
                     role: this.state.role
                 })
             })
-            let result = await response.json();
-            if(result){
+            if(response.ok)
+                this.props.history.push("/users");
+            else{
+                let result = await response.json();
                 if(result.status === 500) {
                     this.setState({errormessage: result.message})
                     this.setState({showError:true});

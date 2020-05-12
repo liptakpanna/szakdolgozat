@@ -1,7 +1,9 @@
 #!/bin/bash
 
 cd frontend
-npm run build
+npm set audit false
+npm install --loglevel=error
+npm run build --loglevel=error
 
 BASE=3000
 INCREMENT=10
@@ -13,4 +15,4 @@ while [[ -n $(lsof -i tcp:$port) ]]; do
 done
 
 
-serve -s build -l $port
+serve -s build -l $port 

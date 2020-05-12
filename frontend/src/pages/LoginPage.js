@@ -90,18 +90,14 @@ class LoginPage extends React.Component{
             let result = await response.json();
             if (result){
                 console.log(result);
-                if(result.status === 403) {
-                    if(result.trace.includes("USER_DISABLED"))
-                        this.setState({errormessage: "Your profile has been disabled. If you want use the application please contact an admin: " + this.state.adminEmail})
-                    else
-                        this.setState({errormessage: "Wrong username password combination. If you have forgotten your password please contact an admin: " + this.state.adminEmail})
-                    this.setState({show:true});
-                    this.setState({buttonDisabled: false})
-                }
-                else if(result.status === 500) {
-                    this.setState({show:true});
-                    this.setState({errormessage: result.message})
-                    this.setState({buttonDisabled: false})
+                if(result.status === 500) {
+                    if(result.message.includes("USER_DISABLED"))
+                    this.setState({errormessage: "Your profile has been disabled. If you want use the application please contact an admin: " + this.state.adminEmail})
+                else
+                    this.setState({errormessage: "Wrong username password combination. If you have forgotten your password please contact an admin: " + this.state.adminEmail})
+                this.setState({show:true});
+                this.setState({buttonDisabled: false})
+
                 }
                 else {
                     localStorage.setItem("isLoggedIn", true);
