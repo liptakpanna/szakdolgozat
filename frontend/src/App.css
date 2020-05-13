@@ -81,19 +81,10 @@ tr:hover .fileInputWrapper label {
 
 .igvContainer {
   background-color: white;
-  overflow: scroll;
 }
 
-.previousIcon {
-  width: 15px;
-  height: 15px;
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  transform: rotate(135deg);
-  -webkit-transform: rotate(135deg);
+.igv-div {
+  height: auto;
 }
 
 tr.disabledUser {
@@ -121,6 +112,7 @@ tr.disabledUser {
   }
 }
 
+/*Source: https://gist.github.com/elyor0529/9da533b9059cae0028e22307da9f10de */
 /* Absolute Center Spinner */
 .loading {
   position: fixed;

@@ -42,7 +42,7 @@ class AdminUsers extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }
@@ -64,7 +64,10 @@ class AdminUsers extends React.Component{
 
     onEditClick(event, item) {
         if (event.target.id === "disableButton") return;
-        this.props.history.push("/user/edit", {item: item, isAdmin: true, origin: "/users"});
+        if (localStorage.getItem("id") === ''+item.id)
+            this.props.history.push("/user/edit", {item: item, isAdmin: false, origin: "/users"});
+        else
+            this.props.history.push("/user/edit", {item: item, isAdmin: true, origin: "/users"});
     }
 
     async changeStatus(id, status) {
@@ -84,7 +87,7 @@ class AdminUsers extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }

@@ -54,7 +54,7 @@ class IgvBrowser extends Component {
     }
 
     addEditButton(){
-      if(localStorage.getItem("username") === this.state.item.owner || (localStorage.getItem("role") === 'ADMIN' && (this.state.item.visibility==="PRIVATE" || this.state.item.visibility==="PUBLIC")))
+      if((localStorage.getItem("username") === this.state.item.owner && localStorage.getItem("role") !== "GUEST") || (localStorage.getItem("role") === 'ADMIN' && (this.state.item.visibility==="PRIVATE" || this.state.item.visibility==="PUBLIC")))
       {
         return(
           <div className="p-2 w-25">

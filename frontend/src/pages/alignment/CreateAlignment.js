@@ -125,18 +125,18 @@ class CreateAlignment extends React.Component{
             let result = await response.json();
             if(result){
                 this.setState({isLoading: false});
-                if(result.status === 500) {
+                if(response.status === 500) {
                     if(result.message.includes("Maximum upload size exceeded")){
                         let max = result.message.substring(result.message.lastIndexOf("(")+1, result.message.length-1);
                         this.setState({errormessage: "Maximum upload size (" + max/1000000 + "MB) exceeded."})
                     }
                     else if(result.message === "Wrong file type")
-                    this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and read files with one of the following extensions: " + this.state.acceptedFormat})
+                        this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and read files with one of the following extensions: " + this.state.acceptedFormat})
                     else
                         this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }
-                else if(result.status === 403) {
+                else if(response.status === 403) {
                     this.props.history.push("/login");
                 }
                 else{
@@ -195,7 +195,7 @@ class CreateAlignment extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }
@@ -251,7 +251,7 @@ class CreateAlignment extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})   
                     this.setState({showError:true});
                 }
@@ -455,7 +455,7 @@ class CreateAlignment extends React.Component{
                 <td className="fileInputWrapper"> <input id={"readfileInput" + i} className="form-control-title pr-0" type="file" accept={this.state.acceptedFormat}
                     required={this.state.trackCount === 1 || this.state.trackCount>i+1}
                     multiple onChange={ (e) => {this.setValueForRead("file", e.target.files, i)}}/>
-                    <label htmlFor={"readfileInput" + i} style={{"width":"230px"}} className="pointer">
+                    <label htmlFor={"readfileInput" + i} className="pointer">
                         <span className="fileInput mr-2">Choose Files</span>
                         <EllipsisText length={15} text={this.state.readFile[i].file.length > 1 ? "2 files chosen" : (this.state.readFile[i].file.length === 0 ? "No file chosen" : this.state.readFile[i].file[0].name)}/>
                     </label>

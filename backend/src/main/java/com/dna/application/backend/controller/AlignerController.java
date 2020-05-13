@@ -14,12 +14,15 @@ import com.dna.application.backend.service.SnapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -43,24 +46,30 @@ public class AlignerController {
     private String errorMessage;
 
     @GetMapping("/list")
-    public List<AlignmentDto> getAlignments(Authentication authentication) throws Exception{
-        return alignmentService.getAlignments((User)authentication.getPrincipal());
+    public List<AlignmentDto> getAlignments(Authentication authentication) {
+        try {
+            return alignmentService.getAlignments((User) authentication.getPrincipal());
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return null;
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public ResponseEntity<Boolean> deleteAlignment(@PathVariable Long id, Authentication authentication) throws Exception{
+    public ResponseEntity<Boolean> deleteAlignment(@PathVariable Long id, Authentication authentication) {
         User user = (User)authentication.getPrincipal();
-        if (alignmentService.deleteAlignment(id, user))
-            return ResponseEntity.ok(true);
-        else
-            throw new Exception("Delete was not successful");
+        try {
+            return ResponseEntity.ok(alignmentService.deleteAlignment(id, user));
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public ResponseEntity<AlignmentDto> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication)
-            throws Exception {
+    public ResponseEntity<?> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) {
         User user = (User)authentication.getPrincipal();
         try {
             switch(alignmentRequest.getAligner()) {
@@ -74,27 +83,35 @@ public class AlignerController {
                     throw new Exception("Not a valid aligner");
             }
         } catch (EntityNameAlreadyExistsException e) {
-            throw new Exception("Alignment name already exists.");
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Alignment name already exists.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (WrongFileTypeException e) {
-            throw new Exception("Wrong file type.");
+            Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message", "Wrong file type.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (CommandNotFoundException e) {
-            throw new Exception("A command was not found, the server does not have everything installed to work properly.");
+            Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message",
+                    "A command was not found, the server does not have everything installed to work properly.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (Exception e) {
-            log.warn(String.valueOf(e));
-            throw new Exception(errorMessage);
+            log.debug(e.getMessage());
+            Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message", errorMessage);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         }
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
-    public ResponseEntity<AlignmentDto> updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication) throws Exception {
+    public ResponseEntity<?> updateAlignment(@RequestBody AlignmentRequest alignmentRequest, Authentication authentication)  {
         User user = (User)authentication.getPrincipal();
         try {
             return ResponseEntity.ok(alignmentService.updateAlignment(alignmentRequest, user));
         } catch (EntityNameAlreadyExistsException e){
-            throw new Exception("Alignment name already exists.");
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Alignment name already exists.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (Exception e) {
-            throw new Exception(errorMessage);
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", errorMessage);
+            log.debug(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         }
     }
 

@@ -76,7 +76,7 @@ class EditUser extends React.Component{
     
                 let result = await response.json();
                 if(result){
-                    if(result.status === 500) {
+                    if(response.status === 500) {
                         this.setState({errormessage: result.message})
                         this.setState({showError:true});
                     }
@@ -114,7 +114,7 @@ class EditUser extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }
@@ -146,7 +146,7 @@ class EditUser extends React.Component{
 
             let result = await response.json();
             if(result){
-                if(result.status === 500) {
+                if(response.status === 500) {
                     this.setState({errormessage: result.message})
                     this.setState({showError:true});
                 }

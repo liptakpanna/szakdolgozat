@@ -7,12 +7,15 @@ import com.dna.application.backend.model.UserRequest;
 import com.dna.application.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @CrossOrigin
@@ -36,17 +39,22 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> updateData(@RequestBody UserRequest userRequest, Authentication authentication)
-            throws Exception {
+    public ResponseEntity<?> updateData(@RequestBody UserRequest userRequest, Authentication authentication) {
         User user = (User)authentication.getPrincipal();
         if(userRequest.getId() == null)
             userRequest.setId(user.getId());
-        else if(user.getRole() != User.Role.ADMIN)
-            throw new Exception("No id provided");
+        else if(user.getRole() != User.Role.ADMIN) {
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message","No id provided");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(value);
+        }
         try {
             return ResponseEntity.ok(userService.updateUser(userRequest, user));
         } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists");
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message","Username already exists");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
+        } catch (Exception e) {
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         }
     }
 
@@ -58,12 +66,16 @@ public class UserController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> addUser(@RequestBody UserRequest userRequest, Authentication authentication) throws Exception{
+    public ResponseEntity<?> addUser(@RequestBody UserRequest userRequest, Authentication authentication) {
         User user = (User)authentication.getPrincipal();
         try{
             return ResponseEntity.ok(userService.addUser(userRequest, user.getUsername()));
         } catch(EntityNameAlreadyExistsException e) {
-            throw new Exception("Username already exists");
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message","Username already exists");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
+        } catch (Exception e) {
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         }
     }
 }
