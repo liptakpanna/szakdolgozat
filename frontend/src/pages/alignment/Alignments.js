@@ -55,7 +55,7 @@ class Alignments extends React.Component{
             }
         }
         catch(e) {
-            this.setState({errormessage: "Cannot connect to server"})
+            this.setState({errormessage: "Cannot connect to server, please try again later."})
             this.setState({showError:true});
             console.log("Cannot connect to server. " + e);
         }

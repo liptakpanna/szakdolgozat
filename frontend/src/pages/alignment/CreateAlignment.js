@@ -116,7 +116,7 @@ class CreateAlignment extends React.Component{
                 }),
                 body: data
             }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
+                this.setState({errormessage: "Cannot connect to server, please try again later."})   
                 this.setState({showError:true});
                 this.setState({isLoading: false});
                 console.log("Cannot connect to server");
@@ -147,7 +147,7 @@ class CreateAlignment extends React.Component{
         }
         catch(e) {
             this.setState({isLoading: false});
-            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({errormessage: "Cannot connect to server, please try again later."})   
             this.setState({showError:true});
             this.setState({isLoading: false});
             console.log("Cannot connect to server. " + e);
@@ -209,7 +209,7 @@ class CreateAlignment extends React.Component{
             }
         }
         catch(e) {
-            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({errormessage: "Cannot connect to server, please try again later."})   
             this.setState({showError:true});
             console.log("Cannot connect to server. " + e);
         }
@@ -243,11 +243,7 @@ class CreateAlignment extends React.Component{
                     'Accept': 'application/json',
                     "Authorization": 'Bearer ' + Cookie.get("jwtToken")
                 })
-            }).catch(error =>  {
-                this.setState({errormessage: "Cannot connect to server"})   
-                this.setState({showError:true});
-                console.log("Cannot connect to server");
-            })
+            });
 
             let result = await response.json();
             if(result){
@@ -265,7 +261,7 @@ class CreateAlignment extends React.Component{
             }
         }
         catch(e) {
-            this.setState({errormessage: "Cannot connect to server"})   
+            this.setState({errormessage: "Cannot connect to server, please try again later."})   
             this.setState({showError:true});
             console.log("Cannot connect to server. " + e);
         }
