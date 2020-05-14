@@ -73,7 +73,6 @@ class AdminAddUser extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.props.history.push('/users');
                 }
             }

@@ -46,7 +46,6 @@ class Profile extends React.Component{
                     this.props.history.push("/login");
                 }
                 else {
-                    console.log(result);
                     this.setState({item: result});
                 }
             }

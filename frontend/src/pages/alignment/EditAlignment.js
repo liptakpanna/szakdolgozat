@@ -72,7 +72,6 @@ class EditUser extends React.Component{
                         usernameAccessList: this.state.item.userAccess
                     }, this.replacer)
                 })
-                console.log("bu");
     
                 let result = await response.json();
                 if(result){
@@ -84,7 +83,6 @@ class EditUser extends React.Component{
                         this.props.history.push("/login");
                     }
                     else{
-                        console.log(result);
                         this.props.history.push('/alignments/igv', {item: result})
                     }
                 }
@@ -122,7 +120,6 @@ class EditUser extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.props.history.push('/alignments')
                 }
             }
@@ -154,7 +151,6 @@ class EditUser extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.setState({usernames: result});
                 }
             }
@@ -185,7 +181,6 @@ class EditUser extends React.Component{
 
     addUserAccessList(){
         if(this.state.item.visibility === "PRIVATE" || this.state.item.visibility === "PRIVATE_GROUP") {
-            console.log(this.state.usernames)
             if(this.state.usernames && this.state.usernames.length > 0) {
                 return(
                     <div className="mb-3">

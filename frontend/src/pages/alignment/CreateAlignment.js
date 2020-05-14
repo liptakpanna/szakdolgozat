@@ -130,7 +130,7 @@ class CreateAlignment extends React.Component{
                         let max = result.message.substring(result.message.lastIndexOf("(")+1, result.message.length-1);
                         this.setState({errormessage: "Maximum upload size (" + max/1000000 + "MB) exceeded."})
                     }
-                    else if(result.message === "Wrong file type")
+                    else if(result.message === "Wrong file type.")
                         this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and read files with one of the following extensions: " + this.state.acceptedFormat})
                     else
                         this.setState({errormessage: result.message})   
@@ -140,7 +140,6 @@ class CreateAlignment extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.props.history.push("/alignments/igv", {item : result});
                 }
             }
@@ -176,7 +175,6 @@ class CreateAlignment extends React.Component{
                 <input className="form-control-title" id="referenceFile" style={{"display":"none"}} type="file" accept=".fasta,.fna,.fa"  required onChange={ (e) => this.onChangeHandler(e, "referenceFile")}/>
                 <label className="pointer" htmlFor="referenceFile">
                     <span className="fileInput mr-2">Choose file</span>
-                    {console.log(this.state.referenceFile)}
                     {this.state.referenceFile === null ? " No file chosen" : this.state.referenceFile.name}
                 </label>
             </div>
@@ -203,7 +201,6 @@ class CreateAlignment extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.setState({references: result});
                 } 
             }
@@ -255,7 +252,6 @@ class CreateAlignment extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.setState({usernames: result});
                 } 
             }
@@ -323,7 +319,6 @@ class CreateAlignment extends React.Component{
         reads[index] = read;
         if(read.name === "" && read.file.length === 0 && index+1 < reads.length) {
             reads.splice(index, 1);
-            console.log(reads);
             this.setState({trackCount: this.state.trackCount-1});
         }
         if(read.name !== null && read.file.length > 0 && index+1 === reads.length) {

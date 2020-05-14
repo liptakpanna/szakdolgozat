@@ -50,7 +50,6 @@ class AdminUsers extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.setState({items: result});
                 }
             }
@@ -95,7 +94,6 @@ class AdminUsers extends React.Component{
                     this.props.history.push("/login");
                 }
                 else{
-                    console.log(result);
                     this.getUsers();
                 }
             }

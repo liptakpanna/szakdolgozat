@@ -94,6 +94,6 @@ public class JwtAuthenticationControllerTest {
         ResponseEntity<?> response = restTemplate.exchange(
                 apiUrl + "/forgotpassword", HttpMethod.GET, entity, String.class);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("<200,[\"liptakpanna@gmail.com\"],"));
+        Assert.assertTrue(actual.contains("<200,[\"<email_here>\"],"));
     }
 }

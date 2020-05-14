@@ -62,7 +62,7 @@ public class UserControllerTest {
         String actual = response.toString();
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
-        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\""));
+        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"<email_here>\",\"role\":\"ADMIN\""));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class UserControllerTest {
         String actual = response.toString();
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
-        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\""));
+        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"<email_here>\",\"role\":\"ADMIN\""));
         Assert.assertTrue(actual.contains("\"id\":2,\"username\":\"newname\",\"email\":\"new@email.com\",\"role\":\"RESEARCHER"));
     }
 
@@ -163,7 +163,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\""));
+        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"<email_here>\",\"role\":\"ADMIN\""));
         Assert.assertTrue(actual.contains("\"id\":2,\"username\":\"testuser\",\"email\":\"new@email.com\",\"role\":\"GUEST"));
     }
 
@@ -203,7 +203,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\",\"status\":\"ENABLED\""));
+        Assert.assertTrue(actual.contains("[{\"id\":1,\"username\":\"admin\",\"email\":\"<email_here>\",\"role\":\"ADMIN\",\"status\":\"ENABLED\""));
         Assert.assertTrue(actual.contains("\"id\":2,\"username\":\"testuser\",\"email\":\"new@email.com\",\"role\":\"GUEST\",\"status\":\"DISABLED\""));
     }
 
@@ -216,7 +216,7 @@ public class UserControllerTest {
         int header = response.getStatusCodeValue();
         Assert.assertEquals(200, header);
         String actual = response.toString();
-        Assert.assertTrue(actual.contains("{\"id\":1,\"username\":\"admin\",\"email\":\"liptakpanna@gmail.com\",\"role\":\"ADMIN\",\"status\":\"ENABLED\",\"updatedBy\":null"));
+        Assert.assertTrue(actual.contains("{\"id\":1,\"username\":\"admin\",\"email\":\"<email_here>\",\"role\":\"ADMIN\",\"status\":\"ENABLED\",\"updatedBy\":null"));
     }
 
     private String getTokenForUser(String username, String password) {

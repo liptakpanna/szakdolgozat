@@ -5,8 +5,8 @@ cd frontend
 while getopts b opt; do
     case $opt in
         b) 
-	npm install --loglevel=error
-	npm run build --loglevel=error   ;;
+	npm install --loglevel=error > /dev/null 2>&1
+	npm run build --loglevel=error  > /dev/null 2>&1  ;;
         *) echo 'Error in parsing options' >&2
            exit 1
     esac
@@ -21,4 +21,4 @@ while [[ -n $(lsof -i tcp:$port) ]]; do
   port=$[port+INCREMENT]
 done
 
-serve -s build -l $port 
+serve -s -n build -l $port 

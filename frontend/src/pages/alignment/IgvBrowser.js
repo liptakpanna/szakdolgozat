@@ -49,7 +49,6 @@ class IgvBrowser extends Component {
           headers: {"Authorization": 'Bearer ' + Cookie.get("jwtToken")}
         });
       }
-      console.log(tracksForIgv);
       return tracksForIgv;
     }
 

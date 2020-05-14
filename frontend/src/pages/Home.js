@@ -14,7 +14,6 @@ class Home extends React.Component{
 
     componentDidMount(){
         this.setState({isLoggedIn: checkJwtToken()});
-        console.log("home" + this.state.isLoggedIn);
     }
 
     addCreateAlignmentsText(){
