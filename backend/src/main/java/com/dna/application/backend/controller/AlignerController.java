@@ -5,6 +5,7 @@ import com.dna.application.backend.exception.CommandNotFoundException;
 import com.dna.application.backend.exception.EntityNameAlreadyExistsException;
 import com.dna.application.backend.exception.WrongFileTypeException;
 import com.dna.application.backend.model.AlignmentRequest;
+import com.dna.application.backend.model.ReadTrack;
 import com.dna.application.backend.model.ReferenceExample;
 import com.dna.application.backend.model.User;
 import com.dna.application.backend.service.AlignmentService;
@@ -45,6 +46,9 @@ public class AlignerController {
     @Value("${default.error.message}")
     private String errorMessage;
 
+    @Value("${max.request.filesize}")
+    private int maxFileSize;
+
     @GetMapping("/list")
     public List<AlignmentDto> getAlignments(Authentication authentication) {
         try {
@@ -70,6 +74,10 @@ public class AlignerController {
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     public ResponseEntity<?> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) {
+        if(isFileSizeLimitExceeded(alignmentRequest)) {
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Maximum upload size exceeded");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
+        }
         User user = (User)authentication.getPrincipal();
         try {
             switch(alignmentRequest.getAligner()) {
@@ -119,5 +127,15 @@ public class AlignerController {
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     public List<ReferenceExample> getReferences() {
         return alignmentService.getReferences();
+    }
+
+    private boolean isFileSizeLimitExceeded(AlignmentRequest request) {
+        double size = 0;
+        if(request.getReferenceDna() != null) size += request.getReadsForDna().size();
+        for(ReadTrack track : request.getReadsForDna()) {
+            size += track.getRead1().getSize();
+            if(track.getRead2() != null) size += track.getRead2().getSize();
+        }
+        return size/1000000 > maxFileSize;
     }
 }

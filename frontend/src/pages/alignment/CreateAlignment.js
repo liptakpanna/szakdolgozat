@@ -63,8 +63,7 @@ class CreateAlignment extends React.Component{
     onClickHandler(event){
         if(!this.state.name || this.state.readFile.length === 1 ) {return;}
         let data = new FormData();
-        if(!this.state.referenceFile && this.state.refType ==="upload") {return;}
-        else if(this.state.refType !=="upload" && !this.state.referencId) {
+        if((this.state.refType !=="upload" && !this.state.referencId) || (!this.state.referenceFile && this.state.refType ==="upload")) {
             this.setState({showError: true});
             this.setState({errormessage: "Please choose reference genome or upload one."})
             return;
@@ -127,8 +126,7 @@ class CreateAlignment extends React.Component{
                 this.setState({isLoading: false});
                 if(response.status === 500) {
                     if(result.message.includes("Maximum upload size exceeded")){
-                        let max = result.message.substring(result.message.lastIndexOf("(")+1, result.message.length-1);
-                        this.setState({errormessage: "Maximum upload size (" + max/1000000 + "MB) exceeded."})
+                        this.setState({errormessage: "Maximum upload size (500MB) exceeded."})
                     }
                     else if(result.message === "Wrong file type.")
                         this.setState({errormessage: result.message + ", please upload reference genome in FASTA format and read files with one of the following extensions: " + this.state.acceptedFormat})

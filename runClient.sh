@@ -5,8 +5,8 @@ cd frontend
 while getopts b opt; do
     case $opt in
         b) 
-	npm install --loglevel=error > /dev/null 2>&1
-	npm run build --loglevel=error  > /dev/null 2>&1  ;;
+	npm install --loglevel=error
+	npm run build --loglevel=error  ;;
         *) echo 'Error in parsing options' >&2
            exit 1
     esac

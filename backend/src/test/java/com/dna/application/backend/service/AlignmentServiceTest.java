@@ -143,4 +143,26 @@ public class AlignmentServiceTest extends BaseCommandRunner {
         String updatedFiles = runCommand(new String[]{"ls", "-la", testFolder+"bams/b1.bam", testFolder+"bams/b1.bam.bai", testFolder+"references/b.fna", testFolder+"references/b.fna.fai"});
         Assert.assertFalse(updatedFiles.toLowerCase().contains("no such file or directory"));
     }
+
+    @Test
+    public void updateAlignment_RemoveUser_returnDto() throws Exception{
+        User user = testDataGenerator.getResearcher();
+        User guest = testDataGenerator.getGuest();
+        Alignment oldAl = testDataGenerator.getPublicAlignmentDeletedOwner();
+        oldAl.getUserAccess().add(guest);
+        Alignment updatedAl = testDataGenerator.getUpdatedAlignment();
+        updatedAl.setName(oldAl.getName());
+        AlignmentRequest request = testDataGenerator.getAlignmentRequest();
+        request.setUsernameAccessList(new ArrayList<>());
+        request.setName(oldAl.getName());
+        AlignmentDto expected = testDataGenerator.getUpdatedAlignmentDto();
+        expected.setName(oldAl.getName());
+
+        given(alignmentRepository.findById(oldAl.getId()))
+                .willReturn(Optional.of(oldAl));
+        given(alignmentRepository.findByName(updatedAl.getName()))
+                .willReturn(updatedAl);
+
+        Assert.assertEquals(expected, alignmentService.updateAlignment(request, user));
+    }
 }

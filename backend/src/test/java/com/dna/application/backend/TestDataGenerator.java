@@ -40,7 +40,7 @@ public class TestDataGenerator {
     private BamUrl bam = new BamUrl("a1", "localhost:9090/resources/bams/a1.bam");
     private BamUrl bamUpdated = new BamUrl("track", "localhost:9090/resources/bams/b1.bam");
 
-    private Alignment publicAlignmentDeletedOwner = new Alignment(1L,"a", "localhost:9090/resources/files/references/a.fna", new HashSet<>(Collections.singletonList(bam)), "Lorem ipsum", Alignment.Aligner.BOWTIE ,Alignment.Visibility.PUBLIC, researcherDeleted, timestamp, timestamp, "updater", null);
+    private Alignment publicAlignmentDeletedOwner = new Alignment(1L,"a", "localhost:9090/resources/files/references/a.fna", new HashSet<>(Collections.singletonList(bam)), "Lorem ipsum", Alignment.Aligner.BOWTIE ,Alignment.Visibility.PUBLIC, researcherDeleted, timestamp, timestamp, "updater", new HashSet<>());
     private AlignmentDto publicAlignmentDtoDeletedOwner = new AlignmentDto(1L,"a", Alignment.Aligner.BOWTIE, "Lorem ipsum", "localhost:9090/resources/files/references/a.fna", new HashSet<>(Collections.singletonList(bam)) ,Alignment.Visibility.PUBLIC, "[disabled user]", timestamp, timestamp, "updater", new ArrayList<>());
     private Alignment privateAlignment = new Alignment(1L,"a", "localhost:9090/resources/examples/test", new HashSet<>(Collections.singletonList(bam)), "Lorem ipsum", Alignment.Aligner.BOWTIE ,Alignment.Visibility.PRIVATE, researcher, timestamp, timestamp, "updater", null);
     private AlignmentDto privateAlignmentDto = new AlignmentDto(1L,"a", Alignment.Aligner.BOWTIE, "Lorem ipsum", "localhost:9090/resources/examples/test", new HashSet<>(Collections.singletonList(bam)) ,Alignment.Visibility.PRIVATE, researcher.getUsername(), timestamp, timestamp, "updater", new ArrayList<>());

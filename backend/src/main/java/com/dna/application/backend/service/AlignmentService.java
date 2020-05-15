@@ -125,15 +125,28 @@ public class AlignmentService extends BaseCommandRunner {
         if(description != null) alignment.setDescription(description);
         if(visibility != null) alignment.setVisibility(visibility);
 
-        if(usernameAccessList != null)
-            for(String username: usernameAccessList) {
+        List<User> usersToRemove = new ArrayList<>();
+
+        if(usernameAccessList != null) {
+            if(alignment.getUserAccess() != null)
+                for(User userToRemove: alignment.getUserAccess()) {
+                    if(!usernameAccessList.contains(userToRemove.getUsername())) {
+                        userToRemove.getAlignmentAccess().remove(alignment);
+                        usersToRemove.add(userToRemove);
+                        userRepository.saveAndFlush(userToRemove);
+                    }
+                }
+            if(usersToRemove.size() > 0)
+                alignment.getUserAccess().removeAll(usersToRemove);
+            for (String username : usernameAccessList) {
                 User userToAdd = userRepository.findByUsername(username);
-                if(userToAdd != null) {
+                if (userToAdd != null) {
                     userToAdd.getAlignmentAccess().add(alignment);
+                    alignment.getUserAccess().add(userToAdd);
                 }
             }
+        }
         alignment.setUpdatedBy(user.getUsername());
-
         alignmentRepository.saveAndFlush(alignment);
         return getAlignmentDto(alignment.getName());
     }

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -343,6 +344,38 @@ public class AlignerControllerTest extends BaseCommandRunner {
         Assert.assertEquals(500, header);
         String actual = response.toString();
         Assert.assertTrue(actual.contains("Alignment name already exists."));
+    }
+
+    @Test
+    public void o_putUpdate_AdminJwtRemoveResAccess_Updated() throws Exception {
+        headers.set("Authorization", "Bearer " + adminJwtToken);
+        AlignmentRequest request = new AlignmentRequest();
+        request.setId(1L);
+        request.setUsernameAccessList(new ArrayList<>());
+        HttpEntity<AlignmentRequest> entity = new HttpEntity<>(request, headers);
+        ResponseEntity<?> response = restTemplate.exchange(
+                apiUrl+"/align/update", HttpMethod.PUT, entity, String.class);
+        int header = response.getStatusCodeValue();
+        Assert.assertEquals(200, header);
+        String actual = response.toString();
+        Assert.assertTrue(actual.contains("\"updatedBy\":\"admin\",\"userAccess\":[]"));
+    }
+
+    @Test
+    public void p_getList_ResearcherJwt_NotAccessed() {
+        headers.set("Authorization", "Bearer " + researcherJwtToken);
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<?> response = restTemplate.exchange(
+                apiUrl+"/align/list", HttpMethod.GET, entity, String.class);
+        int header = response.getStatusCodeValue();
+        Assert.assertEquals(200, header);
+        String actual = response.toString();
+        Assert.assertFalse(actual.contains("{\"id\":1,\"name\":\"new name\",\"aligner\":\"BOWTIE\"," +
+                "\"description\":\"Lorem ipsum dosum\"," +
+                "\"referenceUrl\":\"http://localhost:9090/resources/files/references/new_name.fna\"," +
+                "\"bamUrls\":[{\"id\":1,\"name\":\"test track\"," +
+                "\"url\":\"http://localhost:9090/resources/files/bams/new_name1.bam\"}],\"visibility\":\"PRIVATE\"," +
+                "\"owner\":\"admin\","));
     }
 
     @Test

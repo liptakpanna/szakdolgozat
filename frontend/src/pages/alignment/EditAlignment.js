@@ -20,7 +20,8 @@ class EditUser extends React.Component{
             show: false,
             showError: false,
             errormessage: null,
-            usernames: []
+            usernames: [],
+            usernameAccess : (this.props.location.state.item.userAccess !== undefined ? this.props.location.state.item.userAccess : [])
         }
     }
 
@@ -43,6 +44,11 @@ class EditUser extends React.Component{
             return undefined;
         else
             return value;
+    }
+
+    checkUserAccess() {
+        if (this.state.item.userAccess.sort().join(',') === this.state.usernameAccess.sort().join(',')) return undefined;
+        return this.state.item.userAccess;
     }
 
     async componentDidMount(){
@@ -69,10 +75,9 @@ class EditUser extends React.Component{
                         name: this.state.item.name,
                         visibility: this.state.item.visibility,
                         description: this.state.item.description,
-                        usernameAccessList: this.state.item.userAccess
+                        usernameAccessList: this.checkUserAccess()
                     }, this.replacer)
                 })
-    
                 let result = await response.json();
                 if(result){
                     if(response.status === 500) {
@@ -83,6 +88,7 @@ class EditUser extends React.Component{
                         this.props.history.push("/login");
                     }
                     else{
+                        console.log(result);
                         this.props.history.push('/alignments/igv', {item: result})
                     }
                 }
