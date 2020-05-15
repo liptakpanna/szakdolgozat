@@ -75,7 +75,7 @@ public class AlignerController {
     @PreAuthorize("hasRole('ROLE_ADMIN') OR hasRole('ROLE_RESEARCHER')")
     public ResponseEntity<?> doAlignment(@ModelAttribute AlignmentRequest alignmentRequest, Authentication authentication) {
         if(isFileSizeLimitExceeded(alignmentRequest)) {
-            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Maximum upload size exceeded");
+            Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Maximum upload size ("+ maxFileSize + "MB) exceeded.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         }
         User user = (User)authentication.getPrincipal();
@@ -94,7 +94,7 @@ public class AlignerController {
             Map.Entry<String,String> value=new AbstractMap.SimpleEntry<>("message", "Alignment name already exists.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (WrongFileTypeException e) {
-            Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message", "Wrong file type.");
+            Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message", "Wrong file type");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(value);
         } catch (CommandNotFoundException e) {
             Map.Entry<String, String> value = new AbstractMap.SimpleEntry<>("message",
